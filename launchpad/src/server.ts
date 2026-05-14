@@ -139,6 +139,8 @@ const LaunchBody = z.object({
   decimals: z.number().int().min(0).max(9).optional(),
   creatorFeeBps: z.number().int().min(0).max(1000).optional(),
   protocolFeeBps: z.number().int().min(0).max(1000).optional(),
+  computeUnitLimit: z.number().int().positive().optional(),
+  priorityFeeMicroLamports: z.number().int().nonnegative().optional(),
 });
 
 app.post("/launch", async (req, res) => {
@@ -172,6 +174,8 @@ app.post("/launch", async (req, res) => {
       decimals: parsed.data.decimals,
       creatorFeeBps: parsed.data.creatorFeeBps,
       protocolFeeBps: parsed.data.protocolFeeBps,
+      computeUnitLimit: parsed.data.computeUnitLimit,
+      priorityFeeMicroLamports: parsed.data.priorityFeeMicroLamports,
     });
 
     res.json({

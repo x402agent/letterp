@@ -16,6 +16,7 @@ import {
   Keypair,
   Transaction,
   sendAndConfirmTransaction,
+  ComputeBudgetProgram,
 } from "@solana/web3.js";
 import {
   TOKEN_PROGRAM_ID,
@@ -185,7 +186,22 @@ export function buildCreateAgentToken(
   pushString(parts, args.uri);
   pushString(parts, args.agentUri);
 
-  const instructions = [
+  const instructions: TransactionInstruction[] = [];
+  if (args.computeUnitLimit) {
+    instructions.push(
+      ComputeBudgetProgram.setComputeUnitLimit({
+        units: args.computeUnitLimit,
+      }),
+    );
+  }
+  if (args.priorityFeeMicroLamports) {
+    instructions.push(
+      ComputeBudgetProgram.setComputeUnitPrice({
+        microLamports: args.priorityFeeMicroLamports,
+      }),
+    );
+  }
+  instructions.push(
     new TransactionInstruction({
       keys: [
         { pubkey: global, isSigner: false, isWritable: true },
@@ -208,7 +224,7 @@ export function buildCreateAgentToken(
       programId: LAUNCHPAD_PROGRAM_ID,
       data: Buffer.concat(parts),
     }),
-  ];
+  );
 
   return {
     instructions,

@@ -6,20 +6,21 @@
 //! the invariants and update state atomically.
 
 use pinocchio::{
-    account_info::AccountInfo,
-    program_error::ProgramError,
-    pubkey::Pubkey,
+    error::ProgramError,
+    AccountView,
+    Address,
     ProgramResult,
 };
 use crate::instruction::BondingCurveInstruction;
-use crate::state::{CurveState, CURVE_STATE_LEN};
+use crate::state::CurveState;
 use crate::error::CurveError;
 
+#[allow(dead_code)]
 const BPS: u64 = 10_000;
 
 pub fn process_instruction(
-    _program_id: &Pubkey,
-    accounts: &[AccountInfo],
+    _program_id: &Address,
+    accounts: &mut [AccountView],
     instruction_data: &[u8],
 ) -> ProgramResult {
     let instruction = BondingCurveInstruction::unpack(instruction_data)?;
@@ -55,6 +56,7 @@ pub fn process_instruction(
 }
 
 /// Validate the curve state is initialized and not graduated.
+#[allow(dead_code)]
 fn check_curve_is_active(state: &CurveState) -> Result<(), ProgramError> {
     if state.discriminant != 1 {
         return Err(CurveError::NotInitialized.into());
@@ -70,12 +72,12 @@ fn check_curve_is_active(state: &CurveState) -> Result<(), ProgramError> {
 // -----------------------------------------------------------------------
 
 fn process_initialize_curve(
-    accounts: &[AccountInfo],
-    total_supply: u64,
-    virtual_sol_reserves: u64,
-    virtual_token_reserves: u64,
-    creator_fee_bps: u16,
-    protocol_fee_bps: u16,
+    _accounts: &mut [AccountView],
+    _total_supply: u64,
+    _virtual_sol_reserves: u64,
+    _virtual_token_reserves: u64,
+    _creator_fee_bps: u16,
+    _protocol_fee_bps: u16,
 ) -> ProgramResult {
     // TODO: implement on-chain initialization logic.
     // This involves:
@@ -90,14 +92,14 @@ fn process_initialize_curve(
     // See launchpad/src/programs/launchpad-ix.ts for the off-chain
     // instruction builder that constructs the correct accounts and data.
 
-    pinocchio_log::sol_log("InitializeCurve (stub)");
+    pinocchio_log::log!("InitializeCurve (stub)");
     Ok(())
 }
 
 fn process_buy(
-    accounts: &[AccountInfo],
-    sol_in: u64,
-    min_tokens_out: u64,
+    _accounts: &mut [AccountView],
+    _sol_in: u64,
+    _min_tokens_out: u64,
 ) -> ProgramResult {
     // TODO: implement on-chain buy logic.
     //   - Compute fee deduction from sol_in
@@ -108,14 +110,14 @@ fn process_buy(
     //   - Update realSolReserves, realTokenReserves
     //   - Store accumulated fees (creator + protocol) in the vault
 
-    pinocchio_log::sol_log("Buy (stub)");
+    pinocchio_log::log!("Buy (stub)");
     Ok(())
 }
 
 fn process_sell(
-    accounts: &[AccountInfo],
-    tokens_in: u64,
-    min_sol_out: u64,
+    _accounts: &mut [AccountView],
+    _tokens_in: u64,
+    _min_sol_out: u64,
 ) -> ProgramResult {
     // TODO: implement on-chain sell logic.
     //   - Burn tokens from seller's ATA via token program CPI
@@ -125,26 +127,26 @@ fn process_sell(
     //   - Transfer SOL from vault to seller
     //   - Update realSolReserves, realTokenReserves
 
-    pinocchio_log::sol_log("Sell (stub)");
+    pinocchio_log::log!("Sell (stub)");
     Ok(())
 }
 
-fn process_graduate(accounts: &[AccountInfo]) -> ProgramResult {
+fn process_graduate(_accounts: &mut [AccountView]) -> ProgramResult {
     // TODO: implement graduation logic.
     //   - Mark curve as graduated
     //   - Transfer remaining liquidity to Raydium pool or the target
     //   - Disable further trades on the curve
 
-    pinocchio_log::sol_log("Graduate (stub)");
+    pinocchio_log::log!("Graduate (stub)");
     Ok(())
 }
 
-fn process_claim_fees(accounts: &[AccountInfo]) -> ProgramResult {
+fn process_claim_fees(_accounts: &mut [AccountView]) -> ProgramResult {
     // TODO: implement creator fee claiming.
     //   - Verify the caller is the creator_fee_wallet or authority
     //   - Transfer accumulated SOL fees from vault to recipient
     //   - Reset fee accumulator
 
-    pinocchio_log::sol_log("ClaimCreatorFees (stub)");
+    pinocchio_log::log!("ClaimCreatorFees (stub)");
     Ok(())
 }

@@ -1,7 +1,6 @@
 //! Instruction discriminators and data layout for the bonding-curve program.
 
-use pinocchio::pubkey::Pubkey;
-use pinocchio::program_error::ProgramError;
+use pinocchio::error::ProgramError;
 
 /// Instruction discriminators.
 pub enum BondingCurveInstruction {

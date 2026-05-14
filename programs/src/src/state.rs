@@ -15,7 +15,7 @@
 //!   140 - u16 protocolFeeBps      (2 bytes, LE)
 //!   142 - [u8; 10] padding        (10 bytes)
 
-use pinocchio::pubkey::Pubkey;
+use pinocchio::Address;
 
 pub const CURVE_STATE_LEN: usize = 152;
 
@@ -24,9 +24,9 @@ pub const CURVE_STATE_LEN: usize = 152;
 pub struct CurveState {
     pub discriminant: u8,      // 0 = uninitialized, 1 = initialized
     pub graduated: u8,         // 0 = false, 1 = true (bool)
-    pub authority: Pubkey,     // 32 bytes
-    pub creator_fee_wallet: Pubkey, // 32 bytes
-    pub mint: Pubkey,          // 32 bytes
+    pub authority: Address,     // 32 bytes
+    pub creator_fee_wallet: Address, // 32 bytes
+    pub mint: Address,          // 32 bytes
     pub real_sol_reserves: u64,     // 8 bytes
     pub real_token_reserves: u64,   // 8 bytes
     pub virtual_sol_reserves: u64,  // 8 bytes

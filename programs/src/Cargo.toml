@@ -9,10 +9,10 @@ no-entrypoint = []
 no-idl = []
 
 [dependencies]
-pinocchio = { git = "https://github.com/valentinmadrid/pinocchio", rev = "latest" }
-pinocchio-log = "0.2"
-pinocchio-system = "0.4"
-pinoccio-token = "0.3"
+pinocchio = { path = "../../pinocchio/pinocchio-main/sdk" }
+pinocchio-log = "0.5"
+pinocchio-system = { path = "../../pinocchio/pinocchio-main/programs/system" }
+pinocchio-token = { path = "../../pinocchio/pinocchio-main/programs/token" }
 
 [lib]
 name = "x402_bonding_curve"
