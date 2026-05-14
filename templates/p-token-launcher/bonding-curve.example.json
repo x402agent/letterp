@@ -25,7 +25,7 @@
     ]
   },
   "quoteCommands": {
-    "buy": "npm run ptoken:curve-quote -- --virtual-sol 30 --virtual-token 1073000000 --sol 1",
-    "sell": "npm run ptoken:curve-quote -- --virtual-sol 31 --virtual-token 1038000000 --tokens 1000000"
+    "buy": "curl -s http://localhost:8787/api/quote -H 'content-type: application/json' -d '{\"side\":\"buy\",\"virtualSol\":30,\"virtualToken\":1073000000,\"sol\":1}'",
+    "sell": "curl -s http://localhost:8787/api/quote -H 'content-type: application/json' -d '{\"side\":\"sell\",\"virtualSol\":31,\"virtualToken\":1038000000,\"tokens\":1000000}'"
   }
 }
