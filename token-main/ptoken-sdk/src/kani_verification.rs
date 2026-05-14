@@ -1,8 +1,16 @@
 //! Kani proof harnesses for arithmetic invariants used by token programs.
 
+use crate::agent::{AgentCapabilityFlags, AgentPolicy};
+use crate::bonding_curve::{
+    constant_product_buy_quote, constant_product_sell_quote, LinearBondingCurve,
+};
 use crate::math::{
     apply_bps_fee, calculate_transfer_fee, ceil_div, decimal_multiplier, in_range, muldiv,
     safe_add, safe_div, safe_mul, safe_sub, saturating_add, saturating_sub, would_exceed_max,
+};
+use crate::perpetuals::{funding_payment, Position, PositionSide, PRICE_SCALE};
+use crate::x402::{
+    gateway_fee, verify_receipt, PaymentAsset, X402PaymentIntent, X402Receipt, X402SettlementStatus,
 };
 
 #[kani::proof]
@@ -247,4 +255,131 @@ fn decimal_multiplier_is_total_and_monotonic_until_saturation() {
     } else {
         assert_eq!(multiplier, u64::MAX);
     }
+}
+
+#[kani::proof]
+fn agent_policy_rejects_vacuous_trading_authority() {
+    let risk_limit_bps: u16 = kani::any();
+    let grants_trading: bool = kani::any();
+    let spending_limit_lamports = if grants_trading { 0 } else { 1 };
+    let capabilities = if grants_trading {
+        AgentCapabilityFlags::BONDING_CURVE_TRADING
+    } else {
+        AgentCapabilityFlags::X402_SETTLEMENT
+    };
+    let policy = AgentPolicy {
+        agent_id: [1; 32],
+        owner: [2; 32],
+        capabilities,
+        spending_limit_lamports,
+        risk_limit_bps,
+    };
+
+    let valid = policy.validate().is_ok();
+    kani::cover!(valid, "valid non-trading agent policy is reachable");
+    kani::cover!(
+        !valid,
+        "invalid trading policy without spend limit is reachable"
+    );
+
+    if risk_limit_bps > 10_000 || grants_trading {
+        assert!(!valid);
+    }
+}
+
+#[kani::proof]
+fn x402_receipts_only_unlock_matching_unexpired_payments() {
+    let accepted: bool = kani::any();
+    let expired: bool = kani::any();
+    let underpaid: bool = kani::any();
+    let amount_paid = if underpaid { 999 } else { 1_000 };
+    let now_unix = if expired { 101 } else { 100 };
+    let intent = X402PaymentIntent {
+        asset: PaymentAsset::Sol,
+        amount_due: 1_000,
+        pay_to: [7; 32],
+        route_hash: [9; 32],
+        expires_at_unix: 100,
+    };
+    let receipt = X402Receipt {
+        asset: PaymentAsset::Sol,
+        amount_paid,
+        paid_to: [7; 32],
+        route_hash: [9; 32],
+        status: if accepted {
+            X402SettlementStatus::Accepted
+        } else {
+            X402SettlementStatus::Rejected
+        },
+    };
+
+    let verified = verify_receipt(&intent, &receipt, now_unix).is_ok();
+    kani::cover!(verified, "matching x402 receipt unlock path is reachable");
+    kani::cover!(!verified, "rejected x402 receipt path is reachable");
+    assert_eq!(verified, accepted && !expired && !underpaid);
+
+    let fee = gateway_fee(10_000, 25, 1).unwrap();
+    assert_eq!(fee, 25);
+}
+
+#[kani::proof]
+fn bonding_curve_quotes_are_monotonic_for_bounded_inputs() {
+    let base: u16 = kani::any();
+    let slope: u16 = kani::any();
+    let supply: u16 = kani::any();
+    let tokens: u8 = kani::any();
+    let curve = LinearBondingCurve {
+        base_price: base as u64,
+        slope_numerator: slope as u64,
+        slope_denominator: 1,
+    };
+    let supply = supply as u64;
+    let tokens = (tokens % 16) as u64;
+
+    let price_now = curve.price_at_supply(supply).unwrap();
+    let price_next = curve.price_at_supply(supply + 1).unwrap();
+    kani::cover!(slope == 0, "flat linear curve path is reachable");
+    kani::cover!(slope > 0, "increasing linear curve path is reachable");
+    assert!(price_next >= price_now);
+
+    let quote = curve.buy_quote(supply, tokens).unwrap();
+    kani::cover!(tokens == 0, "zero-token buy quote path is reachable");
+    kani::cover!(tokens > 0, "nonzero-token buy quote path is reachable");
+    if tokens == 0 {
+        assert_eq!(quote, 0);
+    }
+
+    let buy = constant_product_buy_quote(1_000, 1_000, 10, 30).unwrap();
+    let sell = constant_product_sell_quote(1_000, 1_000, 10, 30).unwrap();
+    assert!(buy > 0);
+    assert!(sell > 0);
+}
+
+#[kani::proof]
+fn perpetual_position_math_preserves_side_direction() {
+    let side_long: bool = kani::any();
+    let mark_up: bool = kani::any();
+    let position = Position {
+        side: if side_long {
+            PositionSide::Long
+        } else {
+            PositionSide::Short
+        },
+        collateral: 100,
+        notional: 500,
+        entry_price: PRICE_SCALE,
+    };
+    let mark_price = if mark_up {
+        PRICE_SCALE + PRICE_SCALE / 10
+    } else {
+        PRICE_SCALE - PRICE_SCALE / 10
+    };
+    let pnl = position.unrealized_pnl(mark_price).unwrap();
+
+    kani::cover!(pnl > 0, "profitable perpetual position path is reachable");
+    kani::cover!(pnl < 0, "losing perpetual position path is reachable");
+    assert_eq!(pnl > 0, side_long == mark_up);
+    assert_eq!(position.leverage_bps().unwrap(), 50_000);
+    assert_eq!(funding_payment(10_000, 25).unwrap(), 25);
+    assert_eq!(funding_payment(10_000, -25).unwrap(), -25);
 }
