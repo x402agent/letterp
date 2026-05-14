@@ -1,5 +1,20 @@
 <div align="center">
 
+<h1>Solana Clawd</h1>
+
+<p>
+  <strong>Contract:</strong>
+  <code>8cHzQHUS2s2h8TzCmfqPKYiM4dSt4roa3n7MyRLApump</code>
+</p>
+
+<p>
+  <a href="https://solanaclawd.com">solanaclawd.com</a>
+  ·
+  <a href="https://x402.wtf">x402.wtf</a>
+  ·
+  <a href="https://github.com/x402agent/solana-clawd">github.com/x402agent/solana-clawd</a>
+</p>
+
 <img src="assets/p.svg" alt="Animated ASCII art letter P" width="640">
 
 </div>
