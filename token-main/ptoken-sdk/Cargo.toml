@@ -1,0 +1,35 @@
+[package]
+name = "ptoken-sdk"
+version = "0.1.0"
+edition = "2021"
+description = "High-performance Solana token SDK built on Pinocchio — zero-dependency primitives for SPL Token and Token-2022"
+license = "MIT"
+repository = "https://github.com/your-org/pToken"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[features]
+default = []
+token-classic = []
+token-2022 = []
+all-extensions = ["token-2022"]
+no-entrypoint = []
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(kani)'] }
+
+[dependencies]
+solana-program = { workspace = true }
+spl-token = { workspace = true }
+spl-token-2022 = { workspace = true }
+spl-associated-token-account = { workspace = true }
+borsh = { workspace = true }
+thiserror = { workspace = true }
+num-derive = { workspace = true }
+num-traits = { workspace = true }
+
+[dev-dependencies]
+solana-program-test = "1.18"
+solana-sdk = "1.18"
+tokio = { version = "1", features = ["full"] }

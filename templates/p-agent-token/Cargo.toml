@@ -10,6 +10,9 @@ crate-type = ["lib", "cdylib"]
 default = ["perf"]
 perf = []
 
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(kani)', 'cfg(target_os, values("solana"))'] }
+
 [dependencies]
 pinocchio = { path = "../../pinocchio/pinocchio-main/sdk", features = ["cpi"] }
 pinocchio-system = { path = "../../pinocchio/pinocchio-main/programs/system" }

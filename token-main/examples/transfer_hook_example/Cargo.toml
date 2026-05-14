@@ -1,0 +1,13 @@
+[package]
+name = "transfer-hook-example"
+version = "0.1.0"
+edition = "2021"
+description = "pToken example: Token-2022 transfer hook extension"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+solana-program = { workspace = true }
+spl-token-2022 = { workspace = true }
+ptoken-sdk = { path = "../../ptoken-sdk" }

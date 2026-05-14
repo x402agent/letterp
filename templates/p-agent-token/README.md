@@ -12,6 +12,9 @@ This template is for a faster agent token path:
 
 This template targets the vendored Pinocchio `0.11` tree in this repo and uses
 `AccountView`, `Address`, `ProgramResult`, and `pinocchio::error::ProgramError`.
+It also includes the same Kani proof harnesses used by the promoted
+`../../p-agent-token` crate so generated agent-token programs start with a
+formal verification baseline.
 
 This scaffold is intentionally incomplete and unaudited. It defines the public
 program shape and state contract, but you must implement CPI transfers, PDA
@@ -39,6 +42,13 @@ the concrete reference for crate naming, source layout, and example config.
 
 Use `../../p-token-launcher` for unsigned launch planning and curve quotes. The
 program template itself does not include a JavaScript CLI.
+
+## Formal Verification
+
+Kani proof harnesses cover the template's pure invariants: one-way flags, state
+layout constants, buy/sell amount parsing, fee basis-point math,
+constant-product quotes, byte decoding, and instruction discriminator
+uniqueness. See [`KANI_VERIFICATION.md`](KANI_VERIFICATION.md).
 
 ## Security Checklist
 

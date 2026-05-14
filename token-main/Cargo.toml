@@ -1,0 +1,20 @@
+[workspace]
+members = [
+    "ptoken-sdk",
+    "examples/basic_mint",
+    "examples/confidential_mint",
+    "examples/token_with_metadata",
+    "examples/transfer_hook_example",
+    "examples/transfer_with_fee",
+]
+resolver = "2"
+
+[workspace.dependencies]
+solana-program = "1.18"
+spl-token = "4"
+spl-token-2022 = "3"
+spl-associated-token-account = "2"
+borsh = "1"
+thiserror = "1"
+num-derive = "0.4"
+num-traits = "0.2"

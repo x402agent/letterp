@@ -1,6 +1,6 @@
 use pinocchio::{error::ProgramError, AccountView, ProgramResult};
 
-use super::helpers::require_signer;
+use super::helpers::{require_owned_by, require_signer, require_writable};
 
 pub struct DelegateExecutorAccounts<'a> {
     pub owner: &'a mut AccountView,
@@ -20,7 +20,13 @@ impl<'a> TryFrom<&'a mut [AccountView]> for DelegateExecutorAccounts<'a> {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
         require_signer(owner)?;
-        Ok(Self { owner, agent_state, executive })
+        require_writable(agent_state)?;
+        require_owned_by(agent_state, &crate::ID)?;
+        Ok(Self {
+            owner,
+            agent_state,
+            executive,
+        })
     }
 }
 
@@ -28,12 +34,14 @@ impl<'a> TryFrom<(&'a [u8], &'a mut [AccountView])> for DelegateExecutor<'a> {
     type Error = ProgramError;
 
     fn try_from((_data, accounts): (&'a [u8], &'a mut [AccountView])) -> Result<Self, Self::Error> {
-        Ok(Self { accounts: DelegateExecutorAccounts::try_from(accounts)? })
+        Ok(Self {
+            accounts: DelegateExecutorAccounts::try_from(accounts)?,
+        })
     }
 }
 
 impl<'a> DelegateExecutor<'a> {
-    pub const DISCRIMINATOR: &'a u8 = &3;
+    pub const DISCRIMINATOR: u8 = 3;
 
     pub fn process(self) -> ProgramResult {
         let _ = self.accounts;

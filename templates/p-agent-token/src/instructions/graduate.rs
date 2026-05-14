@@ -1,6 +1,6 @@
 use pinocchio::{error::ProgramError, AccountView, ProgramResult};
 
-use super::helpers::require_signer;
+use super::helpers::{require_owned_by, require_signer, require_writable};
 use crate::state::AgentState;
 
 pub struct GraduateAccounts<'a> {
@@ -21,7 +21,15 @@ impl<'a> TryFrom<&'a mut [AccountView]> for GraduateAccounts<'a> {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
         require_signer(authority)?;
-        Ok(Self { authority, agent_state, curve })
+        require_writable(agent_state)?;
+        require_writable(curve)?;
+        require_owned_by(agent_state, &crate::ID)?;
+        require_owned_by(curve, &crate::ID)?;
+        Ok(Self {
+            authority,
+            agent_state,
+            curve,
+        })
     }
 }
 
@@ -29,12 +37,14 @@ impl<'a> TryFrom<(&'a [u8], &'a mut [AccountView])> for Graduate<'a> {
     type Error = ProgramError;
 
     fn try_from((_data, accounts): (&'a [u8], &'a mut [AccountView])) -> Result<Self, Self::Error> {
-        Ok(Self { accounts: GraduateAccounts::try_from(accounts)? })
+        Ok(Self {
+            accounts: GraduateAccounts::try_from(accounts)?,
+        })
     }
 }
 
 impl<'a> Graduate<'a> {
-    pub const DISCRIMINATOR: &'a u8 = &6;
+    pub const DISCRIMINATOR: u8 = 6;
 
     pub fn process(self) -> ProgramResult {
         let mut data = self.accounts.agent_state.try_borrow_mut()?;

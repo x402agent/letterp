@@ -1,6 +1,6 @@
 use pinocchio::{error::ProgramError, AccountView, ProgramResult};
 
-use super::helpers::require_signer;
+use super::helpers::{require_owned_by, require_signer, require_writable};
 use crate::{errors::PAgentTokenError, require, state::AgentState};
 
 pub struct BindAgentTokenAccounts<'a> {
@@ -20,6 +20,8 @@ impl<'a> TryFrom<&'a mut [AccountView]> for BindAgentTokenAccounts<'a> {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
         require_signer(owner)?;
+        require_writable(agent_state)?;
+        require_owned_by(agent_state, &crate::ID)?;
         Ok(Self { owner, agent_state })
     }
 }
@@ -28,12 +30,14 @@ impl<'a> TryFrom<(&'a [u8], &'a mut [AccountView])> for BindAgentToken<'a> {
     type Error = ProgramError;
 
     fn try_from((_data, accounts): (&'a [u8], &'a mut [AccountView])) -> Result<Self, Self::Error> {
-        Ok(Self { accounts: BindAgentTokenAccounts::try_from(accounts)? })
+        Ok(Self {
+            accounts: BindAgentTokenAccounts::try_from(accounts)?,
+        })
     }
 }
 
 impl<'a> BindAgentToken<'a> {
-    pub const DISCRIMINATOR: &'a u8 = &2;
+    pub const DISCRIMINATOR: u8 = 2;
 
     pub fn process(self) -> ProgramResult {
         let mut data = self.accounts.agent_state.try_borrow_mut()?;

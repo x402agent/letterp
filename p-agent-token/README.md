@@ -70,6 +70,10 @@ cargo check
 
 For SBF builds, use the Solana toolchain appropriate for your validator and Pinocchio version.
 
+## Formal Verification
+
+Kani proof harnesses cover current pure program invariants: one-way flags, state layout constants, buy/sell amount parsing, fee basis-point math, constant-product quotes, byte decoding, and instruction discriminator uniqueness. See [`KANI_VERIFICATION.md`](KANI_VERIFICATION.md).
+
 ## Deployment Draft
 
 See [`DEPLOYMENT.md`](DEPLOYMENT.md) for the devnet and mainnet deployment checklist.
