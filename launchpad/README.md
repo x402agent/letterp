@@ -45,3 +45,15 @@ The default API port is `4400`.
 ## Notes
 
 `/launch` returns unsigned instructions and a generated mint secret in this reference implementation. Production code should use a partial-signing or wallet-mediated flow instead of returning a secret key.
+
+## Pinocchio Contract
+
+The TypeScript builders in this package mirror the native Pinocchio programs:
+
+| Native surface | Path | Relationship |
+|----------------|------|--------------|
+| Bonding curve program | `../programs/src` | Consumes launch, buy, sell, graduate, and claim-fee instruction layouts. |
+| P Agent token program | `../p-agent-token` | Consumes agent registration, mint binding, and delegation account contracts. |
+| Local Pinocchio SDK | `../pinocchio/pinocchio-main/sdk` | Source of `AccountView`, `Address`, entrypoint, and `ProgramResult` semantics. |
+
+Keep account order, discriminators, and PDA seeds in this package aligned with `docs/PINOCCHIO_ADAPTATION.md` and `docs/PROGRAM_DRAFT.md`.

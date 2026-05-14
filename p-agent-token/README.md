@@ -13,6 +13,19 @@ Pinocchio program scaffold for a faster P Agent token path. This folder is the p
 | `p-agent-token` | Defines the Pinocchio state and instruction shell those client builders are expected to target. |
 | `p-token-launcher` | Provides an unsigned planning UI/API for humans and agents before signing or deployment. |
 
+## Pinocchio Integration
+
+This crate uses the vendored Pinocchio tree under `../pinocchio/pinocchio-main`:
+
+```toml
+pinocchio = { path = "../pinocchio/pinocchio-main/sdk", features = ["cpi"] }
+pinocchio-system = { path = "../pinocchio/pinocchio-main/programs/system" }
+pinocchio-token = { path = "../pinocchio/pinocchio-main/programs/token" }
+pinocchio-associated-token-account = { path = "../pinocchio/pinocchio-main/programs/associated-token-account" }
+```
+
+The program is adapted to the Pinocchio `0.11` API with `AccountView`, `Address`, `ProgramResult`, and `pinocchio::error::ProgramError`.
+
 ## Program Shape
 
 | Discriminator | Instruction | Current behavior |

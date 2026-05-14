@@ -11,8 +11,8 @@ default = ["perf"]
 perf = []
 
 [dependencies]
-pinocchio = "0.8"
-pinocchio-system = "0.2"
-pinocchio-token = "0.6"
-pinocchio-associated-token-account = "0.2"
+pinocchio = { path = "../../pinocchio/pinocchio-main/sdk", features = ["cpi"] }
+pinocchio-system = { path = "../../pinocchio/pinocchio-main/programs/system" }
+pinocchio-token = { path = "../../pinocchio/pinocchio-main/programs/token" }
+pinocchio-associated-token-account = { path = "../../pinocchio/pinocchio-main/programs/associated-token-account" }
 thiserror = { version = "2", default-features = false }

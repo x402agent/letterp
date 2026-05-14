@@ -1,10 +1,10 @@
 use core::mem::size_of;
-use pinocchio::{program_error::ProgramError, pubkey::Pubkey};
+use pinocchio::{error::ProgramError, Address};
 
 #[repr(C)]
 pub struct Vault {
-    pub authority: Pubkey,
-    pub mint: Pubkey,
+    pub authority: Address,
+    pub mint: Address,
     amount: [u8; 8],
     pub bump: u8,
 }

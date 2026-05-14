@@ -1,12 +1,12 @@
 use core::mem::size_of;
-use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
+use pinocchio::{error::ProgramError, AccountView, ProgramResult};
 
 use super::helpers::require_signer;
 use crate::state::Vault;
 
 pub struct DepositAccounts<'a> {
-    pub authority: &'a AccountInfo,
-    pub vault: &'a AccountInfo,
+    pub authority: &'a mut AccountView,
+    pub vault: &'a mut AccountView,
 }
 
 pub struct DepositData {
@@ -18,10 +18,10 @@ pub struct Deposit<'a> {
     pub data: DepositData,
 }
 
-impl<'a> TryFrom<&'a [AccountInfo]> for DepositAccounts<'a> {
+impl<'a> TryFrom<&'a mut [AccountView]> for DepositAccounts<'a> {
     type Error = ProgramError;
 
-    fn try_from(accounts: &'a [AccountInfo]) -> Result<Self, Self::Error> {
+    fn try_from(accounts: &'a mut [AccountView]) -> Result<Self, Self::Error> {
         let [authority, vault, _system_program] = accounts else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
@@ -45,10 +45,10 @@ impl TryFrom<&[u8]> for DepositData {
     }
 }
 
-impl<'a> TryFrom<(&'a [u8], &'a [AccountInfo])> for Deposit<'a> {
+impl<'a> TryFrom<(&'a [u8], &'a mut [AccountView])> for Deposit<'a> {
     type Error = ProgramError;
 
-    fn try_from((data, accounts): (&'a [u8], &'a [AccountInfo])) -> Result<Self, Self::Error> {
+    fn try_from((data, accounts): (&'a [u8], &'a mut [AccountView])) -> Result<Self, Self::Error> {
         Ok(Self {
             accounts: DepositAccounts::try_from(accounts)?,
             data: DepositData::try_from(data)?,
@@ -59,8 +59,8 @@ impl<'a> TryFrom<(&'a [u8], &'a [AccountInfo])> for Deposit<'a> {
 impl<'a> Deposit<'a> {
     pub const DISCRIMINATOR: &'a u8 = &0;
 
-    pub fn process(&self) -> ProgramResult {
-        let mut data = self.accounts.vault.try_borrow_mut_data()?;
+    pub fn process(self) -> ProgramResult {
+        let mut data = self.accounts.vault.try_borrow_mut()?;
         let vault = Vault::load_mut(&mut data)?;
         vault.set_amount(vault.amount().saturating_add(self.data.amount));
         Ok(())

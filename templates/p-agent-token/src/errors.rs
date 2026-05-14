@@ -1,4 +1,4 @@
-use pinocchio::program_error::{ProgramError, ToStr};
+use pinocchio::error::{ProgramError, ToStr};
 use thiserror::Error;
 
 #[derive(Clone, Debug, Eq, Error, PartialEq)]
@@ -22,7 +22,7 @@ impl From<PAgentTokenError> for ProgramError {
 }
 
 impl ToStr for PAgentTokenError {
-    fn to_str<E>(&self) -> &'static str {
+    fn to_str(&self) -> &'static str {
         match self {
             PAgentTokenError::MissingSigner => "Error: required signer is missing",
             PAgentTokenError::InvalidState => "Error: invalid p-agent-token state",

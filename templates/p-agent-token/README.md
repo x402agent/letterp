@@ -10,6 +10,9 @@ This template is for a faster agent token path:
 - One-way agent-token binding similar to Metaplex agent token linking.
 - Constant-product launch curve planning.
 
+This template targets the vendored Pinocchio `0.11` tree in this repo and uses
+`AccountView`, `Address`, `ProgramResult`, and `pinocchio::error::ProgramError`.
+
 This scaffold is intentionally incomplete and unaudited. It defines the public
 program shape and state contract, but you must implement CPI transfers, PDA
 signer seeds, curve reserve custody, fee distribution, graduation, and tests

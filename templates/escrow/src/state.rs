@@ -1,12 +1,12 @@
 use core::mem::size_of;
-use pinocchio::{program_error::ProgramError, pubkey::Pubkey};
+use pinocchio::{error::ProgramError, Address};
 
 #[repr(C)]
 pub struct Escrow {
     seed: [u8; 8],
-    pub maker: Pubkey,
-    pub mint_a: Pubkey,
-    pub mint_b: Pubkey,
+    pub maker: Address,
+    pub mint_a: Address,
+    pub mint_b: Address,
     receive: [u8; 8],
     pub bump: u8,
 }
@@ -41,7 +41,7 @@ impl Escrow {
     }
 
     #[inline(always)]
-    pub fn set_inner(&mut self, seed: u64, maker: Pubkey, mint_a: Pubkey, mint_b: Pubkey, receive: u64, bump: u8) {
+    pub fn set_inner(&mut self, seed: u64, maker: Address, mint_a: Address, mint_b: Address, receive: u64, bump: u8) {
         self.seed = seed.to_le_bytes();
         self.maker = maker;
         self.mint_a = mint_a;

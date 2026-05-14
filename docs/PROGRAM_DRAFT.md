@@ -19,6 +19,8 @@ This draft defines the repo target for native Pinocchio-programmed agents on Sol
 | TypeScript SDK | `agent-sdk`, `launchpad`, `shared` | Client instruction builders, PDA helpers, Core Execute wrapping, state decoding. |
 | Workbench | `p-token-launcher` | Unsigned exploration, planning, inspection, and deployment draft generation. |
 
+All native program surfaces use the vendored Pinocchio tree at `pinocchio/pinocchio-main`. See `PINOCCHIO_ADAPTATION.md`.
+
 ## Account Model
 
 | Account | Seeds | Owner | Purpose |

@@ -1,4 +1,4 @@
-use pinocchio::program_error::{ProgramError, ToStr};
+use pinocchio::error::{ProgramError, ToStr};
 use thiserror::Error;
 
 #[derive(Clone, Debug, Eq, Error, PartialEq)]
@@ -18,7 +18,7 @@ impl From<VaultError> for ProgramError {
 }
 
 impl ToStr for VaultError {
-    fn to_str<E>(&self) -> &'static str {
+    fn to_str(&self) -> &'static str {
         match self {
             VaultError::MissingSigner => "Error: required signer is missing",
             VaultError::InvalidOwner => "Error: invalid account owner",

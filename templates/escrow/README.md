@@ -2,6 +2,9 @@
 
 Pinocchio escrow starter for make/take/refund token swaps.
 
+This template targets the vendored Pinocchio `0.11` tree in this repo and uses
+path dependencies into `../../pinocchio/pinocchio-main`.
+
 The starter mirrors the common escrow flow:
 
 - `Make`: maker defines terms and deposits token A into a vault.

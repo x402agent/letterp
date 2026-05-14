@@ -2,6 +2,9 @@
 
 Pinocchio vault starter for native Solana programs.
 
+This template targets the vendored Pinocchio `0.11` tree in this repo and uses
+path dependencies into `../../pinocchio/pinocchio-main`.
+
 The template demonstrates:
 
 - one-byte instruction discriminators;

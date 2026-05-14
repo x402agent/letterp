@@ -1,12 +1,6 @@
 #![no_std]
 
-use pinocchio::{
-    account_info::AccountInfo,
-    entrypoint,
-    program_error::ProgramError,
-    pubkey::Pubkey,
-    ProgramResult,
-};
+use pinocchio::{entrypoint, error::ProgramError, AccountView, Address, ProgramResult};
 
 pub mod errors;
 pub mod instructions;
@@ -16,11 +10,11 @@ use instructions::{Make, Refund, Take};
 
 entrypoint!(process_instruction);
 
-pub const ID: Pubkey = [0; 32];
+pub const ID: Address = Address::new_from_array([0; 32]);
 
 fn process_instruction(
-    _program_id: &Pubkey,
-    accounts: &[AccountInfo],
+    _program_id: &Address,
+    accounts: &mut [AccountView],
     instruction_data: &[u8],
 ) -> ProgramResult {
     match instruction_data.split_first() {

@@ -1,12 +1,12 @@
 use core::mem::size_of;
-use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
+use pinocchio::{error::ProgramError, AccountView, ProgramResult};
 
 use super::helpers::require_signer;
 use crate::state::Vault;
 
 pub struct WithdrawAccounts<'a> {
-    pub authority: &'a AccountInfo,
-    pub vault: &'a AccountInfo,
+    pub authority: &'a mut AccountView,
+    pub vault: &'a mut AccountView,
 }
 
 pub struct WithdrawData {
@@ -18,10 +18,10 @@ pub struct Withdraw<'a> {
     pub data: WithdrawData,
 }
 
-impl<'a> TryFrom<&'a [AccountInfo]> for WithdrawAccounts<'a> {
+impl<'a> TryFrom<&'a mut [AccountView]> for WithdrawAccounts<'a> {
     type Error = ProgramError;
 
-    fn try_from(accounts: &'a [AccountInfo]) -> Result<Self, Self::Error> {
+    fn try_from(accounts: &'a mut [AccountView]) -> Result<Self, Self::Error> {
         let [authority, vault, _system_program] = accounts else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
@@ -45,10 +45,10 @@ impl TryFrom<&[u8]> for WithdrawData {
     }
 }
 
-impl<'a> TryFrom<(&'a [u8], &'a [AccountInfo])> for Withdraw<'a> {
+impl<'a> TryFrom<(&'a [u8], &'a mut [AccountView])> for Withdraw<'a> {
     type Error = ProgramError;
 
-    fn try_from((data, accounts): (&'a [u8], &'a [AccountInfo])) -> Result<Self, Self::Error> {
+    fn try_from((data, accounts): (&'a [u8], &'a mut [AccountView])) -> Result<Self, Self::Error> {
         Ok(Self {
             accounts: WithdrawAccounts::try_from(accounts)?,
             data: WithdrawData::try_from(data)?,
@@ -59,8 +59,8 @@ impl<'a> TryFrom<(&'a [u8], &'a [AccountInfo])> for Withdraw<'a> {
 impl<'a> Withdraw<'a> {
     pub const DISCRIMINATOR: &'a u8 = &1;
 
-    pub fn process(&self) -> ProgramResult {
-        let mut data = self.accounts.vault.try_borrow_mut_data()?;
+    pub fn process(self) -> ProgramResult {
+        let mut data = self.accounts.vault.try_borrow_mut()?;
         let vault = Vault::load_mut(&mut data)?;
         vault.set_amount(vault.amount().checked_sub(self.data.amount).ok_or(ProgramError::InsufficientFunds)?);
         Ok(())
