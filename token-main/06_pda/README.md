@@ -1,11 +1,17 @@
-# 06 — Program Derived Addresses (PDA)
+# 06 - PDA Utilities
 
-Utilities for deriving, validating, and using Program Derived Addresses in
-Pinocchio-based Solana programs.
+Program-derived-address helpers for deterministic account derivation and bump handling.
 
-## Sub-modules
-- `derivation/` — find_program_address and create_program_address helpers
-- `validation/` — Assert a PDA matches expected seeds and bump
-- `bump_seed_management/` — Store and retrieve bump seeds from account data
+## Code Map
+- Primary source: `ptoken-sdk/src/pda`
+- Crate entry: `ptoken-sdk/src/lib.rs`
 
-> 🚧 Coming Soon
+## Local Rules
+- Seed bytes are centralized in `ptoken-sdk/src/constants/seeds.rs`.
+- Validation should compare derived addresses to provided accounts before state mutation.
+- Bump seeds are part of the account contract and should be persisted when replay is required.
+
+## Review Checklist
+- Keep account ordering explicit in docs and code.
+- Prefer project errors over generic `ProgramError` until the Solana boundary.
+- Update the matching example or test when behavior changes.

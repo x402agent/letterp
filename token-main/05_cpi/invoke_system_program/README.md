@@ -1,12 +1,15 @@
 # Invoke System Program
 
-CPI into the Solana System Program. Used for creating new accounts,
-transferring SOL, and allocating space before token account initialization.
+System Program CPI adapters.
 
-## Planned API
-```rust
-pub fn cpi_create_account(payer: &AccountInfo, new_account: &AccountInfo, space: u64, owner: &Pubkey) -> ProgramResult
-pub fn cpi_transfer_sol(from: &AccountInfo, to: &AccountInfo, lamports: u64) -> ProgramResult
-```
+## Implementation Source
+- `ptoken-sdk/src/cpi/invoke_system_program.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Account creation, transfer, allocate, and assign calls require exact account ordering.
+- Signed calls must receive caller-owned seeds.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

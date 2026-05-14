@@ -1,12 +1,15 @@
-# Freeze & Thaw
+# Freeze and Thaw
 
-Freeze a token account to prevent transfers, or thaw it to re-enable them.
-Requires the mint's freeze authority.
+Classic SPL Token freeze-authority helpers.
 
-## Planned API
-```rust
-pub fn freeze_account(account: &AccountInfo, mint: &AccountInfo, authority: &AccountInfo) -> ProgramResult
-pub fn thaw_account(account: &AccountInfo, mint: &AccountInfo, authority: &AccountInfo) -> ProgramResult
-```
+## Implementation Source
+- `ptoken-sdk/src/token_classic/freeze_thaw.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Freeze authority comes from mint configuration.
+- Frozen accounts must fail transfer validation.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

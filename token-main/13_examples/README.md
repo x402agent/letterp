@@ -1,15 +1,17 @@
-# 13 — Examples
+# 13 - Examples
 
-Runnable example programs demonstrating pToken SDK usage. Each example
-is a self-contained Pinocchio-based Solana program.
+Small programs that demonstrate how LetterP token helpers are expected to be called.
 
-## Examples
-| Folder | Description |
-|--------|-------------|
-| `basic_mint` | Create a mint, ATA, and mint tokens to a wallet |
-| `transfer_with_fee` | Transfer tokens with Transfer Fee extension active |
-| `confidential_mint` | Mint tokens using Confidential Transfer extension |
-| `token_with_metadata` | Create a Token-2022 mint with embedded metadata |
-| `transfer_hook_example` | Write and invoke a custom Transfer Hook program |
+## Code Map
+- Primary source: `examples`
+- Crate entry: `ptoken-sdk/src/lib.rs`
 
-> 🚧 Coming Soon
+## Local Rules
+- Examples are not marketing demos; they are executable integration sketches.
+- Each example keeps instruction discriminants local and simple.
+- When the SDK API changes, examples should be updated in the same patch.
+
+## Review Checklist
+- Keep account ordering explicit in docs and code.
+- Prefer project errors over generic `ProgramError` until the Solana boundary.
+- Update the matching example or test when behavior changes.

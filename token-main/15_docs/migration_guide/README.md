@@ -1,20 +1,15 @@
-# Migration Guide: SPL Token → Token-2022
+# Migration Guide
 
-Step-by-step guide for migrating existing SPL Token programs to Token-2022.
+Migration notes from classic SPL Token flows to Token-2022 flows.
 
-## Key Differences
-1. **Program ID** — Update all hardcoded Token program ID references
-2. **Account size** — Token-2022 accounts require extra space for extensions
-3. **ATA derivation** — Include the token program ID in ATA seed derivation
-4. **Multisig** — Token-2022 uses a different multisig account layout
-5. **Extension init order** — Extensions must be initialized before the mint
+## Implementation Source
+- `15_docs`
 
-## Migration Checklist
-- [ ] Update TOKEN_PROGRAM_ID references
-- [ ] Recalculate account space requirements
-- [ ] Update ATA derivation logic
-- [ ] Add extension initialization instructions
-- [ ] Update client-side account deserialization
-- [ ] Test with Token-2022 devnet program
+## Contract Notes
+- Identify changed program IDs, account sizes, and instructions.
+- Keep compatibility risks explicit.
 
-> 🚧 Coming Soon
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

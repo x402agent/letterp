@@ -1,19 +1,15 @@
-# SPL Token Classic Reference
+# Classic Token Reference
 
-Complete instruction reference for the original SPL Token program.
+Reference notes for SPL Token classic flows used by LetterP.
 
-## Instructions
-| Instruction | Accounts Required | Description |
-|-------------|-------------------|-------------|
-| InitializeMint | mint, rent | Create a new token mint |
-| InitializeAccount | account, mint, owner, rent | Create a token account |
-| Transfer | source, dest, owner | Move tokens |
-| Approve | source, delegate, owner | Approve delegate |
-| Revoke | source, owner | Revoke delegate |
-| MintTo | mint, destination, authority | Mint new tokens |
-| Burn | account, mint, authority | Burn tokens |
-| CloseAccount | account, destination, owner | Reclaim rent |
-| FreezeAccount | account, mint, authority | Freeze account |
-| ThawAccount | account, mint, authority | Thaw account |
+## Implementation Source
+- `15_docs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Focus on instructions wrapped by this SDK.
+- Call out required accounts and authorities.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

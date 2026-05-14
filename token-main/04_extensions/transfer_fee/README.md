@@ -1,17 +1,15 @@
-# Transfer Fee Extension
+# Transfer Fee
 
-Charge an automatic fee on every token transfer. Fees accumulate in a
-designated fee account and can be harvested by the fee authority.
+Token-2022 fee configuration and withdrawal helpers.
 
-## Key Parameters
-- `transfer_fee_config_authority` — Can update the fee config
-- `withdraw_withheld_authority` — Can collect accumulated fees
-- `transfer_fee_basis_points` — Fee as basis points (1 bp = 0.01%)
-- `maximum_fee` — Cap on fee per transfer (in raw token units)
+## Implementation Source
+- `ptoken-sdk/src/extensions/transfer_fee.rs`
 
-## Fee Calculation
-```
-fee = min(amount * basis_points / 10_000, maximum_fee)
-```
+## Contract Notes
+- Use basis points and max fee caps together.
+- Math helpers prove cap and saturation behavior with Kani.
 
-> 🚧 Coming Soon
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

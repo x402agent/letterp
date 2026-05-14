@@ -1,13 +1,15 @@
 # Decimals
 
-Convert between raw token amounts (u64) and human-readable decimal amounts.
-Handles precision and rounding for UI display and instruction input.
+Raw amount, UI amount, decimal multiplier, and fee helpers.
 
-## Example
-```
-decimals = 6
-raw_amount = 1_000_000
-ui_amount  = 1.000000
-```
+## Implementation Source
+- `ptoken-sdk/src/math/decimals.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Decimal multipliers saturate above u64 precision.
+- Fee calculations use u128 intermediates.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

@@ -1,14 +1,15 @@
 # Program IDs
 
-Canonical Solana program IDs used by pToken.
+Canonical program IDs used by the SDK.
 
-## IDs
-```rust
-pub const TOKEN_PROGRAM_ID: &str        = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
-pub const TOKEN_2022_PROGRAM_ID: &str   = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
-pub const ATA_PROGRAM_ID: &str          = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe1bN";
-pub const SYSTEM_PROGRAM_ID: &str       = "11111111111111111111111111111111";
-pub const MEMO_PROGRAM_ID: &str         = "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr";
-```
+## Implementation Source
+- `ptoken-sdk/src/constants/program_ids.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Tokenkeg, Token-2022, ATA, System, and other IDs are centralized.
+- Review literals before deploy.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

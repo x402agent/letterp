@@ -1,10 +1,15 @@
-# Group Member Pointer Extension
+# Group Member Pointer
 
-Points a mint to a group member account that establishes membership in a
-token group (collection). Each member has a group member account.
+Pointer from a mint/account into group membership metadata.
 
-## Key Parameters
-- `authority` — Can update the member address
-- `member_address` — The group member account
+## Implementation Source
+- `ptoken-sdk/src/extensions/group_member_pointer.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Pointer authority must be explicit.
+- Do not assume metadata account ownership without validation.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

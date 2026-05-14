@@ -1,9 +1,15 @@
-# Example: Token With Metadata
+# Token With Metadata Example
 
-Demonstrates Token-2022 Token Metadata extension (no Metaplex needed):
-1. Create a mint with metadata pointer + token metadata extensions
-2. Set name, symbol, URI, and additional_metadata fields
-3. Update metadata fields using the update authority
-4. Read metadata back from the mint account directly
+Token-2022 embedded metadata mint walkthrough.
 
-> 🚧 Coming Soon
+## Implementation Source
+- `examples/token_with_metadata/src/lib.rs`
+
+## Contract Notes
+- Metadata strings should use LetterP-specific names.
+- Update metadata authority paths are explicit.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

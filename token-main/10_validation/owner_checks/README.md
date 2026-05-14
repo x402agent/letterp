@@ -1,13 +1,15 @@
 # Owner Checks
 
-Assert that an account is owned by a specific program. Prevents spoofing
-attacks where malicious accounts mimic legitimate ones.
+Program and account-owner validation helpers.
 
-## Planned API
-```rust
-pub fn assert_owned_by_token_program(account: &AccountInfo) -> PTokenResult<()>
-pub fn assert_owned_by_token_2022(account: &AccountInfo) -> PTokenResult<()>
-pub fn assert_owned_by(account: &AccountInfo, program: &Pubkey) -> PTokenResult<()>
-```
+## Implementation Source
+- `ptoken-sdk/src/validation/owner_checks.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Distinguish token account owner from Solana account owner.
+- Owner mismatch should be explicit.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

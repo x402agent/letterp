@@ -1,13 +1,15 @@
 # Mint Validation
 
-Validate mint account properties before operating on them.
-Covers initialization status, decimals, supply, and authority checks.
+Mint account length, initialization, and decimal checks.
 
-## Planned API
-```rust
-pub fn assert_mint_initialized(mint: &AccountInfo) -> PTokenResult<()>
-pub fn assert_mint_authority(mint: &AccountInfo, authority: &Pubkey) -> PTokenResult<()>
-pub fn assert_decimals(mint: &AccountInfo, expected: u8) -> PTokenResult<()>
-```
+## Implementation Source
+- `ptoken-sdk/src/validation/mint_validation.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Validate mint length before reading offsets.
+- Decimals should match instruction expectations.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

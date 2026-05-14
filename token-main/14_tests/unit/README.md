@@ -1,13 +1,15 @@
 # Unit Tests
 
-Pure Rust tests that don't require a Solana runtime. Test math utilities,
-serialization, error handling, and validation logic in isolation.
+Pure Rust tests for math, parsing, and fixed-layout helpers.
 
-## Test Targets
-- Checked arithmetic edge cases (overflow, underflow)
-- Borsh encode/decode round-trips
-- PDA derivation correctness
-- Basis points fee calculation accuracy
-- Decimal conversion precision
+## Implementation Source
+- `ptoken-sdk/src/tests/unit.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Keep these fast and runtime-free.
+- Mirror Kani invariants with concrete examples.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

@@ -1,16 +1,15 @@
-# Interest Bearing Extension
+# Interest Bearing
 
-Tokens accumulate interest over time at a configurable rate.
-The UI amount grows continuously; raw on-chain balance stays fixed.
+Interest-rate extension helpers for Token-2022 mints.
 
-## Key Parameters
-- `rate_authority` — Can update the interest rate
-- `rate` — Annual interest rate in basis points (signed, allows negative rates)
-- `initialization_timestamp` — Unix timestamp when interest began
+## Implementation Source
+- `ptoken-sdk/src/extensions/interest_bearing.rs`
 
-## UI Amount Formula
-```
-ui_amount = raw_amount * e^(rate * time_elapsed_years)
-```
+## Contract Notes
+- Rates require authority-controlled updates.
+- UI amount conversion must account for accrued interest outside base math helpers.
 
-> 🚧 Coming Soon
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

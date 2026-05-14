@@ -1,15 +1,15 @@
-# Non-Transferable Extension
+# Non-Transferable
 
-Makes tokens permanently non-transferable (soul-bound tokens).
-Tokens can only be minted and burned — never moved between accounts.
+Token-2022 non-transferable mint/account behavior.
 
-## Use Cases
-- Credentials and certifications
-- Achievement badges
-- Identity tokens
-- Loyalty points tied to a single user
+## Implementation Source
+- `ptoken-sdk/src/extensions/non_transferable.rs`
 
-## Note
-No configuration parameters — it's a flag-only extension set at mint creation.
+## Contract Notes
+- Minting and burning remain possible depending on authorities.
+- Transfers must fail by construction.
 
-> 🚧 Coming Soon
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

@@ -1,13 +1,15 @@
-# Invoke Token Program
+# Invoke SPL Token
 
-CPI wrappers for every SPL Token instruction callable from another program.
-Constructs AccountMeta slices and instruction data manually for minimal overhead.
+Classic SPL Token CPI adapters.
 
-## Planned API
-```rust
-pub fn cpi_transfer(accounts: TokenTransferAccounts, amount: u64) -> ProgramResult
-pub fn cpi_mint_to(accounts: MintToAccounts, amount: u64) -> ProgramResult
-pub fn cpi_burn(accounts: BurnAccounts, amount: u64) -> ProgramResult
-```
+## Implementation Source
+- `ptoken-sdk/src/cpi/invoke_token_program.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Keep wrappers close to SPL instruction signatures.
+- Prefer checked variants where available.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

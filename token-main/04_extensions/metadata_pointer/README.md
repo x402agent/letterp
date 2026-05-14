@@ -1,10 +1,15 @@
-# Metadata Pointer Extension
+# Metadata Pointer
 
-Points a mint to an external metadata account (e.g. Metaplex).
-Consumers know where to look for metadata without guessing.
+Pointer to off-account metadata for Token-2022 mints.
 
-## Key Parameters
-- `authority` — Can update the metadata address pointer
-- `metadata_address` — The account holding the token's metadata
+## Implementation Source
+- `ptoken-sdk/src/extensions/metadata_pointer.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Pointer and metadata address can differ.
+- Validate metadata account owner when reading data.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

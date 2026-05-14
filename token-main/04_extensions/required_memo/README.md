@@ -1,9 +1,15 @@
-# Required Memo Extension
+# Required Memo
 
-Requires that all incoming transfers to this token account include a memo
-instruction in the same transaction.
+Token-2022 required memo transfer behavior.
 
-## Use Case
-Compliance requirements (e.g. exchange deposits must include reference IDs).
+## Implementation Source
+- `ptoken-sdk/src/extensions/required_memo.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Transfer flows must include memo instruction where required.
+- Tests should cover missing-memo rejection.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

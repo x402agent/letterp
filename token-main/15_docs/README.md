@@ -1,12 +1,17 @@
-# 15 — Documentation
+# 15 - Docs
 
-Guides, references, and migration docs for the pToken SDK.
+Operator and developer references for the LetterP token SDK.
 
-## Sub-modules
-- `pinocchio_guide/` — Intro to Pinocchio for Anchor developers
-- `token_classic_reference/` — Full SPL Token instruction reference
-- `token_2022_reference/` — Token-2022 instruction reference
-- `extension_cookbook/` — Recipes for combining extensions
-- `migration_guide/` — Migrating from SPL Token to Token-2022
+## Code Map
+- Primary source: `15_docs`
+- Crate entry: `ptoken-sdk/src/lib.rs`
 
-> 🚧 Coming Soon
+## Local Rules
+- Docs describe how this repository is wired, not a generic SPL tutorial.
+- Kani verification docs are maintained as a runnable checklist.
+- Migration and extension references should call out account-size and authority changes.
+
+## Review Checklist
+- Keep account ordering explicit in docs and code.
+- Prefer project errors over generic `ProgramError` until the Solana boundary.
+- Update the matching example or test when behavior changes.

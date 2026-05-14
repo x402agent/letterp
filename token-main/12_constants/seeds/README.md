@@ -1,14 +1,15 @@
 # Seeds
 
-Standard PDA seed byte arrays used throughout pToken programs.
+PDA seed byte constants.
 
-## Planned Seeds
-```rust
-pub const MINT_SEED: &[u8]     = b"mint";
-pub const VAULT_SEED: &[u8]    = b"vault";
-pub const METADATA_SEED: &[u8] = b"metadata";
-pub const AUTHORITY_SEED: &[u8] = b"authority";
-pub const CONFIG_SEED: &[u8]   = b"config";
-```
+## Implementation Source
+- `ptoken-sdk/src/constants/seeds.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Changing a seed changes addresses.
+- Document migrations for any seed update.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

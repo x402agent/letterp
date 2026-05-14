@@ -1,13 +1,15 @@
-# Example: Confidential Mint
+# Confidential Mint Example
 
-Demonstrates Token-2022 Confidential Transfer extension:
-1. Create a mint with confidential transfer enabled
-2. Configure a token account with an ElGamal keypair
-3. Deposit tokens into confidential balance
-4. Transfer confidentially (amount hidden on-chain)
-5. Withdraw back to visible balance
+Token-2022 confidential-transfer mint setup walkthrough.
 
-## Note
-Requires generating ZK proofs client-side before submitting transactions.
+## Implementation Source
+- `examples/confidential_mint/src/lib.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Demonstrates extension-oriented account flow.
+- Cryptographic inputs are placeholders for integration tests.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

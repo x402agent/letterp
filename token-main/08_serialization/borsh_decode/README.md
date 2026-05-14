@@ -1,11 +1,15 @@
 # Borsh Decode
 
-Deserialize raw byte slices into typed Rust structs using Borsh.
-Used for reading account data and instruction arguments.
+Borsh payload decoding for structured instruction data.
 
-## Planned Usage
-```rust
-let state = MyAccountState::try_from_slice(&account.data.borrow())?;
-```
+## Implementation Source
+- `ptoken-sdk/src/serialization/borsh_decode.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Reject trailing or missing fields according to caller policy.
+- Map decode failures to SDK errors.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

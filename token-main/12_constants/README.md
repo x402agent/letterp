@@ -1,10 +1,17 @@
-# 12 — Constants
+# 12 - Constants
 
-Program IDs, seed strings, and default values used across the pToken SDK.
-Centralizing these prevents magic bytes scattered across the codebase.
+Program IDs, seed bytes, and SDK-level constants used by the modules.
 
-## Sub-modules
-- `program_ids/` — Token, Token-2022, ATA, and System program IDs
-- `seeds/` — PDA seed byte arrays
+## Code Map
+- Primary source: `ptoken-sdk/src/constants`
+- Crate entry: `ptoken-sdk/src/lib.rs`
 
-> 🚧 Coming Soon
+## Local Rules
+- Program IDs should be literal and reviewed before release.
+- Seed constants are byte slices so PDA derivation does not allocate.
+- Avoid duplicating IDs or seeds inside instruction modules.
+
+## Review Checklist
+- Keep account ordering explicit in docs and code.
+- Prefer project errors over generic `ProgramError` until the Solana boundary.
+- Update the matching example or test when behavior changes.

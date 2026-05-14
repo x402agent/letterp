@@ -1,14 +1,15 @@
 # Checked Arithmetic
 
-Wraps Rust's checked_add, checked_sub, checked_mul, checked_div with
-PToken error types for clean error propagation.
+Safe add, sub, mul, div, and muldiv operations.
 
-## Planned API
-```rust
-pub fn safe_add(a: u64, b: u64) -> PTokenResult<u64>
-pub fn safe_sub(a: u64, b: u64) -> PTokenResult<u64>
-pub fn safe_mul(a: u64, b: u64) -> PTokenResult<u64>
-pub fn safe_div(a: u64, b: u64) -> PTokenResult<u64>
-```
+## Implementation Source
+- `ptoken-sdk/src/math/checked_arithmetic.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Overflow and underflow return SDK errors.
+- Kani covers success and failure paths.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

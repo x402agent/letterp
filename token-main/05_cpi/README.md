@@ -1,13 +1,17 @@
-# 05 — CPI Helpers
+# 05 - CPI Helpers
 
-Cross-Program Invocation helpers for calling Solana token programs
-from within a Pinocchio-based program. All calls use `invoke` or
-`invoke_signed` with explicit account metas.
+Cross-program invocation adapters for System, SPL Token, Token-2022, and Associated Token Account programs.
 
-## Sub-modules
-- `invoke_token_program/` — CPI into SPL Token classic
-- `invoke_token_2022/` — CPI into Token-2022 program
-- `invoke_associated_token/` — CPI into ATA program
-- `invoke_system_program/` — CPI into System program (create accounts, transfer SOL)
+## Code Map
+- Primary source: `ptoken-sdk/src/cpi`
+- Crate entry: `ptoken-sdk/src/lib.rs`
 
-> 🚧 Coming Soon
+## Local Rules
+- CPI helpers should not make business decisions; they should assemble instructions and account arrays.
+- Signer seeds must be passed only by callers that already validated the PDA authority.
+- Prefer checked Token-2022 instructions where the token program exposes them.
+
+## Review Checklist
+- Keep account ordering explicit in docs and code.
+- Prefer project errors over generic `ProgramError` until the Solana boundary.
+- Update the matching example or test when behavior changes.

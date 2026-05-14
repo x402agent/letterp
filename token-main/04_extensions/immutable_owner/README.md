@@ -1,9 +1,15 @@
-# Immutable Owner Extension
+# Immutable Owner
 
-Prevents the owner of a token account from being reassigned after creation.
-This is the default for Associated Token Accounts under Token-2022.
+Token-2022 extension that prevents owner reassignment.
 
-## Note
-No configuration parameters. Once set, the owner can never change.
+## Implementation Source
+- `ptoken-sdk/src/extensions/immutable_owner.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Initialize before account initialization.
+- Useful for ATAs and custody accounts.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

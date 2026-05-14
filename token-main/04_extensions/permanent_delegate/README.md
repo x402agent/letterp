@@ -1,14 +1,15 @@
-# Permanent Delegate Extension
+# Permanent Delegate
 
-Assigns a permanent, irrevocable delegate to a mint. This delegate can
-transfer or burn any token from any holder's account at any time.
+Token-2022 permanent delegate configuration.
 
-## Key Parameter
-- `delegate` — The Pubkey of the permanent delegate (set once at mint creation)
+## Implementation Source
+- `ptoken-sdk/src/extensions/permanent_delegate.rs`
 
-## Use Cases
-- Regulatory compliance / clawback mechanisms
-- Game item management
-- Protocol-controlled treasury tokens
+## Contract Notes
+- Permanent delegate bypasses normal approval lifecycle.
+- Use only when recovery or compliance flows require it.
 
-> 🚧 Coming Soon
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

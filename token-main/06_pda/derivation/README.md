@@ -1,11 +1,15 @@
 # PDA Derivation
 
-Wrappers around `Pubkey::find_program_address` and `Pubkey::create_program_address`
-for deriving PDAs with common pToken seed patterns.
+Address derivation helpers for LetterP seed contracts.
 
-## Common Seeds Used in pToken
-- `[b"mint", user_pubkey]` — User-specific mint PDA
-- `[b"vault", mint_pubkey]` — Protocol vault PDA
-- `[b"metadata", mint_pubkey]` — Metadata PDA
+## Implementation Source
+- `ptoken-sdk/src/pda/derivation.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Seeds are byte slices and must stay stable.
+- Bump handling should avoid temporary borrowed arrays.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

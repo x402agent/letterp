@@ -1,16 +1,15 @@
-# Invoke Associated Token Program
+# Invoke Associated Token
 
-CPI into the Associated Token Account (ATA) program to create ATAs
-deterministically from within another program.
+Associated Token Account CPI adapters.
 
-## Planned API
-```rust
-pub fn cpi_create_associated_token_account(
-    payer: &AccountInfo,
-    wallet: &AccountInfo,
-    mint: &AccountInfo,
-    token_program: &AccountInfo,
-) -> ProgramResult
-```
+## Implementation Source
+- `ptoken-sdk/src/cpi/invoke_associated_token.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Use idempotent creation when replays are possible.
+- Wallet, mint, and token program ID define the ATA.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

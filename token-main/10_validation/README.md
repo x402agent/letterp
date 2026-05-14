@@ -1,12 +1,17 @@
-# 10 — Validation
+# 10 - Validation
 
-Account and instruction validation helpers for safe Pinocchio program development.
-All checks return typed PToken errors rather than panicking.
+Reusable account, signer, owner, mint, and state checks for the token modules.
 
-## Sub-modules
-- `signer_checks/` — Assert required accounts are signers
-- `owner_checks/` — Assert accounts are owned by expected programs
-- `mint_validation/` — Validate mint account state and properties
-- `account_state_checks/` — Validate token account state (initialized, frozen, etc.)
+## Code Map
+- Primary source: `ptoken-sdk/src/validation`
+- Crate entry: `ptoken-sdk/src/lib.rs`
 
-> 🚧 Coming Soon
+## Local Rules
+- Validation functions should be pure checks with no CPI side effects.
+- Use direct layout readers where SPL Token fixed offsets are sufficient.
+- Return SDK errors that callers can convert into `ProgramError`.
+
+## Review Checklist
+- Keep account ordering explicit in docs and code.
+- Prefer project errors over generic `ProgramError` until the Solana boundary.
+- Update the matching example or test when behavior changes.

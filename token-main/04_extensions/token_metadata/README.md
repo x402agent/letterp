@@ -1,22 +1,15 @@
-# Token Metadata Extension
+# Token Metadata
 
-Embed metadata (name, symbol, URI, additional fields) directly inside the mint account.
-Eliminates the need for a separate Metaplex metadata account.
+Embedded metadata extension helpers.
 
-## Key Fields
-- `name` — Token name (e.g. "USD Coin")
-- `symbol` — Ticker symbol (e.g. "USDC")
-- `uri` — URI to off-chain JSON metadata
-- `additional_metadata` — Vec of arbitrary key-value string pairs
+## Implementation Source
+- `ptoken-sdk/src/extensions/token_metadata.rs`
 
-## Planned API
-```rust
-pub fn initialize_token_metadata(
-    mint: &AccountInfo,
-    name: &str,
-    symbol: &str,
-    uri: &str,
-) -> ProgramResult
-```
+## Contract Notes
+- Name, symbol, and URI changes are authority controlled.
+- Keep example metadata project-specific.
 
-> 🚧 Coming Soon
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

@@ -1,15 +1,15 @@
 # Extension Cookbook
 
-Practical recipes for combining Token-2022 extensions to build real-world token types.
+Recipes for combining Token-2022 extensions safely.
 
-## Recipes
-| Token Type | Extensions Used |
-|------------|----------------|
-| Regulated stablecoin | default_account_state + permanent_delegate + transfer_fee |
-| NFT / Soul-bound | non_transferable + token_metadata |
-| Yield-bearing token | interest_bearing + metadata_pointer |
-| Compliant DeFi token | transfer_hook + required_memo + cpi_guard |
-| Royalty token | transfer_fee + transfer_hook + token_metadata |
-| Private transfer | confidential_transfer + confidential_transfer_fee |
+## Implementation Source
+- `15_docs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Show compatible combinations first.
+- Call out authority conflicts and account sizing.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

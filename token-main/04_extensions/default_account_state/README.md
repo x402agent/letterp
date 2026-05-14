@@ -1,12 +1,15 @@
-# Default Account State Extension
+# Default Account State
 
-Newly created token accounts for this mint start in a specified state
-(Initialized or Frozen) automatically.
+Token-2022 default account-state extension helpers.
 
-## Key Parameter
-- `state` — `AccountState::Initialized` or `AccountState::Frozen`
+## Implementation Source
+- `ptoken-sdk/src/extensions/default_account_state.rs`
 
-## Use Case
-Start all accounts frozen to enforce KYC — only unfreeze after verification.
+## Contract Notes
+- Frozen defaults are useful for gated activation.
+- State transitions require the configured authority.
 
-> 🚧 Coming Soon
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

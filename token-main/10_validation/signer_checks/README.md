@@ -1,12 +1,15 @@
 # Signer Checks
 
-Assert that specific accounts in an instruction have signed the transaction.
-Essential for authorization before any state-modifying operation.
+Signer and multisig threshold validation.
 
-## Planned API
-```rust
-pub fn assert_signer(account: &AccountInfo) -> PTokenResult<()>
-pub fn assert_signers(accounts: &[&AccountInfo]) -> PTokenResult<()>
-```
+## Implementation Source
+- `ptoken-sdk/src/validation/signer_checks.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Single-signer and multisig paths should be separate.
+- Missing signer errors should be deterministic.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

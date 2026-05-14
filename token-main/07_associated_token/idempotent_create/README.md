@@ -1,7 +1,15 @@
-# Idempotent Create ATA
+# Idempotent ATA Create
 
-Create an ATA only if it doesn't already exist. Uses the
-`CreateIdempotent` instruction variant to avoid transaction failures
-when the ATA was already created by a previous call.
+Replay-safe ATA creation helper.
 
-> 🚧 Coming Soon
+## Implementation Source
+- `ptoken-sdk/src/associated_token/idempotent_create.rs`
+
+## Contract Notes
+- Safe when account may already exist.
+- Still validate owner and mint after creation.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

@@ -1,11 +1,15 @@
-# Pack / Unpack
+# Pack/Unpack
 
-Implements the SPL Token `Pack` and `Unpack` traits for mint and account state structs.
-These are fixed-size serialization formats used by the original SPL Token program.
+SPL Pack trait helpers for account state types.
 
-## Sizes
-- `Mint`: 82 bytes
-- `Account`: 165 bytes
-- `Multisig`: 355 bytes
+## Implementation Source
+- `ptoken-sdk/src/serialization/pack_unpack.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Import Pack wherever associated LEN is used.
+- Keep unpack errors visible to callers.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

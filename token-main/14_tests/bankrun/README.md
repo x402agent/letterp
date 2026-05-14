@@ -1,18 +1,15 @@
 # Bankrun Tests
 
-Fast, lightweight Solana program tests using `solana-bankrun`.
-No validator startup — tests run in milliseconds.
+Runtime-style test plan for transaction flows.
 
-## Why Bankrun?
-- 100x faster than test-validator
-- Supports time travel (warp to slot/epoch)
-- Full instruction simulation with real runtime behavior
-- Easy account prefunding and state setup
+## Implementation Source
+- `ptoken-sdk/src/tests/bankrun.rs`
 
-## Planned Test Suites
-- Token mint + transfer smoke tests
-- Extension configuration tests
-- Fee calculation verification
-- Hook invocation tests
+## Contract Notes
+- Useful for CPI-heavy modules.
+- Keep fixtures deterministic.
 
-> 🚧 Coming Soon
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

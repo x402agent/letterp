@@ -1,15 +1,15 @@
-# Example: Basic Mint
+# Basic Mint Example
 
-Demonstrates the simplest pToken workflow:
-1. Create a mint account with 6 decimals
-2. Derive and create an Associated Token Account for a wallet
-3. Mint 1,000,000 raw units (1.000000 tokens) to the ATA
-4. Transfer 500,000 units to a second wallet ATA
-5. Burn 100,000 units
+Classic mint, ATA, mint-to, transfer, and burn walkthrough.
 
-## Run
-```bash
-anchor test   # (once Anchor integration is complete)
-```
+## Implementation Source
+- `examples/basic_mint/src/lib.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Uses local discriminants for simple dispatch.
+- Should be run after SDK compile blockers are resolved.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

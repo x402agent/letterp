@@ -1,15 +1,15 @@
 # Close Account
 
-Close a token account with zero balance, returning the rent lamports
-to a destination account.
+Classic SPL Token close-account flow.
 
-## Planned API
-```rust
-pub fn close_account(
-    account: &AccountInfo,
-    destination: &AccountInfo,
-    owner: &AccountInfo,
-) -> ProgramResult
-```
+## Implementation Source
+- `ptoken-sdk/src/token_classic/close_account.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Require zero balance before close.
+- Destination receives remaining lamports.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

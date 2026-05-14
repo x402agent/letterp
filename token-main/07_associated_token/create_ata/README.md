@@ -1,16 +1,15 @@
 # Create ATA
 
-Create an Associated Token Account for a given wallet and mint.
-The ATA address is deterministically derived from these two keys.
+Associated Token Account creation helper.
 
-## Planned API
-```rust
-pub fn create_associated_token_account(
-    payer: &AccountInfo,
-    wallet: &Pubkey,
-    mint: &AccountInfo,
-    token_program_id: &Pubkey,
-) -> ProgramResult
-```
+## Implementation Source
+- `ptoken-sdk/src/associated_token/create_ata.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Create with explicit payer and wallet.
+- Use the expected token program ID for classic vs Token-2022.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

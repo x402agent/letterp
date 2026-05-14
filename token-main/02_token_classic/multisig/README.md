@@ -1,15 +1,15 @@
 # Multisig
 
-Create and use M-of-N multisig authorities for mint, freeze, or transfer operations.
-Supports up to 11 signers with a configurable threshold.
+Classic SPL Token multisig account creation and authority use.
 
-## Planned API
-```rust
-pub fn initialize_multisig(
-    multisig: &AccountInfo,
-    signers: &[&Pubkey],
-    m: u8,
-) -> ProgramResult
-```
+## Implementation Source
+- `ptoken-sdk/src/token_classic/multisig.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Threshold and signer count must be checked.
+- Signer account order matters for SPL Token.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

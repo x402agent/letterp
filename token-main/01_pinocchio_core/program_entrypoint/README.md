@@ -1,17 +1,15 @@
 # Program Entrypoint
 
-Custom Solana program entrypoint using Pinocchio's lightweight process_instruction
-pattern. No Anchor macros — pure Rust function dispatch.
+Lightweight dispatch pattern for Solana programs using this SDK.
 
-## Planned Pattern
-```rust
-pinocchio_sdk::entrypoint!(process_instruction);
+## Implementation Source
+- `ptoken-sdk/src/pinocchio_core/program_entrypoint.rs`
 
-pub fn process_instruction(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    instruction_data: &[u8],
-) -> ProgramResult { ... }
-```
+## Contract Notes
+- Entry points should parse once and delegate.
+- Business logic belongs in instruction modules, not the entrypoint.
 
-> 🚧 Coming Soon
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

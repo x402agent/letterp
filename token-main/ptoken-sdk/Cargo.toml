@@ -2,9 +2,8 @@
 name = "ptoken-sdk"
 version = "0.1.0"
 edition = "2021"
-description = "High-performance Solana token SDK built on Pinocchio — zero-dependency primitives for SPL Token and Token-2022"
+description = "LetterP Solana token SDK primitives for SPL Token and Token-2022"
 license = "MIT"
-repository = "https://github.com/your-org/pToken"
 
 [lib]
 crate-type = ["cdylib", "lib"]

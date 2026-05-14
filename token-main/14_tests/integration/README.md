@@ -1,13 +1,15 @@
 # Integration Tests
 
-Full end-to-end program tests using `solana-test-validator` or `solana-program-test`.
-Tests the complete instruction flow from client to on-chain program.
+Instruction-level test plans for SDK flows.
 
-## Test Scenarios
-- Mint creation and token account initialization
-- Full transfer lifecycle
-- Extension initialization and interaction
-- CPI invocation chains
-- Error condition handling
+## Implementation Source
+- `ptoken-sdk/src/tests/integration.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Use Solana program-test once compile blockers are cleared.
+- Cover authority and account-order failures.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

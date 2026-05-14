@@ -1,8 +1,15 @@
 # Invoke Token-2022
 
-CPI wrappers for Token-2022 instructions. Identical surface to the classic
-token CPI helpers but targets the Token-2022 program ID.
+Token-2022 CPI adapters.
 
-Accounts must match Token-2022's expected account order exactly.
+## Implementation Source
+- `ptoken-sdk/src/cpi/invoke_token_2022.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Token-2022 supports additional checked and extension-aware flows.
+- Do not mix Tokenkeg and Token-2022 program IDs.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

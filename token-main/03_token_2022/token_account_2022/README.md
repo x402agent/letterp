@@ -1,15 +1,15 @@
-# Token Account 2022
+# Token-2022 Account
 
-Initialize token accounts under the Token-2022 program.
-Supports extensions like ImmutableOwner and RequiredMemo at account creation time.
+Token-2022 account creation and initialization.
 
-## Planned API
-```rust
-pub fn initialize_account_2022(
-    account: &AccountInfo,
-    mint: &AccountInfo,
-    owner: &Pubkey,
-) -> ProgramResult
-```
+## Implementation Source
+- `ptoken-sdk/src/token_2022/token_account_2022.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Account size depends on enabled extensions.
+- Use Token-2022 program ID consistently.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

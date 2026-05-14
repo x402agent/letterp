@@ -1,10 +1,15 @@
-# Example: Transfer With Fee
+# Transfer With Fee Example
 
-Demonstrates Token-2022 Transfer Fee extension:
-1. Create a mint with 50 basis points (0.5%) transfer fee, max fee 1,000 units
-2. Mint tokens to a source account
-3. Transfer tokens — fee is automatically withheld
-4. Harvest withheld fees from token accounts to the fee vault
-5. Withdraw fees from the vault to the fee authority
+Token-2022 transfer-fee configuration and transfer sketch.
 
-> 🚧 Coming Soon
+## Implementation Source
+- `examples/transfer_with_fee/src/lib.rs`
+
+## Contract Notes
+- Basis-point calculations are backed by math helpers.
+- Fee withdrawal should be tested separately.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

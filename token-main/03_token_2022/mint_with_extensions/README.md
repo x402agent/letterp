@@ -1,22 +1,15 @@
 # Mint With Extensions
 
-Initialize a Token-2022 mint with pre-configured extensions.
-Extensions must be specified before the mint account is initialized.
-The account must be allocated with enough space for all chosen extensions.
+Token-2022 mint creation with extension space planning.
 
-## Extension Sizing
-Each extension adds to the required account size:
-- Base mint: 82 bytes
-- Each extension: base + discriminant (2) + length (2) + extension-specific data
+## Implementation Source
+- `ptoken-sdk/src/token_2022/mint_with_extensions.rs`
 
-## Planned API
-```rust
-pub fn create_mint_with_extensions(
-    mint: &AccountInfo,
-    authority: &Pubkey,
-    decimals: u8,
-    extensions: &[ExtensionType],
-) -> ProgramResult
-```
+## Contract Notes
+- Calculate extension space before allocation.
+- Initialize extensions before mint init when required.
 
-> 🚧 Coming Soon
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

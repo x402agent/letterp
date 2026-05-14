@@ -1,12 +1,15 @@
 # Syscalls
 
-Thin wrappers around Solana's native syscalls as exposed by Pinocchio.
-Covers logging, compute budget hints, clock access, and slot queries.
+Thin runtime wrappers for logging and invocation boundaries.
 
-## Planned Wrappers
-- `sol_log_compute_units()`
-- `sol_get_clock_sysvar()`
-- `sol_invoke_signed()`
-- `sol_create_program_address()`
+## Implementation Source
+- `ptoken-sdk/src/pinocchio_core/syscalls.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Keep wrappers boring and direct.
+- Do not hide signer-seed or account-order requirements.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

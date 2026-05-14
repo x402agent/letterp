@@ -1,15 +1,17 @@
-# 03 — Token-2022
+# 03 - Token-2022 Base
 
-Base operations for the Token-2022 program (Token Extensions Program).
-Program ID: `TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb`
+Base Token-2022 operations that are shared by extension-enabled mints and accounts.
 
-Token-2022 is backward-compatible with SPL Token but adds an extension system
-that embeds extra functionality directly into mint and token account data.
+## Code Map
+- Primary source: `ptoken-sdk/src/token_2022`
+- Crate entry: `ptoken-sdk/src/lib.rs`
 
-## Sub-modules
-- `mint_with_extensions/` — Initialize mints with one or more extensions
-- `reallocate/` — Add extensions to existing token accounts post-creation
-- `token_account_2022/` — Token-2022 specific account initialization
-- `close_account_2022/` — Close Token-2022 accounts with extension cleanup
+## Local Rules
+- Extension space must be calculated before account creation.
+- Reallocation must preserve owner, signer, and rent requirements.
+- Close-account behavior follows Token-2022 rules, including extension-specific constraints.
 
-> 🚧 Coming Soon
+## Review Checklist
+- Keep account ordering explicit in docs and code.
+- Prefer project errors over generic `ProgramError` until the Solana boundary.
+- Update the matching example or test when behavior changes.

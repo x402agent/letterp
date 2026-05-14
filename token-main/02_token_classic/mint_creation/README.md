@@ -1,16 +1,15 @@
 # Mint Creation
 
-Initialize a new SPL Token mint account using Pinocchio CPI into the Token program.
-Covers mint authority, freeze authority, and decimal configuration.
+Classic SPL Token mint allocation and initialization.
 
-## Planned API
-```rust
-pub fn initialize_mint(
-    mint: &AccountInfo,
-    mint_authority: &Pubkey,
-    freeze_authority: Option<&Pubkey>,
-    decimals: u8,
-) -> ProgramResult
-```
+## Implementation Source
+- `ptoken-sdk/src/token_classic/mint_creation.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Allocate rent-exempt space before init.
+- Validate mint and authority accounts before CPI.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

@@ -1,17 +1,15 @@
 # Bump Seed Management
 
-Store canonical bump seeds in account data to avoid expensive re-derivation
-on every instruction. Retrieve and verify stored bumps efficiently.
+Helpers for storing and reusing PDA bumps.
 
-## Pattern
-```rust
-// Store bump at account creation
-account_data[BUMP_OFFSET] = bump;
+## Implementation Source
+- `ptoken-sdk/src/pda/bump_seed_management.rs`
 
-// Retrieve and use for signing
-let bump = account_data[BUMP_OFFSET];
-let signer_seeds = &[seed1, seed2, &[bump]];
-invoke_signed(ix, accounts, &[signer_seeds])?;
-```
+## Contract Notes
+- Persist bump when the account must sign later.
+- Never brute-force bumps inside repeated hot paths.
 
-> 🚧 Coming Soon
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

@@ -1,22 +1,15 @@
 # Zero-Copy Layout
 
-Zero-copy account deserialization using direct byte slice interpretation.
-Avoids heap allocation by reading data in-place from AccountInfo.data.
+Fixed-offset readers for SPL Token mint and account data.
 
-## Planned Pattern
-```rust
-#[repr(C)]
-pub struct MintLayout {
-    pub mint_authority: COption<Pubkey>,
-    pub supply: u64,
-    pub decimals: u8,
-    pub is_initialized: bool,
-    pub freeze_authority: COption<Pubkey>,
-}
+## Implementation Source
+- `ptoken-sdk/src/pinocchio_core/zero_copy_layout.rs`
 
-impl MintLayout {
-    pub fn from_bytes(data: &[u8]) -> &Self { ... }
-}
-```
+## Contract Notes
+- Offsets must match SPL Token layout.
+- Readers return errors instead of slicing blindly.
 
-> 🚧 Coming Soon
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

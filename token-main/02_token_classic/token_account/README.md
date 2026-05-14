@@ -1,15 +1,15 @@
 # Token Account
 
-Create and initialize a token account to hold a specific mint.
-Supports both explicit account creation and ATA-style derivation.
+Classic SPL Token account creation, initialization, and state operations.
 
-## Planned API
-```rust
-pub fn initialize_account(
-    account: &AccountInfo,
-    mint: &AccountInfo,
-    owner: &Pubkey,
-) -> ProgramResult
-```
+## Implementation Source
+- `ptoken-sdk/src/token_classic/token_account.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Use SPL account length from Pack once compile imports are fixed.
+- Separate account setup from transfers.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

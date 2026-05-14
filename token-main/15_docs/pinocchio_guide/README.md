@@ -1,17 +1,15 @@
 # Pinocchio Guide
 
-A practical guide to writing Solana programs with Pinocchio for developers
-coming from Anchor or native-Rust backgrounds.
+Internal guide for the explicit runtime style used in this repo.
 
-## Topics
-1. What is Pinocchio and why use it?
-2. Project setup and Cargo.toml dependencies
-3. Writing the program entrypoint
-4. Parsing accounts without Anchor macros
-5. Reading and writing account data (zero-copy)
-6. Making CPI calls with invoke and invoke_signed
-7. PDA derivation and signing
-8. Error handling patterns
-9. Compute unit optimization tips
+## Implementation Source
+- `15_docs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Explain account order and discriminant parsing.
+- Avoid framework comparisons unless they clarify migration risk.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

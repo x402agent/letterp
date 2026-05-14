@@ -1,15 +1,15 @@
 # PDA Validation
 
-Assert that a given account address matches the expected PDA derived from
-known seeds and program ID. Prevents seed substitution attacks.
+Compare provided accounts against derived PDAs.
 
-## Planned API
-```rust
-pub fn assert_pda(
-    account: &AccountInfo,
-    seeds: &[&[u8]],
-    program_id: &Pubkey,
-) -> PTokenResult<u8>  // returns bump
-```
+## Implementation Source
+- `ptoken-sdk/src/pda/validation.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Fail before state mutation.
+- Return SDK errors with enough context for tests.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

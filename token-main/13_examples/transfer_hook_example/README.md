@@ -1,17 +1,15 @@
-# Example: Transfer Hook
+# Transfer Hook Example
 
-Demonstrates Token-2022 Transfer Hook extension:
-1. Write a hook program implementing the `Execute` interface
-2. Create a mint with the hook program configured
-3. Every transfer invokes the hook — this example logs the transfer amount
-4. Update the hook program address using the hook authority
+Token-2022 transfer hook configuration and invocation sketch.
 
-## Hook Program Template
-```rust
-pub fn execute(ctx: Context<Execute>, amount: u64) -> Result<()> {
-    msg!("Transfer hook fired: {} tokens", amount);
-    Ok(())
-}
-```
+## Implementation Source
+- `examples/transfer_hook_example/src/lib.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Hook program behavior should be deterministic.
+- Log-only hooks are examples, not policy enforcement.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

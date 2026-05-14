@@ -86,12 +86,12 @@ fn process_create_metadata_mint(accounts: &[AccountInfo]) -> ProgramResult {
         mint,
         update_authority,
         payer,   // mint authority
-        "pToken Example".to_string(),
-        "PTKN".to_string(),
-        "https://example.com/ptoken-metadata.json".to_string(),
+        "LetterP Metadata Mint".to_string(),
+        "LTRP".to_string(),
+        "https://letterp.local/metadata/letterp-mint.json".to_string(),
     )?;
 
     msg!("Metadata mint created: {}", mint.key);
-    msg!("Name: pToken Example | Symbol: PTKN");
+    msg!("Name: LetterP Metadata Mint | Symbol: LTRP");
     Ok(())
 }

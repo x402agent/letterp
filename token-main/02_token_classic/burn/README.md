@@ -1,16 +1,15 @@
 # Burn
 
-Permanently destroy tokens, reducing the mint's total supply.
-Requires the token account owner or an approved delegate.
+Classic SPL Token burn helper surface.
 
-## Planned API
-```rust
-pub fn burn(
-    account: &AccountInfo,
-    mint: &AccountInfo,
-    authority: &AccountInfo,
-    amount: u64,
-) -> ProgramResult
-```
+## Implementation Source
+- `ptoken-sdk/src/token_classic/burn.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Burn authority must be owner or approved delegate.
+- Check available balance before invoking token program.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

@@ -1,14 +1,15 @@
 # Account Info
 
-Raw AccountInfo struct access using Pinocchio's account model.
-Provides helpers for reading key, lamports, data, owner, and executable flag
-directly from the account's memory-mapped byte slice.
+Borrowing and account metadata helpers used before instruction logic touches account data.
 
-## Planned API
-```rust
-pub fn get_account_data(account: &AccountInfo) -> &[u8]
-pub fn get_account_lamports(account: &AccountInfo) -> u64
-pub fn assert_owned_by(account: &AccountInfo, owner: &Pubkey) -> PTokenResult<()>
-```
+## Implementation Source
+- `ptoken-sdk/src/pinocchio_core/account_info.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Keep lamport/data borrows scoped tightly.
+- Expose signer, writable, owner, and key checks without cloning more than necessary.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

@@ -1,19 +1,15 @@
-# Transfer Hook Extension
+# Transfer Hook
 
-Execute a custom program on every token transfer. The hook program receives
-the transfer accounts and can enforce arbitrary logic (allowlists, royalties, etc).
+Token-2022 transfer hook configuration.
 
-## Key Parameters
-- `authority` — Can update the hook program
-- `program_id` — The hook program to invoke on transfer
+## Implementation Source
+- `ptoken-sdk/src/extensions/transfer_hook.rs`
 
-## Hook Interface
-The hook program must implement the `Execute` instruction defined by the
-`spl-transfer-hook-interface` crate.
+## Contract Notes
+- Hook program ID must be reviewed as part of mint config.
+- Hook account metas must be deterministic.
 
-## Use Cases
-- NFT royalties
-- KYC/AML enforcement
-- Dynamic transfer taxes
-
-> 🚧 Coming Soon
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

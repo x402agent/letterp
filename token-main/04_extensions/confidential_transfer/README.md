@@ -1,16 +1,15 @@
-# Confidential Transfer Extension
+# Confidential Transfer
 
-Hide transfer amounts using ElGamal encryption and zero-knowledge proofs.
-Balances are stored as ciphertexts; amounts are never revealed on-chain.
+Token-2022 confidential-transfer configuration helpers.
 
-## Key Concepts
-- ElGamal keypair per token account
-- ZK proof of valid transfer range (Sigma protocols)
-- `ApplyPendingBalance` merges incoming amounts
-- `Withdraw` decrypts and moves to visible balance
+## Implementation Source
+- `ptoken-sdk/src/extensions/confidential_transfer.rs`
 
-## Requirements
-- Account must configure an ElGamal public key
-- Proofs are submitted as account data (large accounts)
+## Contract Notes
+- Treat cryptographic public keys as typed data, not raw strings.
+- Audit authority and auditor key updates separately.
 
-> 🚧 Coming Soon
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

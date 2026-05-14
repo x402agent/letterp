@@ -1,29 +1,33 @@
-# pToken SDK
+# LetterP Token SDK
 
-A high-performance Solana token SDK built on Pinocchio — zero-dependency, close-to-the-metal Rust primitives for SPL Token and Token-2022 programs.
+LetterP Token SDK is the local Solana token toolkit for this repository. It keeps SPL Token, Token-2022, PDA, ATA, serialization, validation, and arithmetic behavior explicit so instruction code can be reviewed line by line.
 
 ## Structure
 
 | Module | Description |
 |--------|-------------|
-| `01_pinocchio_core` | Pinocchio runtime: accounts, instructions, syscalls, zero-copy |
-| `02_token_classic` | SPL Token (original program) operations |
-| `03_token_2022` | Token-2022 base operations |
-| `04_extensions` | All 14 Token-2022 extensions |
-| `05_cpi` | Cross-Program Invocation helpers |
-| `06_pda` | Program Derived Address utilities |
-| `07_associated_token` | Associated Token Account (ATA) wrappers |
-| `08_serialization` | Borsh encode/decode and pack/unpack |
-| `09_math` | Safe checked arithmetic and decimal helpers |
-| `10_validation` | Signer, owner, mint, and state checks |
-| `11_errors` | Custom error types for tokens and extensions |
-| `12_constants` | Program IDs, seeds, and defaults |
-| `13_examples` | Runnable example programs |
-| `14_tests` | Unit, integration, and bankrun test suites |
-| `15_docs` | Guides, references, and migration docs |
+| `01_pinocchio_core` | Runtime-facing account, entrypoint, instruction-data, syscall, and fixed-layout readers |
+| `02_token_classic` | Original SPL Token instruction and CPI helpers |
+| `03_token_2022` | Token-2022 mint, account, close, and reallocation helpers |
+| `04_extensions` | Token-2022 extension constructors and authority-aware update helpers |
+| `05_cpi` | System, Token, Token-2022, and ATA CPI adapters |
+| `06_pda` | PDA derivation, bump, and validation helpers |
+| `07_associated_token` | ATA derivation and creation helpers |
+| `08_serialization` | Borsh and fixed-width instruction encoding helpers |
+| `09_math` | Checked arithmetic, decimal, fee, and u64 helpers with Kani proofs |
+| `10_validation` | Reusable signer, owner, mint, and account-state checks |
+| `11_errors` | SDK error types and ProgramError conversion |
+| `12_constants` | Canonical program IDs and PDA seed bytes |
+| `13_examples` | LetterP example programs for mint, fee, metadata, hook, and confidential flows |
+| `14_tests` | Unit, integration, and runtime test plans |
+| `15_docs` | Verification, migration, extension, and token references |
 
-## Status
-> 🚧 Coming Soon — All modules are under active development.
+## Implementation Status
+The repository has two layers:
+- `ptoken-sdk/src` contains the Rust crate code that examples import.
+- Numbered folders contain project-owned module notes that map back to the Rust source and document invariants, authority assumptions, and audit hooks.
+
+The arithmetic and documentation surfaces are wired and Kani verified. The broader Solana CPI/extension crate still has compile blockers tracked in `COMING_SOON.md`, mostly around dependency imports, SPL Token-2022 type drift, CPI lifetimes, and one PDA temporary borrow.
 
 ## Formal Verification
 Kani proof harnesses live in `ptoken-sdk/src/kani_verification.rs` and currently cover token arithmetic, fee, range, and decimal multiplier invariants. See `15_docs/KANI_VERIFICATION.md` for install and run commands, including non-vacuity checks with `kani::cover!`.
@@ -32,5 +36,3 @@ Kani proof harnesses live in `ptoken-sdk/src/kani_verification.rs` and currently
 - **SPL Token**: `TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA`
 - **Token-2022**: `TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb`
 - **ATA Program**: `ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe1bN`
-- **Meteora**: `4xCUgkuWmpk1gmrcT9PmmCPVY8kFnHKCsMoLsRrNSPL`
-- **pumpswap**: `7hynuVWWjwUPHEqYYYWCDUGctSR8PretCD8AU1F3pump`

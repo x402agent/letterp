@@ -1,13 +1,17 @@
-# 07 — Associated Token Account (ATA)
+# 07 - Associated Token Accounts
 
-Helpers for the Associated Token Account program.
-ATA Program ID: `ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe1bN`
+ATA derivation and creation helpers for SPL Token and Token-2022 account ownership patterns.
 
-ATAs are deterministically derived token accounts — one per (wallet, mint) pair.
+## Code Map
+- Primary source: `ptoken-sdk/src/associated_token`
+- Crate entry: `ptoken-sdk/src/lib.rs`
 
-## Sub-modules
-- `create_ata/` — Create a new ATA
-- `get_ata_address/` — Derive the ATA address off-chain
-- `idempotent_create/` — Create ATA only if it doesn't exist
+## Local Rules
+- Derive ATA addresses from wallet, token program, and mint exactly in that order.
+- Use idempotent creation when account pre-existence is acceptable.
+- Do not infer token program ID from mint data unless the caller explicitly opts into that behavior.
 
-> 🚧 Coming Soon
+## Review Checklist
+- Keep account ordering explicit in docs and code.
+- Prefer project errors over generic `ProgramError` until the Solana boundary.
+- Update the matching example or test when behavior changes.

@@ -1,16 +1,15 @@
 # Transfer
 
-Transfer tokens from one account to another. Supports both direct owner
-transfers and delegate-authorized transfers.
+Classic SPL Token transfer helper surface.
 
-## Planned API
-```rust
-pub fn transfer(
-    source: &AccountInfo,
-    destination: &AccountInfo,
-    authority: &AccountInfo,
-    amount: u64,
-) -> ProgramResult
-```
+## Implementation Source
+- `ptoken-sdk/src/token_classic/transfer.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Transfer amount is raw base units.
+- Validate mint and owner relationships before CPI.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

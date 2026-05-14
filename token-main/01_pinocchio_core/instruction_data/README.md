@@ -1,13 +1,15 @@
 # Instruction Data
 
-Utilities for parsing raw instruction byte arrays into typed structs.
-Handles discriminant extraction and argument deserialization without Anchor IDL.
+Discriminant and fixed-field parsing for compact instruction payloads.
 
-## Planned API
-```rust
-pub fn parse_instruction(data: &[u8]) -> PTokenResult<PTokenInstruction>
-pub fn read_u64(data: &[u8], offset: usize) -> u64
-pub fn read_pubkey(data: &[u8], offset: usize) -> Pubkey
-```
+## Implementation Source
+- `ptoken-sdk/src/pinocchio_core/instruction_data.rs`
 
-> 🚧 Coming Soon
+## Contract Notes
+- Reject short buffers before reading.
+- Keep discriminant mapping local to each program or example.
+
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.

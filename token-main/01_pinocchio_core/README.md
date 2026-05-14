@@ -1,14 +1,17 @@
-# 01 — Pinocchio Core
+# 01 - Pinocchio Core
 
-Foundational Pinocchio runtime primitives used across the entire pToken SDK.
-Pinocchio is a zero-dependency Solana program library that operates directly
-on raw account bytes and instruction data without any macro overhead.
+Runtime-facing primitives for LetterP token programs. These helpers keep instruction dispatch, account reads, and fixed-layout token parsing explicit instead of hiding behavior behind framework macros.
 
-## Sub-modules
-- `account_info/` — Raw AccountInfo access and lifetime management
-- `instruction_data/` — Parsing instruction discriminants and arguments
-- `program_entrypoint/` — Custom entrypoint without Anchor boilerplate
-- `syscalls/` — Direct Solana syscall wrappers (sol_log, sol_invoke, etc.)
-- `zero_copy_layout/` — Zero-copy account deserialization via byte slices
+## Code Map
+- Primary source: `ptoken-sdk/src/pinocchio_core`
+- Crate entry: `ptoken-sdk/src/lib.rs`
 
-> 🚧 Coming Soon
+## Local Rules
+- Use byte-slice readers for SPL Token account fields that are stable by offset.
+- Keep entrypoint dispatch small: validate discriminants first, then hand off to module code.
+- Do not allocate for reads that can be performed directly from account data.
+
+## Review Checklist
+- Keep account ordering explicit in docs and code.
+- Prefer project errors over generic `ProgramError` until the Solana boundary.
+- Update the matching example or test when behavior changes.

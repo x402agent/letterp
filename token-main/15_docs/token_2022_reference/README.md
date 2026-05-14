@@ -1,23 +1,15 @@
 # Token-2022 Reference
 
-Complete instruction reference for the Token-2022 program and all supported extensions.
+Reference notes for Token-2022 base and extension flows.
 
-## Base Instructions (identical to SPL Token Classic)
-All classic SPL Token instructions are supported with the same interface.
+## Implementation Source
+- `15_docs`
 
-## Extension Instructions
-- InitializeMintCloseAuthority
-- InitializeTransferFeeConfig
-- InitializeConfidentialTransferMint
-- InitializeInterestBearingMint
-- InitializeNonTransferableMint
-- InitializePermanentDelegate
-- InitializeTransferHook
-- InitializeMetadataPointer
-- InitializeTokenMetadata
-- InitializeGroupPointer
-- InitializeGroupMemberPointer
-- EnableRequiredMemoTransfers
-- EnableCpiGuard
+## Contract Notes
+- Document extension initialization ordering.
+- Call out reallocation and rent changes.
 
-> 🚧 Coming Soon
+## Audit Hooks
+- Check signer, owner, and writable requirements before CPI or state mutation.
+- Add or update unit tests for pure logic and integration tests for account flow.
+- If arithmetic is involved, mirror the invariant in `ptoken-sdk/src/kani_verification.rs`.
