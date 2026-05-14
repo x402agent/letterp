@@ -1,20 +1,27 @@
 # Open Work Register
 
-This file tracks known work that remains after adapting the scaffold into the LetterP token codebase. It is intentionally concrete: each item points to a code surface, not a generic future feature.
+This file tracks known work that remains after adapting the repository into the LetterP token codebase.
 
-## Verified
-- [x] `09_math` overflow, underflow, divisor, fee cap, decimal multiplier, and range invariants are covered by Kani.
-- [x] Numbered module READMEs now describe LetterP-specific source paths, contracts, and audit hooks.
+## Completed
+
 - [x] Root workspace manifest resolves the SDK and example crates.
+- [x] SPL metadata, Token-2022 confidential transfer, `Pack::LEN`, CPI lifetime, and PDA bump-borrow compile blockers are fixed.
+- [x] Numbered module READMEs describe LetterP-specific source paths, contracts, and audit hooks.
+- [x] Agent, x402, bonding-curve, and perpetual SDK primitives are implemented.
+- [x] Kani verifies 11 harnesses with non-vacuity cover checks.
+- [x] Devnet public program IDs are generated in `program-ids/devnet/programs.toml`.
 
-## Compile Blockers
-- [ ] Add the missing `spl-token-metadata-interface` dependency or route metadata helpers through the Token-2022 re-export if the selected SPL version supports it.
-- [ ] Import `solana_program::program_pack::Pack` wherever SPL `LEN` associated constants are used.
-- [ ] Update confidential-transfer helper signatures to match `spl-token-2022` 3.x typed public key and ciphertext arguments.
-- [ ] Give CPI helper functions a shared `AccountInfo<'a>` lifetime where cloned account arrays require invariant lifetimes.
-- [ ] Fix `ptoken-sdk/src/pda/derivation.rs` so the bump byte array lives long enough for `create_program_address`.
+## Remaining Before Mainnet
+
+- [ ] Implement audited on-chain entrypoints for the generated p-agent, p-token, x402 gateway, bonding-curve, and perpetual program IDs.
+- [ ] Build SBF artifacts and record final `.so` sizes for exact mainnet rent costs.
+- [ ] Add reproducible build instructions and release checksums.
+- [ ] Decide deployment authority custody and upgrade-authority revocation policy.
+- [ ] Add third-party security review and disclosure process.
 
 ## Next Verification Targets
+
 - [ ] Fixed-layout readers in `pinocchio_core::zero_copy_layout`.
 - [ ] Account-state validation for initialized, frozen, sufficient-balance, and zero-balance checks.
-- [ ] PDA seed construction once the temporary bump borrow is fixed.
+- [ ] PDA seed construction and address-domain separation.
+- [ ] On-chain entrypoint instruction decoding once the new programs exist.

@@ -12,8 +12,7 @@
 use ptoken_sdk::{
     cpi::invoke_token_2022::{cpi_mint_to_2022, cpi_transfer_checked_2022},
     extensions::transfer_fee::{
-        harvest_withheld_tokens_to_mint, initialize_transfer_fee_config, set_transfer_fee,
-        withdraw_withheld_tokens_from_accounts, TransferFeeConfig,
+        harvest_withheld_tokens_to_mint, initialize_transfer_fee_config, TransferFeeConfig,
     },
     token_2022::mint_with_extensions::create_mint_with_extensions,
     validation::signer_checks::assert_signer,

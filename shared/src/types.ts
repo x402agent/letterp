@@ -55,6 +55,12 @@ export const P_TOKEN_FEATURE_GATE_PROGRAM_ID = publicKeyFromEnv(
   "ptokFjwyJtrwCa9Kgo9xoDS59V4QccBGEaRFnRPnSdP",
 );
 
+/** LetterP memo program id. Override after deploying `p-memo-main`. */
+export const P_MEMO_PROGRAM_ID = publicKeyFromEnv(
+  "P_MEMO_PROGRAM_ID",
+  "PMemo11111111111111111111111111111111111111",
+);
+
 /** Metaplex Core program ID. */
 export const MPL_CORE_PROGRAM_ID = publicKeyFromEnv(
   "MPL_CORE_PROGRAM_ID",

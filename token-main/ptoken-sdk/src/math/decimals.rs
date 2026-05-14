@@ -4,6 +4,8 @@
 ///
 /// # Example
 /// ```
+/// use ptoken_sdk::math::raw_to_ui;
+///
 /// // 1_000_000 raw units with 6 decimals = 1.0
 /// let ui = raw_to_ui(1_000_000, 6);
 /// assert_eq!(ui, 1.0f64);
@@ -16,6 +18,8 @@ pub fn raw_to_ui(amount: u64, decimals: u8) -> f64 {
 ///
 /// # Example
 /// ```
+/// use ptoken_sdk::math::ui_to_raw;
+///
 /// let raw = ui_to_raw(1.5, 6);
 /// assert_eq!(raw, 1_500_000u64);
 /// ```
@@ -27,6 +31,8 @@ pub fn ui_to_raw(ui_amount: f64, decimals: u8) -> u64 {
 ///
 /// # Example
 /// ```
+/// use ptoken_sdk::math::decimal_multiplier;
+///
 /// assert_eq!(decimal_multiplier(6), 1_000_000u64);
 /// ```
 pub fn decimal_multiplier(decimals: u8) -> u64 {
@@ -64,6 +70,8 @@ pub fn decimal_multiplier(decimals: u8) -> u64 {
 ///
 /// # Example
 /// ```
+/// use ptoken_sdk::math::format_amount;
+///
 /// assert_eq!(format_amount(1_500_000, 6), "1.500000");
 /// ```
 pub fn format_amount(amount: u64, decimals: u8) -> String {

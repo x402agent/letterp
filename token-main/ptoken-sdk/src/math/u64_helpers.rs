@@ -7,6 +7,8 @@ pub const MAX_SUPPLY: u64 = u64::MAX;
 ///
 /// # Example
 /// ```
+/// use ptoken_sdk::math::bps_to_percent;
+///
 /// assert_eq!(bps_to_percent(50), 0.005f64);
 /// ```
 pub fn bps_to_percent(bps: u16) -> f64 {

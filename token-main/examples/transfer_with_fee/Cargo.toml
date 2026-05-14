@@ -12,3 +12,6 @@ solana-program = { workspace = true }
 spl-token-2022 = { workspace = true }
 spl-associated-token-account = { workspace = true }
 ptoken-sdk = { path = "../../ptoken-sdk" }
+
+[lints.rust]
+unexpected_cfgs = { level = "allow", check-cfg = ['cfg(target_os, values("solana"))', 'cfg(feature, values("custom-heap", "custom-panic"))'] }

@@ -136,6 +136,7 @@ const LaunchBody = z.object({
   symbol: z.string().max(10).optional(),
   uri: z.string().max(256).optional(),
   agentUri: z.string().max(256).optional(),
+  memo: z.string().max(566).optional(),
   decimals: z.number().int().min(0).max(9).optional(),
   creatorFeeBps: z.number().int().min(0).max(1000).optional(),
   protocolFeeBps: z.number().int().min(0).max(1000).optional(),
@@ -171,6 +172,7 @@ app.post("/launch", async (req, res) => {
       symbol: parsed.data.symbol,
       uri: parsed.data.uri,
       agentUri: parsed.data.agentUri,
+      memo: parsed.data.memo,
       decimals: parsed.data.decimals,
       creatorFeeBps: parsed.data.creatorFeeBps,
       protocolFeeBps: parsed.data.protocolFeeBps,
@@ -202,6 +204,7 @@ app.post("/launch", async (req, res) => {
   const result = await buildCreateLaunch(connection, {
     payer,
     creatorFeeWallet,
+    memo: parsed.data.memo,
     decimals: parsed.data.decimals,
     creatorFeeBps: parsed.data.creatorFeeBps,
     protocolFeeBps: parsed.data.protocolFeeBps,

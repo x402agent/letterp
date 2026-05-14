@@ -16,10 +16,7 @@ use ptoken_sdk::{
         token_account::create_token_account,
         transfer::transfer_checked,
     },
-    validation::{
-        mint_validation::assert_mint_initialized, owner_checks::assert_owned_by_token_program,
-        signer_checks::assert_signer,
-    },
+    validation::{mint_validation::assert_mint_initialized, signer_checks::assert_signer},
 };
 use solana_program::{
     account_info::{next_account_info, AccountInfo},

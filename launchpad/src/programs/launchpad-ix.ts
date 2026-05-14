@@ -32,6 +32,7 @@ import {
   findCreatorVaultPda,
   findExecutionDelegationPda,
   findAssociatedTokenAddress,
+  buildMemoInstruction,
 } from "@x402pt/shared";
 import BN from "bn.js";
 import { DEFAULT_CURVE } from "../curves/constant-product";
@@ -97,6 +98,7 @@ export interface CreateLaunchParams {
   totalSupply?: BN;
   virtualSolReserves?: BN;
   virtualTokenReserves?: BN;
+  memo?: string;
 }
 
 export interface CreateLaunchResult {
@@ -122,6 +124,7 @@ export interface CreateAgentTokenParams {
   mint?: Keypair;
   computeUnitLimit?: number;
   priorityFeeMicroLamports?: number;
+  memo?: string;
 }
 
 export interface CreateAgentTokenResult {
@@ -201,6 +204,14 @@ export function buildCreateAgentToken(
       }),
     );
   }
+  if (args.memo) {
+    instructions.push(
+      buildMemoInstruction({
+        memo: args.memo,
+        signers: [args.payer],
+      }),
+    );
+  }
   instructions.push(
     new TransactionInstruction({
       keys: [
@@ -260,6 +271,15 @@ export async function buildCreateLaunch(
   const mintRent = await connection.getMinimumBalanceForRentExemption(82); // Mint::LEN
 
   const ixs: TransactionInstruction[] = [];
+
+  if (params.memo) {
+    ixs.push(
+      buildMemoInstruction({
+        memo: params.memo,
+        signers: [params.payer],
+      }),
+    );
+  }
 
   // 1. Allocate the mint account, owned by token program.
   ixs.push(

@@ -1,0 +1,11 @@
+# LetterP devnet program IDs.
+#
+# Private keypairs are generated locally under program-ids/devnet/keypairs/
+# and ignored by git. Only public IDs should be committed.
+
+[devnet]
+bonding_curve = "2yVjXFU9cLM79DDpLHvAsCWgZaxU2cNRpd9nBhj7tC3m"
+p_agent = "FaXsrwC4bZnprnoMtvPibxLyJjhPSwC7pURsZK7T49Gg"
+p_token = "7BNvimHVAW7KHzG33RFYoQLEQMZZ1yk8MbaDETwujptY"
+perpetuals = "GikZAua12fZz7rNNBPeSp9PSGP5RpH2Drje7x75Kq4wX"
+x402_gateway = "5hsc8ptpLrCYfeEZypEm4NtDjjMpsSwWVLLnEwLtzeMF"

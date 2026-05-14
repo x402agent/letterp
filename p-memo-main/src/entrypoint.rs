@@ -1,30 +1,40 @@
 use {
-    core::str::{from_utf8, from_utf8_unchecked},
+    core::str::from_utf8,
     pinocchio::{
         entrypoint::{InstructionContext, MaybeAccount},
-        lazy_program_entrypoint,
         program_error::ProgramError,
         ProgramResult,
     },
     pinocchio_log::log,
 };
 
-lazy_program_entrypoint!(process_instruction);
+const BASE58_PUBKEY_BUFFER_LEN: usize = 44;
 
 pub fn process_instruction(mut context: InstructionContext) -> ProgramResult {
-    let mut output = [0u8; 44];
+    log_signers(&mut context)?;
+
+    // SAFETY: all account metas have been consumed before reading instruction data.
+    let memo = unsafe { context.instruction_data_unchecked() };
+    let memo = from_utf8(memo).map_err(|error| {
+        log!(1300, "Invalid UTF-8, from byte {}", error.valid_up_to());
+        ProgramError::InvalidInstructionData
+    })?;
+
+    log!(1300, "Memo (len {}): \"{}\"", memo.len(), memo);
+    Ok(())
+}
+
+fn log_signers(context: &mut InstructionContext) -> ProgramResult {
+    let mut encoded_key = [0u8; BASE58_PUBKEY_BUFFER_LEN];
     let mut missing_required_signature = false;
 
-    // Process signer accounts (if any).
     while context.remaining() > 0 {
-        // Duplicated accounts are implicitly checked since at least one of the
-        // "copies" must be a signer.
         if let MaybeAccount::Account(account) = context.next_account()? {
             if account.is_signer() {
-                let len = five8::encode_32(account.key(), &mut output);
-                // SAFETY: b58 encoding produces a valid UTF-8 string.
-                let as_str = unsafe { from_utf8_unchecked(output.get_unchecked(..len as usize)) };
-                log!("Signed by {}", as_str);
+                let encoded_len = five8::encode_32(account.key(), &mut encoded_key) as usize;
+                let signer = from_utf8(&encoded_key[..encoded_len])
+                    .map_err(|_| ProgramError::InvalidAccountData)?;
+                log!("Signed by {}", signer);
             } else {
                 missing_required_signature = true;
             }
@@ -32,21 +42,8 @@ pub fn process_instruction(mut context: InstructionContext) -> ProgramResult {
     }
 
     if missing_required_signature {
-        return Err(ProgramError::MissingRequiredSignature);
+        Err(ProgramError::MissingRequiredSignature)
+    } else {
+        Ok(())
     }
-
-    // SAFETY: All accounts have been processed.
-    let instruction_data = unsafe { context.instruction_data_unchecked() };
-
-    log!(
-        1300,
-        "Memo (len {}): \"{}\"",
-        instruction_data.len(),
-        from_utf8(instruction_data).map_err(|error| {
-            log!(1300, "Invalid UTF-8, from byte {}", error.valid_up_to());
-            ProgramError::InvalidInstructionData
-        })?
-    );
-
-    Ok(())
 }
