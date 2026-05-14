@@ -1,0 +1,11 @@
+{
+  "name": "@x402pt/p-memo-program",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "cargo build --manifest-path Cargo.toml",
+    "build:sbf": "cargo build-sbf",
+    "test": "cargo test --manifest-path Cargo.toml",
+    "clean": "cargo clean --manifest-path Cargo.toml"
+  }
+}

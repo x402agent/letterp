@@ -12,9 +12,9 @@
  * hands off settlement instructions to the caller or a relayer.
  */
 import express from "express";
-import { PublicKey, Connection, Transaction, SystemProgram } from "@solana/web3.js";
+import { PublicKey } from "@solana/web3.js";
 import { z } from "zod";
-import { PaymentRequirements } from "@x402pt/shared";
+import { buildMemoInstruction } from "@x402pt/shared";
 
 const app = express();
 app.use(express.json({ limit: "1mb" }));
@@ -32,16 +32,6 @@ const USDC_MINT = new PublicKey(
     : "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
 );
 
-function makeConnection(): Connection {
-  const endpoint =
-    process.env.HELIUS_RPC_URL ??
-    process.env.SOLANA_RPC_URL ??
-    "https://api.mainnet-beta.solana.com";
-  return new Connection(endpoint, "confirmed");
-}
-
-const connection = makeConnection();
-
 // In-memory set of settled payment IDs (idempotency).
 // In production this would be a DB or Redis.
 const settledPayments = new Set<string>();
@@ -49,14 +39,6 @@ const settledPayments = new Set<string>();
 // ---------------------------------------------------------------------------
 // Schemas
 // ---------------------------------------------------------------------------
-
-const SupportedResponse = z.object({
-  network: z.string(),
-  asset: z.string(),
-  scheme: z.literal("exact"),
-  minAmount: z.string(),
-  maxAmount: z.string(),
-});
 
 /** What the launchpad sends us to verify. */
 const VerifyBody = z.object({
@@ -185,6 +167,11 @@ app.post("/settle", async (req, res) => {
   res.status(200).json({
     success: true,
     settlementTx: null, // no tx submitted in reference impl
+    memo: serializeInstruction(
+      buildMemoInstruction({
+        memo: `x402:settled:${paymentId}`,
+      }),
+    ),
     network: NETWORK,
   });
 });
@@ -196,11 +183,23 @@ app.get("/health", (_req, res) => {
   res.json({ ok: true, network: NETWORK });
 });
 
+function serializeInstruction(ix: ReturnType<typeof buildMemoInstruction>) {
+  return {
+    programId: ix.programId.toBase58(),
+    keys: ix.keys.map((key) => ({
+      pubkey: key.pubkey.toBase58(),
+      isSigner: key.isSigner,
+      isWritable: key.isWritable,
+    })),
+    data: ix.data.toString("base64"),
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Start
 // ---------------------------------------------------------------------------
 
-app.listen(PORT, () => {
+export const server = app.listen(PORT, () => {
   console.log(`x402 Facilitator listening on http://localhost:${PORT}`);
   console.log(`Network: ${NETWORK}, USDC: ${USDC_MINT.toBase58()}`);
 });

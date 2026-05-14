@@ -8,7 +8,7 @@ TypeScript launchpad package for bonding-curve token launches, x402-gated HTTP e
 |------|---------|
 | Curve math | `DEFAULT_CURVE`, `quoteBuy`, `quoteSell`, `applyBuy`, `applySell`, `isReadyToGraduate`, `spotPrice` |
 | State reads | `makeConnection`, `fetchCurveState`, `decodeCurveState` |
-| Instruction builders | `buildCreateLaunch`, `buildCreateAgentToken`, `buildBuy`, `buildSell`, `buildGraduate`, `buildClaimCreatorFees`, registration and delegation builders |
+| Instruction builders | `buildCreateLaunch`, `buildCreateAgentToken`, `buildBuy`, `buildSell`, `buildGraduate`, `buildClaimCreatorFees`, registration and delegation builders with optional p-memo prelude support |
 | Server | `src/server.ts` runs the launchpad HTTP API |
 
 ## HTTP API
@@ -41,10 +41,13 @@ The default API port is `4400`.
 | `HELIUS_API_KEY` | unset | Builds a Helius RPC URL when explicit URLs are not set. |
 | `FACILITATOR_URL` | `http://localhost:4402` | x402 verification and settlement service. |
 | `PROTOCOL_TREASURY` | system program ID | Fallback `payTo` address for paid endpoints. |
+| `P_MEMO_PROGRAM_ID` | `PMemo11111111111111111111111111111111111111` | Memo program used when `/launch` receives a `memo` field. |
 
 ## Notes
 
 `/launch` returns unsigned instructions and a generated mint secret in this reference implementation. Production code should use a partial-signing or wallet-mediated flow instead of returning a secret key.
+
+If `/launch` receives `memo`, the returned instruction list starts with a p-memo instruction signed by the payer. This lets launch transactions carry an explicit UTF-8 receipt without coupling the launchpad program to memo logging.
 
 ## Pinocchio Contract
 

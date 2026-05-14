@@ -36,6 +36,7 @@ async function main() {
       symbol: "PAGT",
       uri: "https://example.com/pagt-token.json",
       agentUri: "https://example.com/pagt-agent.json",
+      memo: "letterp:launch-token:example",
       decimals: 6,
       creatorFeeBps: 100, // 1%
     }),

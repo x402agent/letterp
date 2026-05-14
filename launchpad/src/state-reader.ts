@@ -31,10 +31,7 @@ import { BondingCurveState, findCurvePda } from "@x402pt/shared";
 const CURVE_STATE_LEN = 152;
 
 /** Parse a raw buffer into a BondingCurveState. */
-export function decodeCurveState(
-  data: Buffer,
-  mint: PublicKey,
-): BondingCurveState | null {
+export function decodeCurveState(data: Buffer): BondingCurveState | null {
   if (data.length < CURVE_STATE_LEN) return null;
   if (data.readUInt8(0) !== 1) return null; // not Initialized
 
@@ -63,7 +60,7 @@ export async function fetchCurveState(
     await connection.getAccountInfo(curvePda);
 
   if (!accountInfo) return null;
-  return decodeCurveState(accountInfo.data, mint);
+  return decodeCurveState(accountInfo.data);
 }
 
 /**

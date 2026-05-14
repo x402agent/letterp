@@ -7,6 +7,7 @@
     "start:launch-token": "node dist/launch-token.js",
     "start:agent-launch": "node dist/agent-launch.js",
     "start:pay-to-read": "node dist/pay-to-read.js",
+    "start:memo": "node dist/memo.js",
     "clean": "rm -rf dist"
   },
   "dependencies": {

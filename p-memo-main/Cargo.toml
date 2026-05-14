@@ -1,8 +1,7 @@
 [package]
 name = "p-memo"
-version = "0.0.0"
-description = "A pinocchio-based Memo (aka 'p-memo') program"
-repository = "https://github.com/febo/p-memo"
+version = "0.1.0"
+description = "LetterP low-compute Pinocchio memo program for p-agent and x402 receipts"
 license = "Apache-2.0"
 edition = "2021"
 readme = "./README.md"

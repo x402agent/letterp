@@ -64,6 +64,17 @@ const PAYTO_FALLBACK = new PublicKey(
  */
 type PayToResolver = (req: Request) => PublicKey;
 
+interface FacilitatorVerifyResponse {
+  valid: boolean;
+  invalidReason?: string;
+}
+
+interface FacilitatorSettleResponse {
+  success: boolean;
+  error?: string;
+  [key: string]: unknown;
+}
+
 function require402(
   amountUsdc: string,
   description: string,
@@ -99,7 +110,7 @@ function require402(
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ payment: header, requirements }),
       });
-      const verify = await verifyResp.json();
+      const verify = (await verifyResp.json()) as FacilitatorVerifyResponse;
       if (!verify.valid) {
         res.status(402).json({ error: "Payment invalid", reason: verify.invalidReason });
         return;
@@ -109,7 +120,7 @@ function require402(
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ payment: header, requirements }),
       });
-      const settle = await settleResp.json();
+      const settle = (await settleResp.json()) as FacilitatorSettleResponse;
       if (!settle.success) {
         res.status(402).json({ error: "Settlement failed", reason: settle.error });
         return;

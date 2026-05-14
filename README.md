@@ -40,6 +40,7 @@ Solana Clawd uses this codebase for:
 - p-token launch workflows, mint inspection, registry exploration, and bonding-curve planning.
 - P Agent workflows for faster agent tokens using p-token plus Pinocchio.
 - A local p-token/P Agent workbench at [p-token-launcher](p-token-launcher/README.md).
+- A low-compute p-memo program at [p-memo-main](p-memo-main/README.md) for launch, agent, and x402 settlement receipts.
 - Pinocchio-native drafts for the agent token program and bonding curve launchpad.
 - Program templates for vaults, escrow applications, p-token launchers, and p-agent-token flows.
 - Agent/MCP-style discovery so local agents can inspect templates, explain tradeoffs, and register launched p-tokens.
@@ -89,6 +90,7 @@ Run the native Pinocchio checks:
 ```bash
 CARGO_TARGET_DIR=/tmp/letterp-p-agent-token-target cargo check --manifest-path p-agent-token/Cargo.toml
 CARGO_TARGET_DIR=/tmp/letterp-bonding-curve-target cargo check --manifest-path programs/src/Cargo.toml
+npm run memo:build
 ```
 
 The docs also describe these intended agent/MCP CLI aliases:

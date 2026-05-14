@@ -8,7 +8,7 @@ Express service implementing the reference x402 facilitator endpoints for this w
 |--------|------|---------|
 | `GET` | `/supported` | Returns accepted network, asset, scheme, and amount bounds. |
 | `POST` | `/verify` | Validates the request body and checks that the payment looks like a Solana transaction signature. |
-| `POST` | `/settle` | Marks a payment/resource pair as settled for idempotency. |
+| `POST` | `/settle` | Marks a payment/resource pair as settled and returns a serialized p-memo receipt instruction. |
 | `GET` | `/health` | Basic service health response. |
 
 ## Build and Run
@@ -32,3 +32,7 @@ The default port is `4402`.
 ## Production Gaps
 
 This is a reference implementation. It does not submit transfers or confirm transaction contents on-chain. A production facilitator should verify the referenced transaction, confirm amount and recipient, enforce freshness, and store idempotency in durable storage.
+
+## Memo Receipts
+
+Settlement responses include a p-memo instruction with a `x402:settled:<payment-id>` memo. Clients can append that instruction to a transaction to leave a low-compute audit trail using `p-memo-main`.

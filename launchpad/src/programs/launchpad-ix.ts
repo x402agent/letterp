@@ -503,7 +503,7 @@ export function buildFeeDistributionIx(
     throw new Error("p-token batch supports at most 255 recipients per instruction");
   }
 
-  const parts = [Buffer.from([25, recipients.length])];
+  const parts: Buffer[] = [Buffer.from([25, recipients.length])];
   for (const recipient of recipients) {
     parts.push(u64(recipient.amount), Buffer.from([decimals]));
   }
