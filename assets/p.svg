@@ -1,0 +1,42 @@
+<svg width="640" height="360" viewBox="0 0 640 360" role="img" aria-label="Animated ASCII art letter P" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="360" fill="#050505"/>
+  <style>
+    .p {
+      fill: #39ff14;
+      font: 700 24px ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      letter-spacing: 2px;
+      filter: drop-shadow(0 0 8px #39ff14);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    .scan {
+      fill: rgba(255, 255, 255, 0.12);
+      animation: scan 2.4s linear infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        fill: #39ff14;
+        opacity: 0.72;
+        transform: translateY(0);
+      }
+      50% {
+        fill: #ffffff;
+        opacity: 1;
+        transform: translateY(-2px);
+      }
+    }
+
+    @keyframes scan {
+      from { transform: translateY(-80px); }
+      to { transform: translateY(360px); }
+    }
+  </style>
+  <text class="p" x="138" y="84">██████╗</text>
+  <text class="p" x="138" y="120">██╔══██╗</text>
+  <text class="p" x="138" y="156">██████╔╝</text>
+  <text class="p" x="138" y="192">██╔═══╝</text>
+  <text class="p" x="138" y="228">██║</text>
+  <text class="p" x="138" y="264">╚═╝</text>
+  <rect class="scan" x="0" y="0" width="640" height="52"/>
+</svg>
