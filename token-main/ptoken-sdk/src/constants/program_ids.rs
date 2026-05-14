@@ -1,4 +1,4 @@
-//! Canonical Solana program IDs used by pToken.
+//! Canonical Solana program IDs used by LetterP token helpers.
 
 use solana_program::pubkey;
 use solana_program::pubkey::Pubkey;

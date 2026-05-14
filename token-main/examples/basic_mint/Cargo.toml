@@ -2,7 +2,7 @@
 name = "basic-mint"
 version = "0.1.0"
 edition = "2021"
-description = "pToken example: create a mint, ATA, mint, transfer, and burn"
+description = "LetterP example: create a mint, ATA, mint, transfer, and burn"
 
 [lib]
 crate-type = ["cdylib", "lib"]

@@ -2,7 +2,7 @@
 name = "transfer-with-fee"
 version = "0.1.0"
 edition = "2021"
-description = "pToken example: Token-2022 transfer fee extension"
+description = "LetterP example: Token-2022 transfer fee extension"
 
 [lib]
 crate-type = ["cdylib", "lib"]

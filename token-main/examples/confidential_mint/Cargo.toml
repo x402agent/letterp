@@ -2,7 +2,7 @@
 name = "confidential-mint"
 version = "0.1.0"
 edition = "2021"
-description = "pToken example: Token-2022 confidential transfer extension"
+description = "LetterP example: Token-2022 confidential transfer extension"
 
 [lib]
 crate-type = ["cdylib", "lib"]

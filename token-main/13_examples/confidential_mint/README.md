@@ -7,7 +7,7 @@ Token-2022 confidential-transfer mint setup walkthrough.
 
 ## Contract Notes
 - Demonstrates extension-oriented account flow.
-- Cryptographic inputs are placeholders for integration tests.
+- Cryptographic inputs are deterministic test fixtures until the example is wired to real key material.
 
 ## Audit Hooks
 - Check signer, owner, and writable requirements before CPI or state mutation.

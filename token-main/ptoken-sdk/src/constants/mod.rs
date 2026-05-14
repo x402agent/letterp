@@ -1,4 +1,4 @@
-//! Constants used throughout the pToken SDK.
+//! Constants used throughout the LetterP token SDK.
 
 pub mod program_ids;
 pub mod seeds;

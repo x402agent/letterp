@@ -1,13 +1,13 @@
 //! # Basic Mint Example
 //!
-//! Demonstrates the simplest pToken workflow using SPL Token classic:
+//! Demonstrates the simplest LetterP workflow using SPL Token classic:
 //! 1. Create and initialize a mint (6 decimals)
 //! 2. Create an Associated Token Account for the user
 //! 3. Mint 1,000,000 raw units to the ATA
 //! 4. Transfer 500,000 units to a second wallet
 //! 5. Burn 100,000 units
 //!
-//! This example uses Pinocchio-style account parsing with pToken SDK helpers.
+//! This example uses explicit account parsing with LetterP SDK helpers.
 
 use solana_program::{
     account_info::{next_account_info, AccountInfo},

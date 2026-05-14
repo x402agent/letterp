@@ -1,4 +1,4 @@
-//! Test suites for the pToken SDK.
+//! Test suites for the LetterP token SDK.
 
 pub mod unit;
 pub mod integration;

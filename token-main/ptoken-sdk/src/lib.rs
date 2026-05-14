@@ -1,8 +1,8 @@
-//! # pToken SDK
+//! # LetterP Token SDK
 //!
-//! A high-performance Solana token SDK built on Pinocchio principles —
-//! zero-dependency, close-to-the-metal Rust primitives for SPL Token
-//! and Token-2022 programs.
+//! Solana token primitives for LetterP programs that use SPL Token and
+//! Token-2022 directly with explicit account, instruction, and arithmetic
+//! boundaries.
 //!
 //! ## Modules
 //! - [`pinocchio_core`] — Pinocchio runtime primitives

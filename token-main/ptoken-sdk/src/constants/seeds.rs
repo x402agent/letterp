@@ -1,4 +1,4 @@
-//! PDA seed byte arrays for pToken programs.
+//! PDA seed byte arrays for LetterP token programs.
 
 /// Seed for user-specific mint PDAs.
 pub const MINT_SEED: &[u8] = b"mint";
