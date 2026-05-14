@@ -6,6 +6,11 @@ members = [
     "examples/token_with_metadata",
     "examples/transfer_hook_example",
     "examples/transfer_with_fee",
+    "programs/p_agent",
+    "programs/p_token",
+    "programs/x402_gateway",
+    "programs/bonding_curve",
+    "programs/perpetuals",
 ]
 resolver = "2"
 

@@ -2181,6 +2181,46 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "09edd9e8b54e49e587e4f6295a7d29c3ea94d469cb40ab8ca70b288248a81db2"
 
 [[package]]
+name = "letterp-bonding-curve"
+version = "0.1.0"
+dependencies = [
+ "ptoken-sdk",
+ "solana-program",
+]
+
+[[package]]
+name = "letterp-p-agent"
+version = "0.1.0"
+dependencies = [
+ "ptoken-sdk",
+ "solana-program",
+]
+
+[[package]]
+name = "letterp-p-token"
+version = "0.1.0"
+dependencies = [
+ "ptoken-sdk",
+ "solana-program",
+]
+
+[[package]]
+name = "letterp-perpetuals"
+version = "0.1.0"
+dependencies = [
+ "ptoken-sdk",
+ "solana-program",
+]
+
+[[package]]
+name = "letterp-x402-gateway"
+version = "0.1.0"
+dependencies = [
+ "ptoken-sdk",
+ "solana-program",
+]
+
+[[package]]
 name = "libc"
 version = "0.2.186"
 source = "registry+https://github.com/rust-lang/crates.io-index"

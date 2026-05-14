@@ -26,28 +26,28 @@
 #![forbid(unsafe_code)]
 
 pub mod agent;
-#[cfg(not(kani))]
+#[cfg(all(not(kani), feature = "runtime"))]
 pub mod associated_token;
 pub mod bonding_curve;
 pub mod constants;
-#[cfg(not(kani))]
+#[cfg(all(not(kani), feature = "runtime"))]
 pub mod cpi;
 pub mod errors;
-#[cfg(not(kani))]
+#[cfg(all(not(kani), feature = "all-extensions"))]
 pub mod extensions;
 pub mod math;
-#[cfg(not(kani))]
+#[cfg(all(not(kani), feature = "runtime"))]
 pub mod pda;
 pub mod perpetuals;
-#[cfg(not(kani))]
+#[cfg(all(not(kani), feature = "runtime"))]
 pub mod pinocchio_core;
-#[cfg(not(kani))]
+#[cfg(all(not(kani), feature = "runtime"))]
 pub mod serialization;
-#[cfg(not(kani))]
+#[cfg(all(not(kani), feature = "token-2022"))]
 pub mod token_2022;
-#[cfg(not(kani))]
+#[cfg(all(not(kani), feature = "token-classic"))]
 pub mod token_classic;
-#[cfg(not(kani))]
+#[cfg(all(not(kani), feature = "runtime"))]
 pub mod validation;
 pub mod x402;
 

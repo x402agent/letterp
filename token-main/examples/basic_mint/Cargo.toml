@@ -11,7 +11,7 @@ crate-type = ["cdylib", "lib"]
 solana-program = { workspace = true }
 spl-token = { workspace = true }
 spl-associated-token-account = { workspace = true }
-ptoken-sdk = { path = "../../ptoken-sdk" }
+ptoken-sdk = { path = "../../ptoken-sdk", features = ["full"] }
 
 [lints.rust]
 unexpected_cfgs = { level = "allow", check-cfg = ['cfg(target_os, values("solana"))', 'cfg(feature, values("custom-heap", "custom-panic"))'] }

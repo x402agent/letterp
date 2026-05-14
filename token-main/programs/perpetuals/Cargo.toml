@@ -1,16 +1,16 @@
 [package]
-name = "confidential-mint"
+name = "letterp-perpetuals"
 version = "0.1.0"
 edition = "2021"
-description = "LetterP example: Token-2022 confidential transfer extension"
+description = "LetterP perpetuals Solana program"
+license = "MIT"
 
 [lib]
-crate-type = ["cdylib", "lib"]
+crate-type = ["cdylib"]
 
 [dependencies]
 solana-program = { workspace = true }
-spl-token-2022 = { workspace = true }
-ptoken-sdk = { path = "../../ptoken-sdk", features = ["full"] }
+ptoken-sdk = { path = "../../ptoken-sdk" }
 
 [lints.rust]
 unexpected_cfgs = { level = "allow", check-cfg = ['cfg(target_os, values("solana"))', 'cfg(feature, values("custom-heap", "custom-panic"))'] }

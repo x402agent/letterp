@@ -6,10 +6,12 @@ description = "LetterP Solana token SDK primitives for SPL Token and Token-2022"
 license = "MIT"
 
 [lib]
-crate-type = ["cdylib", "lib"]
+crate-type = ["lib"]
 
 [features]
 default = []
+full = ["runtime", "token-classic", "token-2022", "all-extensions"]
+runtime = []
 token-classic = []
 token-2022 = []
 all-extensions = ["token-2022"]
