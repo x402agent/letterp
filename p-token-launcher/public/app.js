@@ -6,6 +6,7 @@ const state = {
 
 const outputIds = [
   "explore-output",
+  "pinocchio-output",
   "plan-output",
   "agent-output",
   "program-output",
@@ -21,6 +22,10 @@ document.querySelectorAll(".tabs button").forEach((button) => {
 
 document.getElementById("workspace-button").addEventListener("click", async () => {
   render("explore-output", await getJson("/api/workspace"));
+});
+
+document.getElementById("pinocchio-button").addEventListener("click", async () => {
+  render("pinocchio-output", await getJson("/api/pinocchio"));
 });
 
 document.getElementById("explore-form").addEventListener("submit", async (event) => {
@@ -68,15 +73,17 @@ document.getElementById("inspect-form").addEventListener("submit", async (event)
 await boot();
 
 async function boot() {
-  const [health, registry, workspace] = await Promise.all([
+  const [health, registry, workspace, pinocchio] = await Promise.all([
     getJson("/api/health"),
     getJson("/api/registry"),
     getJson("/api/workspace"),
+    getJson("/api/pinocchio"),
   ]);
   document.getElementById("status").textContent =
     `${health.network} / ${health.unsigned ? "unsigned" : "signing"} / ${workspace.packages.length} modules`;
   render("registry-output", registry);
   render("explore-output", workspace);
+  render("pinocchio-output", pinocchio);
   document.getElementById("launch-form").requestSubmit();
   document.getElementById("agent-form").requestSubmit();
   document.getElementById("program-form").requestSubmit();

@@ -12,7 +12,7 @@ use instructions::{
 
 entrypoint!(process_instruction);
 
-pub const ID: Address = [0; 32];
+pub const ID: Address = Address::new_from_array([0; 32]);
 
 fn process_instruction(
     _program_id: &Address,

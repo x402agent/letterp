@@ -78,6 +78,11 @@ async function handleApi(req, res, url) {
     return;
   }
 
+  if (req.method === "GET" && url.pathname === "/api/pinocchio") {
+    sendJson(res, 200, pinocchioMap());
+    return;
+  }
+
   if (req.method === "GET" && url.pathname === "/api/registry") {
     sendJson(res, 200, readRegistry());
     return;
@@ -180,6 +185,7 @@ function workspaceMap() {
   return {
     repoRoot,
     unsigned: true,
+    pinocchio: pinocchioMap(),
     packages: [
       {
         name: "agent-sdk",
@@ -212,8 +218,79 @@ function workspaceMap() {
         entrypoints: ["src/drift-adapter.ts"],
       },
     ],
-    documents: ["docs/PROTOCOL.md", "docs/P_AGENTS.md", "docs/PROGRAM_DRAFT.md", "p-agent-token/DEPLOYMENT.md"],
+    documents: [
+      "docs/PROTOCOL.md",
+      "docs/P_AGENTS.md",
+      "docs/PROGRAM_DRAFT.md",
+      "docs/PINOCCHIO_ADAPTATION.md",
+      "p-agent-token/DEPLOYMENT.md",
+    ],
     templates: ["templates/escrow", "templates/vault", "templates/p-agent-token", "templates/p-token-launcher"],
+  };
+}
+
+function pinocchioMap() {
+  return {
+    source: "pinocchio/pinocchio-main",
+    sdk: {
+      crate: "pinocchio",
+      path: "pinocchio/pinocchio-main/sdk",
+      version: "0.11.1",
+      exports: ["AccountView", "Address", "ProgramResult", "error::ProgramError", "entrypoint"],
+    },
+    helperPrograms: [
+      {
+        crate: "pinocchio-system",
+        path: "pinocchio/pinocchio-main/programs/system",
+        usedBy: ["p-agent-token", "programs/src"],
+      },
+      {
+        crate: "pinocchio-token",
+        path: "pinocchio/pinocchio-main/programs/token",
+        usedBy: ["p-agent-token", "programs/src"],
+      },
+      {
+        crate: "pinocchio-associated-token-account",
+        path: "pinocchio/pinocchio-main/programs/associated-token-account",
+        usedBy: ["p-agent-token"],
+      },
+      {
+        crate: "pinocchio-token-2022",
+        path: "pinocchio/pinocchio-main/programs/token-2022",
+        usedBy: ["future token extension work"],
+      },
+      {
+        crate: "pinocchio-memo",
+        path: "pinocchio/pinocchio-main/programs/memo",
+        usedBy: ["future audit trail memos"],
+      },
+    ],
+    adaptedSurfaces: [
+      {
+        surface: "p-agent-token",
+        status: "path-linked and cargo-checking",
+        contract: "Core asset binding, agent-token state, execution delegation",
+      },
+      {
+        surface: "programs/src",
+        status: "path-linked and cargo-checking",
+        contract: "Bonding curve launchpad program shell",
+      },
+      {
+        surface: "p-token-launcher",
+        status: "exposes Pinocchio map and deployment draft endpoints",
+        contract: "Frontend/API exploration of p-token and P Agent program plans",
+      },
+      {
+        surface: "launchpad",
+        status: "TypeScript builders mirror Pinocchio instruction discriminators",
+        contract: "Unsigned client instructions and x402-gated HTTP routes",
+      },
+    ],
+    checks: [
+      "CARGO_TARGET_DIR=/tmp/letterp-p-agent-token-target cargo check",
+      "CARGO_TARGET_DIR=/tmp/letterp-bonding-curve-target cargo check",
+    ],
   };
 }
 
@@ -379,12 +456,14 @@ function programDraft(input) {
         programId: launchpadProgramId,
         purpose: "bonding curve state, buy/sell/graduation, creator fee claiming",
         sourceOfTruth: "docs/PROTOCOL.md",
+        pinocchioDeps: ["pinocchio", "pinocchio-system", "pinocchio-token"],
       },
       agentToken: {
         path: "p-agent-token",
         programId: agentProgramId,
         purpose: "agent state, Core asset binding, p-token mint binding, executive delegation",
         sourceOfTruth: "p-agent-token/DEPLOYMENT.md",
+        pinocchioDeps: ["pinocchio", "pinocchio-system", "pinocchio-token", "pinocchio-associated-token-account"],
       },
       tokenProgram: {
         programId: pTokenProgramId,

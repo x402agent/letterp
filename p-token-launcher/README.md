@@ -39,6 +39,7 @@ http://localhost:8787
 |-------|---------|
 | `GET /api/health` | Runtime status, target network, p-token program ID, and supported adapters. |
 | `GET /api/workspace` | Returns the repo module map, docs, and template locations. |
+| `GET /api/pinocchio` | Returns the local Pinocchio SDK/helper crate map and adapted surfaces. |
 | `GET /api/registry` | Reads `data/ptokens.json` when present; otherwise returns an empty registry. |
 | `GET /api/examples` | Returns `launch-config.example.json` and `bonding-curve.example.json`. |
 | `POST /api/explore` | Classifies an address, metadata URI, perp market, or workspace query and returns next actions. |

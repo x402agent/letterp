@@ -16,6 +16,7 @@
         <div class="status-stack">
           <div class="status" id="status">Connecting</div>
           <button class="ghost" id="workspace-button" type="button">Workspace</button>
+          <button class="ghost" id="pinocchio-button" type="button">Pinocchio</button>
         </div>
       </header>
 
@@ -134,6 +135,7 @@
       <section class="output-band">
         <div class="tabs">
           <button class="active" data-output="explore-output">Explore</button>
+          <button data-output="pinocchio-output">Pinocchio</button>
           <button data-output="plan-output">Launch</button>
           <button data-output="agent-output">Agent</button>
           <button data-output="program-output">Program</button>
@@ -143,6 +145,7 @@
           <button data-output="registry-output">Registry</button>
         </div>
         <pre id="explore-output" class="output active"></pre>
+        <pre id="pinocchio-output" class="output"></pre>
         <pre id="plan-output" class="output"></pre>
         <pre id="agent-output" class="output"></pre>
         <pre id="program-output" class="output"></pre>
