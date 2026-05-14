@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "source": "pinocchio/pinocchio-main",
+  "programs": [
+    {
+      "name": "pinocchio",
+      "path": "pinocchio/pinocchio-main/sdk",
+      "usedBy": ["p-agent-token", "programs/src"],
+      "adaptation": "Native SDK: AccountView, Address, ProgramResult, entrypoint"
+    },
+    {
+      "name": "pinocchio-system",
+      "path": "pinocchio/pinocchio-main/programs/system",
+      "usedBy": ["p-agent-token", "programs/src", "templates/vault", "templates/escrow"],
+      "adaptation": "System CPI helper surface for account creation, SOL movement, and PDA state"
+    },
+    {
+      "name": "pinocchio-token",
+      "path": "pinocchio/pinocchio-main/programs/token",
+      "usedBy": ["p-agent-token", "programs/src", "templates"],
+      "adaptation": "SPL-compatible token CPI helper surface for p-token/SPL fallback flows"
+    },
+    {
+      "name": "pinocchio-associated-token-account",
+      "path": "pinocchio/pinocchio-main/programs/associated-token-account",
+      "usedBy": ["p-agent-token", "templates"],
+      "adaptation": "ATA creation and validation for launch, vault, escrow, and agent flows"
+    },
+    {
+      "name": "pinocchio-token-2022",
+      "path": "pinocchio/pinocchio-main/programs/token-2022",
+      "usedBy": ["future-token-extension-work"],
+      "adaptation": "Reserved for extension-aware p-token launches"
+    },
+    {
+      "name": "pinocchio-memo",
+      "path": "pinocchio/pinocchio-main/programs/memo",
+      "usedBy": ["future-agent-trace-work"],
+      "adaptation": "Reserved for launch annotations and trace markers"
+    }
+  ]
+}
