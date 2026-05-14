@@ -7,7 +7,6 @@ import {
 } from "@solana/web3.js";
 import BN from "bn.js";
 import {
-  MPL_CORE_PROGRAM_ID,
   P_TOKEN_LAUNCHPAD_PROGRAM_ID,
   findAssetSignerPda,
   findAgentPda,
@@ -83,7 +82,7 @@ export class PAgent {
       creatorFeeBps: opts.creatorFeeBps,
     });
 
-    return built.instructions.map((ix) =>
+    return built.instructions.map((ix: TransactionInstruction) =>
       wrapAgentExecute(this.asset, signerPda, ix),
     );
   }
