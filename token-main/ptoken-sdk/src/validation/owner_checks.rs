@@ -1,7 +1,7 @@
 //! Account program-ownership checks.
 
+use crate::{constants::program_ids::*, errors::PTokenError};
 use solana_program::account_info::AccountInfo;
-use crate::{errors::PTokenError, constants::program_ids::*};
 
 /// Assert an account is owned by the SPL Token program.
 pub fn assert_owned_by_token_program(account: &AccountInfo) -> Result<(), PTokenError> {

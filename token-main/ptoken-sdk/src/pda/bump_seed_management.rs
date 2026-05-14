@@ -7,7 +7,9 @@ use solana_program::{account_info::AccountInfo, program_error::ProgramError};
 /// Write a bump seed to a specific byte offset in account data.
 pub fn store_bump(account: &AccountInfo, offset: usize, bump: u8) -> Result<(), ProgramError> {
     let mut data = account.data.borrow_mut();
-    *data.get_mut(offset).ok_or(ProgramError::InvalidAccountData)? = bump;
+    *data
+        .get_mut(offset)
+        .ok_or(ProgramError::InvalidAccountData)? = bump;
     Ok(())
 }
 

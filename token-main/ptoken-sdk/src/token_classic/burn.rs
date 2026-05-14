@@ -1,18 +1,14 @@
 //! SPL Token burn operations.
 
-use solana_program::{
-    account_info::AccountInfo,
-    entrypoint::ProgramResult,
-    program::invoke,
-};
-use spl_token::instruction as token_ix;
 use crate::constants::program_ids::TOKEN_PROGRAM_ID;
+use solana_program::{account_info::AccountInfo, entrypoint::ProgramResult, program::invoke};
+use spl_token::instruction as token_ix;
 
 /// Burn tokens from `account`, reducing the mint's total supply.
-pub fn burn(
-    account: &AccountInfo,
-    mint: &AccountInfo,
-    authority: &AccountInfo,
+pub fn burn<'a>(
+    account: &AccountInfo<'a>,
+    mint: &AccountInfo<'a>,
+    authority: &AccountInfo<'a>,
     amount: u64,
 ) -> ProgramResult {
     invoke(
@@ -29,10 +25,10 @@ pub fn burn(
 }
 
 /// Burn tokens with a checked instruction (verifies decimals on-chain).
-pub fn burn_checked(
-    account: &AccountInfo,
-    mint: &AccountInfo,
-    authority: &AccountInfo,
+pub fn burn_checked<'a>(
+    account: &AccountInfo<'a>,
+    mint: &AccountInfo<'a>,
+    authority: &AccountInfo<'a>,
     amount: u64,
     decimals: u8,
 ) -> ProgramResult {

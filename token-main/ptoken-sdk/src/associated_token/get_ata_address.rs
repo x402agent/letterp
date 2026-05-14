@@ -1,8 +1,8 @@
 //! Derive Associated Token Account addresses.
 
+use crate::constants::program_ids::{TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID};
 use solana_program::pubkey::Pubkey;
 use spl_associated_token_account::get_associated_token_address_with_program_id;
-use crate::constants::program_ids::{TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID};
 
 /// Derive the ATA address for a wallet and mint (SPL Token classic).
 pub fn get_associated_token_address(wallet: &Pubkey, mint: &Pubkey) -> Pubkey {

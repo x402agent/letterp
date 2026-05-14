@@ -1,13 +1,10 @@
 //! Reallocate Token-2022 token accounts to add new extensions.
 
+use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
 use solana_program::{
-    account_info::AccountInfo,
-    entrypoint::ProgramResult,
-    program::invoke,
-    pubkey::Pubkey,
+    account_info::AccountInfo, entrypoint::ProgramResult, program::invoke, pubkey::Pubkey,
 };
 use spl_token_2022::{extension::ExtensionType, instruction as token_ix};
-use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
 
 /// Add new extensions to an existing Token-2022 token account.
 ///
@@ -15,10 +12,10 @@ use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
 /// append the required space for the new extensions.
 ///
 /// The payer covers any additional rent lamports required.
-pub fn reallocate(
-    token_account: &AccountInfo,
-    payer: &AccountInfo,
-    owner: &AccountInfo,
+pub fn reallocate<'a>(
+    token_account: &AccountInfo<'a>,
+    payer: &AccountInfo<'a>,
+    owner: &AccountInfo<'a>,
     new_extensions: &[ExtensionType],
 ) -> ProgramResult {
     invoke(
@@ -35,10 +32,10 @@ pub fn reallocate(
 }
 
 /// Reallocate using a PDA owner.
-pub fn reallocate_signed(
-    token_account: &AccountInfo,
-    payer: &AccountInfo,
-    pda_owner: &AccountInfo,
+pub fn reallocate_signed<'a>(
+    token_account: &AccountInfo<'a>,
+    payer: &AccountInfo<'a>,
+    pda_owner: &AccountInfo<'a>,
     new_extensions: &[ExtensionType],
     signer_seeds: &[&[&[u8]]],
 ) -> ProgramResult {

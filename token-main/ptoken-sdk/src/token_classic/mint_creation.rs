@@ -1,16 +1,11 @@
 //! Initialize new SPL Token mint accounts.
 
+use crate::constants::program_ids::TOKEN_PROGRAM_ID;
 use solana_program::{
-    account_info::AccountInfo,
-    entrypoint::ProgramResult,
-    program::invoke,
-    pubkey::Pubkey,
-    rent::Rent,
-    system_instruction,
-    sysvar::Sysvar,
+    account_info::AccountInfo, entrypoint::ProgramResult, program::invoke, program_pack::Pack,
+    pubkey::Pubkey, rent::Rent, system_instruction, sysvar::Sysvar,
 };
 use spl_token::instruction as token_ix;
-use crate::{constants::program_ids::TOKEN_PROGRAM_ID, errors::PTokenError};
 
 /// Parameters for creating a new mint.
 #[derive(Debug, Clone)]
@@ -30,15 +25,15 @@ pub struct InitializeMintParams<'a> {
 /// Performs two instructions:
 /// 1. `system_program::create_account` — allocates space and funds rent
 /// 2. `spl_token::initialize_mint` — sets authority and decimals
-pub fn create_and_initialize_mint(
-    payer: &AccountInfo,
-    mint: &AccountInfo,
+pub fn create_and_initialize_mint<'a>(
+    payer: &AccountInfo<'a>,
+    mint: &AccountInfo<'a>,
     mint_authority: &Pubkey,
     freeze_authority: Option<&Pubkey>,
     decimals: u8,
-    system_program: &AccountInfo,
-    token_program: &AccountInfo,
-    rent_sysvar: &AccountInfo,
+    system_program: &AccountInfo<'a>,
+    token_program: &AccountInfo<'a>,
+    rent_sysvar: &AccountInfo<'a>,
 ) -> ProgramResult {
     let rent = Rent::get()?;
     let mint_rent = rent.minimum_balance(spl_token::state::Mint::LEN);
@@ -71,12 +66,12 @@ pub fn create_and_initialize_mint(
 }
 
 /// Initialize an already-allocated mint account (no create_account CPI).
-pub fn initialize_mint(
-    mint: &AccountInfo,
+pub fn initialize_mint<'a>(
+    mint: &AccountInfo<'a>,
     mint_authority: &Pubkey,
     freeze_authority: Option<&Pubkey>,
     decimals: u8,
-    rent_sysvar: &AccountInfo,
+    rent_sysvar: &AccountInfo<'a>,
 ) -> ProgramResult {
     invoke(
         &token_ix::initialize_mint(
@@ -93,10 +88,10 @@ pub fn initialize_mint(
 /// Mint new tokens to a destination account.
 ///
 /// Requires the mint authority to sign.
-pub fn mint_to(
-    mint: &AccountInfo,
-    destination: &AccountInfo,
-    authority: &AccountInfo,
+pub fn mint_to<'a>(
+    mint: &AccountInfo<'a>,
+    destination: &AccountInfo<'a>,
+    authority: &AccountInfo<'a>,
     amount: u64,
 ) -> ProgramResult {
     invoke(
@@ -113,10 +108,10 @@ pub fn mint_to(
 }
 
 /// Mint tokens using a PDA authority (invoke_signed).
-pub fn mint_to_signed(
-    mint: &AccountInfo,
-    destination: &AccountInfo,
-    pda_authority: &AccountInfo,
+pub fn mint_to_signed<'a>(
+    mint: &AccountInfo<'a>,
+    destination: &AccountInfo<'a>,
+    pda_authority: &AccountInfo<'a>,
     amount: u64,
     signer_seeds: &[&[&[u8]]],
 ) -> ProgramResult {

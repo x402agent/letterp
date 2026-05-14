@@ -1,18 +1,15 @@
 //! CPI into the Solana System Program.
 
 use solana_program::{
-    account_info::AccountInfo,
-    entrypoint::ProgramResult,
-    program::invoke,
-    pubkey::Pubkey,
+    account_info::AccountInfo, entrypoint::ProgramResult, program::invoke, pubkey::Pubkey,
     system_instruction,
 };
 
 /// CPI: create a new account owned by `owner_program`.
-pub fn cpi_create_account(
-    payer: &AccountInfo,
-    new_account: &AccountInfo,
-    system_program: &AccountInfo,
+pub fn cpi_create_account<'a>(
+    payer: &AccountInfo<'a>,
+    new_account: &AccountInfo<'a>,
+    system_program: &AccountInfo<'a>,
     owner_program: &Pubkey,
     lamports: u64,
     space: u64,
@@ -30,10 +27,10 @@ pub fn cpi_create_account(
 }
 
 /// CPI: transfer SOL from `from` to `to`.
-pub fn cpi_transfer_sol(
-    from: &AccountInfo,
-    to: &AccountInfo,
-    system_program: &AccountInfo,
+pub fn cpi_transfer_sol<'a>(
+    from: &AccountInfo<'a>,
+    to: &AccountInfo<'a>,
+    system_program: &AccountInfo<'a>,
     lamports: u64,
 ) -> ProgramResult {
     invoke(
@@ -43,10 +40,10 @@ pub fn cpi_transfer_sol(
 }
 
 /// CPI: transfer SOL using a PDA authority.
-pub fn cpi_transfer_sol_signed(
-    from: &AccountInfo,
-    to: &AccountInfo,
-    system_program: &AccountInfo,
+pub fn cpi_transfer_sol_signed<'a>(
+    from: &AccountInfo<'a>,
+    to: &AccountInfo<'a>,
+    system_program: &AccountInfo<'a>,
     lamports: u64,
     signer_seeds: &[&[&[u8]]],
 ) -> ProgramResult {
@@ -58,9 +55,9 @@ pub fn cpi_transfer_sol_signed(
 }
 
 /// CPI: allocate space for an account.
-pub fn cpi_allocate(
-    account: &AccountInfo,
-    system_program: &AccountInfo,
+pub fn cpi_allocate<'a>(
+    account: &AccountInfo<'a>,
+    system_program: &AccountInfo<'a>,
     space: u64,
 ) -> ProgramResult {
     invoke(
@@ -70,9 +67,9 @@ pub fn cpi_allocate(
 }
 
 /// CPI: assign an account to a program.
-pub fn cpi_assign(
-    account: &AccountInfo,
-    system_program: &AccountInfo,
+pub fn cpi_assign<'a>(
+    account: &AccountInfo<'a>,
+    system_program: &AccountInfo<'a>,
     owner: &Pubkey,
 ) -> ProgramResult {
     invoke(

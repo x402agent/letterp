@@ -20,8 +20,10 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(kani)'] }
 
 [dependencies]
 solana-program = { workspace = true }
+solana-zk-token-sdk = { workspace = true }
 spl-token = { workspace = true }
 spl-token-2022 = { workspace = true }
+spl-token-metadata-interface = { workspace = true }
 spl-associated-token-account = { workspace = true }
 borsh = { workspace = true }
 thiserror = { workspace = true }

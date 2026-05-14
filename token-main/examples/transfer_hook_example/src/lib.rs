@@ -14,6 +14,11 @@
 //! 2. Create mint via Program A, pointing hook to Program B
 //! 3. Every `transfer_checked` call invokes Program B automatically
 
+use ptoken_sdk::{
+    extensions::transfer_hook::{initialize_transfer_hook, update_transfer_hook},
+    token_2022::mint_with_extensions::create_mint_with_extensions,
+    validation::signer_checks::assert_signer,
+};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint,
@@ -21,11 +26,6 @@ use solana_program::{
     msg,
     program_error::ProgramError,
     pubkey::Pubkey,
-};
-use ptoken_sdk::{
-    extensions::transfer_hook::{initialize_transfer_hook, update_transfer_hook},
-    token_2022::mint_with_extensions::create_mint_with_extensions,
-    validation::signer_checks::assert_signer,
 };
 use spl_token_2022::extension::ExtensionType;
 
@@ -38,7 +38,11 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
-    match instruction_data.first().copied().ok_or(ProgramError::InvalidInstructionData)? {
+    match instruction_data
+        .first()
+        .copied()
+        .ok_or(ProgramError::InvalidInstructionData)?
+    {
         0 => process_create_hook_mint(accounts, &instruction_data[1..]),
         1 => process_update_hook(accounts, &instruction_data[1..]),
         _ => Err(ProgramError::InvalidInstructionData),
@@ -76,8 +80,8 @@ fn process_create_hook_mint(accounts: &[AccountInfo], data: &[u8]) -> ProgramRes
     // Initialize the transfer hook extension
     initialize_transfer_hook(
         mint,
-        Some(payer.key),         // authority can update the hook
-        Some(&hook_program_id),  // the hook program to invoke on every transfer
+        Some(payer.key),        // authority can update the hook
+        Some(&hook_program_id), // the hook program to invoke on every transfer
     )?;
 
     msg!("Hook mint created: {}", mint.key);
@@ -126,7 +130,8 @@ pub fn execute_hook(
     let amount = ptoken_sdk::serialization::borsh_decode::read_u64(
         instruction_data,
         instruction_data.len().saturating_sub(8),
-    ).unwrap_or(0);
+    )
+    .unwrap_or(0);
 
     msg!("Transfer hook fired — amount: {} raw units", amount);
 
@@ -140,6 +145,10 @@ pub fn execute_hook(
         return Err(ProgramError::Custom(1));
     }
 
-    msg!("Transfer hook passed. Amount {} >= minimum {}.", amount, MIN_TRANSFER_AMOUNT);
+    msg!(
+        "Transfer hook passed. Amount {} >= minimum {}.",
+        amount,
+        MIN_TRANSFER_AMOUNT
+    );
     Ok(())
 }

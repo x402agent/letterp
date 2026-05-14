@@ -1,7 +1,7 @@
 //! Checked arithmetic operations for safe token calculations.
 
-use crate::errors::PTokenError;
 use crate::errors::token_errors::PTokenError as Err;
+use crate::errors::PTokenError;
 
 /// Safely add two u64 values, returning [`PTokenError::ArithmeticOverflow`] on overflow.
 pub fn safe_add(a: u64, b: u64) -> Result<u64, PTokenError> {

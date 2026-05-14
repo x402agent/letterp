@@ -1,24 +1,19 @@
 //! Token-2022 token account initialization.
 
+use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
 use solana_program::{
-    account_info::AccountInfo,
-    entrypoint::ProgramResult,
-    program::invoke,
-    pubkey::Pubkey,
-    rent::Rent,
-    system_instruction,
-    sysvar::Sysvar,
+    account_info::AccountInfo, entrypoint::ProgramResult, program::invoke, program_pack::Pack,
+    pubkey::Pubkey, rent::Rent, system_instruction, sysvar::Sysvar,
 };
 use spl_token_2022::{instruction as token_ix, state::Account};
-use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
 
 /// Create and initialize a Token-2022 token account.
-pub fn create_token_account_2022(
-    payer: &AccountInfo,
-    token_account: &AccountInfo,
-    mint: &AccountInfo,
+pub fn create_token_account_2022<'a>(
+    payer: &AccountInfo<'a>,
+    token_account: &AccountInfo<'a>,
+    mint: &AccountInfo<'a>,
     owner: &Pubkey,
-    system_program: &AccountInfo,
+    system_program: &AccountInfo<'a>,
 ) -> ProgramResult {
     let rent = Rent::get()?;
     let space = spl_token_2022::extension::ExtensionType::try_calculate_account_len::<Account>(&[])
@@ -37,12 +32,7 @@ pub fn create_token_account_2022(
     )?;
 
     invoke(
-        &token_ix::initialize_account3(
-            &TOKEN_2022_PROGRAM_ID,
-            token_account.key,
-            mint.key,
-            owner,
-        )?,
+        &token_ix::initialize_account3(&TOKEN_2022_PROGRAM_ID, token_account.key, mint.key, owner)?,
         &[token_account.clone(), mint.clone()],
     )?;
 

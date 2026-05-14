@@ -1,30 +1,25 @@
 //! SPL Token account creation and initialization.
 
+use crate::constants::program_ids::TOKEN_PROGRAM_ID;
 use solana_program::{
-    account_info::AccountInfo,
-    entrypoint::ProgramResult,
-    program::invoke,
-    pubkey::Pubkey,
-    rent::Rent,
-    system_instruction,
-    sysvar::Sysvar,
+    account_info::AccountInfo, entrypoint::ProgramResult, program::invoke, program_pack::Pack,
+    pubkey::Pubkey, rent::Rent, system_instruction, sysvar::Sysvar,
 };
 use spl_token::instruction as token_ix;
-use crate::constants::program_ids::TOKEN_PROGRAM_ID;
 
 /// Create and initialize a new token account.
 ///
 /// Steps:
 /// 1. Allocate account via System program
 /// 2. Initialize via Token program
-pub fn create_token_account(
-    payer: &AccountInfo,
-    token_account: &AccountInfo,
-    mint: &AccountInfo,
+pub fn create_token_account<'a>(
+    payer: &AccountInfo<'a>,
+    token_account: &AccountInfo<'a>,
+    mint: &AccountInfo<'a>,
     owner: &Pubkey,
-    system_program: &AccountInfo,
-    token_program: &AccountInfo,
-    rent_sysvar: &AccountInfo,
+    system_program: &AccountInfo<'a>,
+    token_program: &AccountInfo<'a>,
+    rent_sysvar: &AccountInfo<'a>,
 ) -> ProgramResult {
     let rent = Rent::get()?;
     let account_rent = rent.minimum_balance(spl_token::state::Account::LEN);
@@ -41,36 +36,22 @@ pub fn create_token_account(
     )?;
 
     invoke(
-        &token_ix::initialize_account(
-            &TOKEN_PROGRAM_ID,
-            token_account.key,
-            mint.key,
-            owner,
-        )?,
-        &[
-            token_account.clone(),
-            mint.clone(),
-            rent_sysvar.clone(),
-        ],
+        &token_ix::initialize_account(&TOKEN_PROGRAM_ID, token_account.key, mint.key, owner)?,
+        &[token_account.clone(), mint.clone(), rent_sysvar.clone()],
     )?;
 
     Ok(())
 }
 
 /// Initialize an already-allocated token account.
-pub fn initialize_account(
-    token_account: &AccountInfo,
-    mint: &AccountInfo,
+pub fn initialize_account<'a>(
+    token_account: &AccountInfo<'a>,
+    mint: &AccountInfo<'a>,
     owner: &Pubkey,
-    rent_sysvar: &AccountInfo,
+    rent_sysvar: &AccountInfo<'a>,
 ) -> ProgramResult {
     invoke(
-        &token_ix::initialize_account(
-            &TOKEN_PROGRAM_ID,
-            token_account.key,
-            mint.key,
-            owner,
-        )?,
+        &token_ix::initialize_account(&TOKEN_PROGRAM_ID, token_account.key, mint.key, owner)?,
         &[token_account.clone(), mint.clone(), rent_sysvar.clone()],
     )
 }

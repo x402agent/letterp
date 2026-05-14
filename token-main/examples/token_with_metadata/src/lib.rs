@@ -9,20 +9,19 @@
 //!
 //! Result: A mint that IS its own metadata account.
 
+use ptoken_sdk::{
+    extensions::{
+        metadata_pointer::initialize_metadata_pointer, token_metadata::initialize_token_metadata,
+    },
+    token_2022::mint_with_extensions::create_mint_with_extensions,
+    validation::signer_checks::assert_signer,
+};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint,
     entrypoint::ProgramResult,
     msg,
     pubkey::Pubkey,
-};
-use ptoken_sdk::{
-    extensions::{
-        metadata_pointer::initialize_metadata_pointer,
-        token_metadata::initialize_token_metadata,
-    },
-    token_2022::mint_with_extensions::create_mint_with_extensions,
-    validation::signer_checks::assert_signer,
 };
 use spl_token_2022::extension::ExtensionType;
 
@@ -67,7 +66,7 @@ fn process_create_metadata_mint(accounts: &[AccountInfo]) -> ProgramResult {
         mint,
         payer.key,
         None,
-        0,   // 0 decimals for this NFT-style token
+        0, // 0 decimals for this NFT-style token
         &[ExtensionType::MetadataPointer],
         system_program,
     )?;
@@ -76,8 +75,8 @@ fn process_create_metadata_mint(accounts: &[AccountInfo]) -> ProgramResult {
 
     initialize_metadata_pointer(
         mint,
-        Some(update_authority.key),  // authority can update the pointer
-        Some(mint.key),              // metadata lives in the mint account
+        Some(update_authority.key), // authority can update the pointer
+        Some(mint.key),             // metadata lives in the mint account
     )?;
 
     msg!("Step 3: Initialize token metadata");
@@ -85,7 +84,7 @@ fn process_create_metadata_mint(accounts: &[AccountInfo]) -> ProgramResult {
     initialize_token_metadata(
         mint,
         update_authority,
-        payer,   // mint authority
+        payer, // mint authority
         "LetterP Metadata Mint".to_string(),
         "LTRP".to_string(),
         "https://letterp.local/metadata/letterp-mint.json".to_string(),

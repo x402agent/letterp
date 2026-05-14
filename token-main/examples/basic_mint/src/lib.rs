@@ -9,25 +9,24 @@
 //!
 //! This example uses explicit account parsing with LetterP SDK helpers.
 
+use ptoken_sdk::{
+    token_classic::{
+        burn::burn_checked,
+        mint_creation::{create_and_initialize_mint, mint_to},
+        token_account::create_token_account,
+        transfer::transfer_checked,
+    },
+    validation::{
+        mint_validation::assert_mint_initialized, owner_checks::assert_owned_by_token_program,
+        signer_checks::assert_signer,
+    },
+};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint,
     entrypoint::ProgramResult,
     msg,
     pubkey::Pubkey,
-};
-use ptoken_sdk::{
-    token_classic::{
-        mint_creation::{create_and_initialize_mint, mint_to},
-        token_account::create_token_account,
-        transfer::transfer_checked,
-        burn::burn_checked,
-    },
-    validation::{
-        signer_checks::assert_signer,
-        owner_checks::assert_owned_by_token_program,
-        mint_validation::assert_mint_initialized,
-    },
 };
 
 entrypoint!(process_instruction);
@@ -93,9 +92,9 @@ fn process_create_mint(
     create_and_initialize_mint(
         payer,
         mint,
-        payer.key,   // mint authority = payer
-        None,        // no freeze authority
-        6,           // 6 decimal places
+        payer.key, // mint authority = payer
+        None,      // no freeze authority
+        6,         // 6 decimal places
         system_program,
         token_program,
         rent_sysvar,
@@ -150,8 +149,7 @@ fn process_mint_tokens(
     assert_signer(authority)?;
 
     // amount is the first 8 bytes of data (little-endian u64)
-    let amount = ptoken_sdk::serialization::borsh_decode::read_u64(data, 0)
-        .unwrap_or(1_000_000);
+    let amount = ptoken_sdk::serialization::borsh_decode::read_u64(data, 0).unwrap_or(1_000_000);
 
     msg!("Minting {} raw units to {}", amount, destination.key);
 
@@ -161,11 +159,7 @@ fn process_mint_tokens(
     Ok(())
 }
 
-fn process_transfer(
-    _program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    data: &[u8],
-) -> ProgramResult {
+fn process_transfer(_program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
     let source = next_account_info(accounts_iter)?;
     let mint = next_account_info(accounts_iter)?;
@@ -174,8 +168,7 @@ fn process_transfer(
 
     assert_signer(authority)?;
 
-    let amount = ptoken_sdk::serialization::borsh_decode::read_u64(data, 0)
-        .unwrap_or(500_000);
+    let amount = ptoken_sdk::serialization::borsh_decode::read_u64(data, 0).unwrap_or(500_000);
 
     msg!("Transferring {} raw units to {}", amount, destination.key);
 
@@ -185,11 +178,7 @@ fn process_transfer(
     Ok(())
 }
 
-fn process_burn(
-    _program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    data: &[u8],
-) -> ProgramResult {
+fn process_burn(_program_id: &Pubkey, accounts: &[AccountInfo], data: &[u8]) -> ProgramResult {
     let accounts_iter = &mut accounts.iter();
     let token_account = next_account_info(accounts_iter)?;
     let mint = next_account_info(accounts_iter)?;
@@ -197,8 +186,7 @@ fn process_burn(
 
     assert_signer(authority)?;
 
-    let amount = ptoken_sdk::serialization::borsh_decode::read_u64(data, 0)
-        .unwrap_or(100_000);
+    let amount = ptoken_sdk::serialization::borsh_decode::read_u64(data, 0).unwrap_or(100_000);
 
     msg!("Burning {} raw units", amount);
 

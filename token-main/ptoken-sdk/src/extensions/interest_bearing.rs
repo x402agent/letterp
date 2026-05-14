@@ -1,13 +1,10 @@
 //! Interest Bearing extension — tokens accumulate interest over time.
 
+use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
 use solana_program::{
-    account_info::AccountInfo,
-    entrypoint::ProgramResult,
-    program::invoke,
-    pubkey::Pubkey,
+    account_info::AccountInfo, entrypoint::ProgramResult, program::invoke, pubkey::Pubkey,
 };
 use spl_token_2022::extension::interest_bearing_mint::instruction as ib_ix;
-use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
 
 /// Initialize the Interest Bearing extension on a mint.
 ///
@@ -16,8 +13,8 @@ use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
 /// # Arguments
 /// * `rate_authority` — Can update the interest rate. `None` = immutable.
 /// * `rate` — Annual rate in basis points (signed: negative rates allowed).
-pub fn initialize_interest_bearing_mint(
-    mint: &AccountInfo,
+pub fn initialize_interest_bearing_mint<'a>(
+    mint: &AccountInfo<'a>,
     rate_authority: Option<&Pubkey>,
     rate: i16,
 ) -> ProgramResult {
@@ -33,9 +30,9 @@ pub fn initialize_interest_bearing_mint(
 }
 
 /// Update the interest rate on an existing mint.
-pub fn update_rate(
-    mint: &AccountInfo,
-    rate_authority: &AccountInfo,
+pub fn update_rate<'a>(
+    mint: &AccountInfo<'a>,
+    rate_authority: &AccountInfo<'a>,
     rate: i16,
 ) -> ProgramResult {
     invoke(

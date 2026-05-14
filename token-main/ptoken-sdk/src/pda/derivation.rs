@@ -1,7 +1,7 @@
 //! PDA derivation helpers.
 
+use crate::constants::seeds::*;
 use solana_program::pubkey::Pubkey;
-use crate::constants::{program_ids::TOKEN_2022_PROGRAM_ID, seeds::*};
 
 /// Derive a user-specific mint PDA and its bump seed.
 ///
@@ -51,7 +51,16 @@ pub fn find_pda(seeds: &[&[u8]], program_id: &Pubkey) -> (Pubkey, u8) {
 }
 
 /// Create a PDA from seeds + bump (no search, panics if off-curve).
-pub fn create_pda(seeds: &[&[u8]], bump: u8, program_id: &Pubkey) -> Result<Pubkey, solana_program::pubkey::PubkeyError> {
-    let seeds_with_bump: Vec<&[u8]> = seeds.iter().copied().chain(std::iter::once(&[bump][..])).collect();
+pub fn create_pda(
+    seeds: &[&[u8]],
+    bump: u8,
+    program_id: &Pubkey,
+) -> Result<Pubkey, solana_program::pubkey::PubkeyError> {
+    let bump_seed = [bump];
+    let seeds_with_bump: Vec<&[u8]> = seeds
+        .iter()
+        .copied()
+        .chain(std::iter::once(&bump_seed[..]))
+        .collect();
     Pubkey::create_program_address(&seeds_with_bump, program_id)
 }

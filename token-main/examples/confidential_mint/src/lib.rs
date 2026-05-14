@@ -16,6 +16,11 @@
 //! ZK proof generation happens client-side using the solana-zk-token-sdk.
 //! The proofs are submitted as separate instruction accounts.
 
+use ptoken_sdk::{
+    extensions::confidential_transfer::initialize_confidential_transfer_mint,
+    token_2022::mint_with_extensions::create_mint_with_extensions,
+    validation::signer_checks::assert_signer,
+};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint,
@@ -23,11 +28,6 @@ use solana_program::{
     msg,
     program_error::ProgramError,
     pubkey::Pubkey,
-};
-use ptoken_sdk::{
-    extensions::confidential_transfer::initialize_confidential_transfer_mint,
-    token_2022::mint_with_extensions::create_mint_with_extensions,
-    validation::signer_checks::assert_signer,
 };
 use spl_token_2022::extension::ExtensionType;
 
@@ -38,7 +38,11 @@ pub fn process_instruction(
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
-    match instruction_data.first().copied().ok_or(ProgramError::InvalidInstructionData)? {
+    match instruction_data
+        .first()
+        .copied()
+        .ok_or(ProgramError::InvalidInstructionData)?
+    {
         0 => process_create_confidential_mint(accounts),
         _ => Err(ProgramError::InvalidInstructionData),
     }
@@ -74,9 +78,9 @@ fn process_create_confidential_mint(accounts: &[AccountInfo]) -> ProgramResult {
 
     initialize_confidential_transfer_mint(
         mint,
-        Some(payer.key),  // authority can update config
-        true,             // auto_approve_new_accounts
-        None,             // no auditor
+        Some(payer.key), // authority can update config
+        true,            // auto_approve_new_accounts
+        None,            // no auditor
     )?;
 
     msg!("Confidential mint created: {}", mint.key);

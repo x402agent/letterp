@@ -9,7 +9,9 @@ pub fn to_bytes<T: BorshSerialize>(value: &T) -> Result<Vec<u8>, ProgramError> {
 }
 
 /// Serialize to a fixed-size array. Panics if the size doesn't match.
-pub fn to_fixed_bytes<T: BorshSerialize, const N: usize>(value: &T) -> Result<[u8; N], ProgramError> {
+pub fn to_fixed_bytes<T: BorshSerialize, const N: usize>(
+    value: &T,
+) -> Result<[u8; N], ProgramError> {
     let bytes = to_bytes(value)?;
     if bytes.len() != N {
         return Err(ProgramError::InvalidInstructionData);
@@ -30,12 +32,17 @@ pub fn write_u64(buf: &mut [u8], offset: usize, value: u64) -> Result<(), Progra
 
 /// Write a u8 into a mutable slice at `offset`.
 pub fn write_u8(buf: &mut [u8], offset: usize, value: u8) -> Result<(), ProgramError> {
-    *buf.get_mut(offset).ok_or(ProgramError::InvalidAccountData)? = value;
+    *buf.get_mut(offset)
+        .ok_or(ProgramError::InvalidAccountData)? = value;
     Ok(())
 }
 
 /// Write a Pubkey (32 bytes) into a mutable slice at `offset`.
-pub fn write_pubkey(buf: &mut [u8], offset: usize, key: &solana_program::pubkey::Pubkey) -> Result<(), ProgramError> {
+pub fn write_pubkey(
+    buf: &mut [u8],
+    offset: usize,
+    key: &solana_program::pubkey::Pubkey,
+) -> Result<(), ProgramError> {
     buf.get_mut(offset..offset + 32)
         .ok_or(ProgramError::InvalidAccountData)?
         .copy_from_slice(key.as_ref());

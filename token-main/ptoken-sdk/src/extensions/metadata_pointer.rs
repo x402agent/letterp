@@ -1,13 +1,10 @@
 //! Metadata Pointer extension — point a mint to its metadata account.
 
+use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
 use solana_program::{
-    account_info::AccountInfo,
-    entrypoint::ProgramResult,
-    program::invoke,
-    pubkey::Pubkey,
+    account_info::AccountInfo, entrypoint::ProgramResult, program::invoke, pubkey::Pubkey,
 };
 use spl_token_2022::extension::metadata_pointer::instruction as mp_ix;
-use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
 
 /// Initialize the Metadata Pointer extension on a mint.
 ///
@@ -16,8 +13,8 @@ use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
 /// # Arguments
 /// * `authority` — Can update the metadata address. `None` = immutable.
 /// * `metadata_address` — Account holding the token metadata. Can be the mint itself.
-pub fn initialize_metadata_pointer(
-    mint: &AccountInfo,
+pub fn initialize_metadata_pointer<'a>(
+    mint: &AccountInfo<'a>,
     authority: Option<&Pubkey>,
     metadata_address: Option<&Pubkey>,
 ) -> ProgramResult {
@@ -33,9 +30,9 @@ pub fn initialize_metadata_pointer(
 }
 
 /// Update the metadata address pointer.
-pub fn update_metadata_pointer(
-    mint: &AccountInfo,
-    authority: &AccountInfo,
+pub fn update_metadata_pointer<'a>(
+    mint: &AccountInfo<'a>,
+    authority: &AccountInfo<'a>,
     new_metadata_address: Option<Pubkey>,
 ) -> ProgramResult {
     invoke(

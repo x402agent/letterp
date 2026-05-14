@@ -1,11 +1,7 @@
 //! Raw AccountInfo access helpers using Pinocchio's zero-overhead model.
 
-use solana_program::{
-    account_info::AccountInfo,
-    program_error::ProgramError,
-    pubkey::Pubkey,
-};
 use crate::errors::PTokenError;
+use solana_program::{account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey};
 
 /// Assert that an account is a signer on the transaction.
 pub fn assert_signer(account: &AccountInfo) -> Result<(), PTokenError> {
@@ -16,10 +12,7 @@ pub fn assert_signer(account: &AccountInfo) -> Result<(), PTokenError> {
 }
 
 /// Assert that an account is owned by `expected_owner`.
-pub fn assert_owned_by(
-    account: &AccountInfo,
-    expected_owner: &Pubkey,
-) -> Result<(), PTokenError> {
+pub fn assert_owned_by(account: &AccountInfo, expected_owner: &Pubkey) -> Result<(), PTokenError> {
     if account.owner != expected_owner {
         return Err(PTokenError::InvalidAccountOwner);
     }

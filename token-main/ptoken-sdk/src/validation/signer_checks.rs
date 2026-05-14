@@ -1,7 +1,7 @@
 //! Signer authorization checks.
 
-use solana_program::account_info::AccountInfo;
 use crate::errors::PTokenError;
+use solana_program::account_info::AccountInfo;
 
 /// Assert that a single account is a transaction signer.
 pub fn assert_signer(account: &AccountInfo) -> Result<(), PTokenError> {

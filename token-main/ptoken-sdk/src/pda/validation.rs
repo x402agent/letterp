@@ -1,7 +1,7 @@
 //! PDA validation — assert accounts match expected PDAs.
 
-use solana_program::{account_info::AccountInfo, pubkey::Pubkey};
 use crate::errors::PTokenError;
+use solana_program::{account_info::AccountInfo, pubkey::Pubkey};
 
 /// Assert that `account` is the PDA derived from `seeds` and `program_id`.
 ///

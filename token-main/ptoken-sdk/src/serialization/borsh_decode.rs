@@ -33,9 +33,14 @@ pub fn read_u32(data: &[u8], offset: usize) -> Result<u32, ProgramError> {
 }
 
 /// Read a Pubkey (32 bytes) from a byte slice at `offset`.
-pub fn read_pubkey(data: &[u8], offset: usize) -> Result<solana_program::pubkey::Pubkey, ProgramError> {
+pub fn read_pubkey(
+    data: &[u8],
+    offset: usize,
+) -> Result<solana_program::pubkey::Pubkey, ProgramError> {
     let bytes = data
         .get(offset..offset + 32)
         .ok_or(ProgramError::InvalidAccountData)?;
-    Ok(solana_program::pubkey::Pubkey::from(<[u8; 32]>::try_from(bytes).unwrap()))
+    Ok(solana_program::pubkey::Pubkey::from(
+        <[u8; 32]>::try_from(bytes).unwrap(),
+    ))
 }

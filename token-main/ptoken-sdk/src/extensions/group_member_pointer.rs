@@ -1,19 +1,16 @@
 //! Group Member Pointer extension — point a mint to a group member account.
 
+use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
 use solana_program::{
-    account_info::AccountInfo,
-    entrypoint::ProgramResult,
-    program::invoke,
-    pubkey::Pubkey,
+    account_info::AccountInfo, entrypoint::ProgramResult, program::invoke, pubkey::Pubkey,
 };
 use spl_token_2022::extension::group_member_pointer::instruction as gmp_ix;
-use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
 
 /// Initialize the Group Member Pointer extension on a mint.
 ///
 /// Must be called before `InitializeMint2`.
-pub fn initialize_group_member_pointer(
-    mint: &AccountInfo,
+pub fn initialize_group_member_pointer<'a>(
+    mint: &AccountInfo<'a>,
     authority: Option<&Pubkey>,
     member_address: Option<&Pubkey>,
 ) -> ProgramResult {
@@ -29,9 +26,9 @@ pub fn initialize_group_member_pointer(
 }
 
 /// Update the group member address pointer.
-pub fn update_group_member_pointer(
-    mint: &AccountInfo,
-    authority: &AccountInfo,
+pub fn update_group_member_pointer<'a>(
+    mint: &AccountInfo<'a>,
+    authority: &AccountInfo<'a>,
     new_member_address: Option<Pubkey>,
 ) -> ProgramResult {
     invoke(

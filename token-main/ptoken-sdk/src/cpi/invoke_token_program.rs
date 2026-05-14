@@ -1,5 +1,6 @@
 //! CPI wrappers for SPL Token classic instructions.
 
+use crate::constants::program_ids::TOKEN_PROGRAM_ID;
 use solana_program::{
     account_info::AccountInfo,
     entrypoint::ProgramResult,
@@ -7,13 +8,12 @@ use solana_program::{
     pubkey::Pubkey,
 };
 use spl_token::instruction as token_ix;
-use crate::constants::program_ids::TOKEN_PROGRAM_ID;
 
 /// CPI: transfer tokens via SPL Token program.
-pub fn cpi_transfer(
-    source: &AccountInfo,
-    destination: &AccountInfo,
-    authority: &AccountInfo,
+pub fn cpi_transfer<'a>(
+    source: &AccountInfo<'a>,
+    destination: &AccountInfo<'a>,
+    authority: &AccountInfo<'a>,
     amount: u64,
 ) -> ProgramResult {
     invoke(
@@ -30,10 +30,10 @@ pub fn cpi_transfer(
 }
 
 /// CPI: transfer tokens using a PDA authority.
-pub fn cpi_transfer_signed(
-    source: &AccountInfo,
-    destination: &AccountInfo,
-    pda_authority: &AccountInfo,
+pub fn cpi_transfer_signed<'a>(
+    source: &AccountInfo<'a>,
+    destination: &AccountInfo<'a>,
+    pda_authority: &AccountInfo<'a>,
     amount: u64,
     signer_seeds: &[&[&[u8]]],
 ) -> ProgramResult {
@@ -52,10 +52,10 @@ pub fn cpi_transfer_signed(
 }
 
 /// CPI: mint tokens to a destination account.
-pub fn cpi_mint_to(
-    mint: &AccountInfo,
-    destination: &AccountInfo,
-    authority: &AccountInfo,
+pub fn cpi_mint_to<'a>(
+    mint: &AccountInfo<'a>,
+    destination: &AccountInfo<'a>,
+    authority: &AccountInfo<'a>,
     amount: u64,
 ) -> ProgramResult {
     invoke(
@@ -72,10 +72,10 @@ pub fn cpi_mint_to(
 }
 
 /// CPI: mint tokens using a PDA mint authority.
-pub fn cpi_mint_to_signed(
-    mint: &AccountInfo,
-    destination: &AccountInfo,
-    pda_authority: &AccountInfo,
+pub fn cpi_mint_to_signed<'a>(
+    mint: &AccountInfo<'a>,
+    destination: &AccountInfo<'a>,
+    pda_authority: &AccountInfo<'a>,
     amount: u64,
     signer_seeds: &[&[&[u8]]],
 ) -> ProgramResult {
@@ -94,10 +94,10 @@ pub fn cpi_mint_to_signed(
 }
 
 /// CPI: burn tokens.
-pub fn cpi_burn(
-    account: &AccountInfo,
-    mint: &AccountInfo,
-    authority: &AccountInfo,
+pub fn cpi_burn<'a>(
+    account: &AccountInfo<'a>,
+    mint: &AccountInfo<'a>,
+    authority: &AccountInfo<'a>,
     amount: u64,
 ) -> ProgramResult {
     invoke(
@@ -114,10 +114,10 @@ pub fn cpi_burn(
 }
 
 /// CPI: close token account.
-pub fn cpi_close_account(
-    account: &AccountInfo,
-    destination: &AccountInfo,
-    authority: &AccountInfo,
+pub fn cpi_close_account<'a>(
+    account: &AccountInfo<'a>,
+    destination: &AccountInfo<'a>,
+    authority: &AccountInfo<'a>,
 ) -> ProgramResult {
     invoke(
         &token_ix::close_account(
@@ -132,9 +132,9 @@ pub fn cpi_close_account(
 }
 
 /// CPI: set a new authority on a mint or token account.
-pub fn cpi_set_authority(
-    account: &AccountInfo,
-    current_authority: &AccountInfo,
+pub fn cpi_set_authority<'a>(
+    account: &AccountInfo<'a>,
+    current_authority: &AccountInfo<'a>,
     new_authority: Option<&Pubkey>,
     authority_type: spl_token::instruction::AuthorityType,
 ) -> ProgramResult {

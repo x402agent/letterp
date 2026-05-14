@@ -1,13 +1,7 @@
 //! Token Metadata extension — embed metadata directly in the mint.
 
-use solana_program::{
-    account_info::AccountInfo,
-    entrypoint::ProgramResult,
-    program::invoke,
-    pubkey::Pubkey,
-};
-use spl_token_2022::instruction as token_ix;
 use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
+use solana_program::{account_info::AccountInfo, entrypoint::ProgramResult, program::invoke};
 
 /// Initialize token metadata on a mint account.
 ///
@@ -18,10 +12,10 @@ use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
 /// * `name` — Token name (e.g. "USD Coin")
 /// * `symbol` — Ticker symbol (e.g. "USDC")
 /// * `uri` — Off-chain JSON metadata URI
-pub fn initialize_token_metadata(
-    mint: &AccountInfo,
-    update_authority: &AccountInfo,
-    mint_authority: &AccountInfo,
+pub fn initialize_token_metadata<'a>(
+    mint: &AccountInfo<'a>,
+    update_authority: &AccountInfo<'a>,
+    mint_authority: &AccountInfo<'a>,
     name: String,
     symbol: String,
     uri: String,
@@ -37,14 +31,18 @@ pub fn initialize_token_metadata(
             symbol,
             uri,
         ),
-        &[mint.clone(), update_authority.clone(), mint_authority.clone()],
+        &[
+            mint.clone(),
+            update_authority.clone(),
+            mint_authority.clone(),
+        ],
     )
 }
 
 /// Update a metadata field on the mint.
-pub fn update_token_metadata_field(
-    mint: &AccountInfo,
-    update_authority: &AccountInfo,
+pub fn update_token_metadata_field<'a>(
+    mint: &AccountInfo<'a>,
+    update_authority: &AccountInfo<'a>,
     field: spl_token_metadata_interface::state::Field,
     value: String,
 ) -> ProgramResult {

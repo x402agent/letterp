@@ -1,11 +1,6 @@
 //! Thin wrappers around Solana syscalls.
 
-use solana_program::{
-    clock::Clock,
-    msg,
-    program_error::ProgramError,
-    sysvar::Sysvar,
-};
+use solana_program::{clock::Clock, msg, program_error::ProgramError, sysvar::Sysvar};
 
 /// Log a message to the Solana program log.
 pub fn log(message: &str) {

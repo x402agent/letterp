@@ -11,8 +11,10 @@ resolver = "2"
 
 [workspace.dependencies]
 solana-program = "1.18"
+solana-zk-token-sdk = "1.18.11"
 spl-token = "4"
 spl-token-2022 = "3"
+spl-token-metadata-interface = "0.3.3"
 spl-associated-token-account = "2"
 borsh = "1"
 thiserror = "1"

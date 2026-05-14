@@ -9,22 +9,21 @@
 //! 6. Harvest withheld fees to the mint
 //! 7. Withdraw fees from mint to fee authority wallet
 
+use ptoken_sdk::{
+    cpi::invoke_token_2022::{cpi_mint_to_2022, cpi_transfer_checked_2022},
+    extensions::transfer_fee::{
+        harvest_withheld_tokens_to_mint, initialize_transfer_fee_config, set_transfer_fee,
+        withdraw_withheld_tokens_from_accounts, TransferFeeConfig,
+    },
+    token_2022::mint_with_extensions::create_mint_with_extensions,
+    validation::signer_checks::assert_signer,
+};
 use solana_program::{
     account_info::{next_account_info, AccountInfo},
     entrypoint,
     entrypoint::ProgramResult,
     msg,
     pubkey::Pubkey,
-};
-use ptoken_sdk::{
-    extensions::transfer_fee::{
-        initialize_transfer_fee_config, set_transfer_fee,
-        withdraw_withheld_tokens_from_accounts, harvest_withheld_tokens_to_mint,
-        TransferFeeConfig,
-    },
-    token_2022::mint_with_extensions::create_mint_with_extensions,
-    cpi::invoke_token_2022::{cpi_transfer_checked_2022, cpi_mint_to_2022},
-    validation::signer_checks::assert_signer,
 };
 use spl_token_2022::extension::ExtensionType;
 
@@ -68,17 +67,17 @@ fn process_create_fee_mint(accounts: &[AccountInfo]) -> ProgramResult {
     let fee_config = TransferFeeConfig {
         transfer_fee_config_authority: Some(*fee_authority.key),
         withdraw_withheld_authority: Some(*withdraw_authority.key),
-        transfer_fee_basis_points: 50,   // 0.5%
-        maximum_fee: 1_000,              // max 1000 raw units per transfer
+        transfer_fee_basis_points: 50, // 0.5%
+        maximum_fee: 1_000,            // max 1000 raw units per transfer
     };
 
     // Step 1: Allocate mint account with space for TransferFeeConfig extension
     create_mint_with_extensions(
         payer,
         mint,
-        payer.key,   // mint authority
-        None,        // no freeze authority
-        6,           // 6 decimals
+        payer.key, // mint authority
+        None,      // no freeze authority
+        6,         // 6 decimals
         &[ExtensionType::TransferFeeConfig],
         system_program,
     )?;
@@ -99,8 +98,7 @@ fn process_mint_tokens(accounts: &[AccountInfo], data: &[u8]) -> ProgramResult {
 
     assert_signer(authority)?;
 
-    let amount = ptoken_sdk::serialization::borsh_decode::read_u64(data, 0)
-        .unwrap_or(10_000_000);
+    let amount = ptoken_sdk::serialization::borsh_decode::read_u64(data, 0).unwrap_or(10_000_000);
 
     cpi_mint_to_2022(mint, destination, authority, amount)?;
     msg!("Minted {} units to {}", amount, destination.key);
@@ -117,14 +115,20 @@ fn process_transfer_with_fee(accounts: &[AccountInfo], data: &[u8]) -> ProgramRe
 
     assert_signer(authority)?;
 
-    let amount = ptoken_sdk::serialization::borsh_decode::read_u64(data, 0)
-        .unwrap_or(1_000_000);
+    let amount = ptoken_sdk::serialization::borsh_decode::read_u64(data, 0).unwrap_or(1_000_000);
 
     let fee = ptoken_sdk::math::decimals::calculate_transfer_fee(amount, 50, 1_000);
-    msg!("Transferring {} units (fee withheld: {} units)", amount, fee);
+    msg!(
+        "Transferring {} units (fee withheld: {} units)",
+        amount,
+        fee
+    );
 
     cpi_transfer_checked_2022(source, mint, destination, authority, amount, 6)?;
-    msg!("Transfer complete. Fee of {} units withheld in destination account.", fee);
+    msg!(
+        "Transfer complete. Fee of {} units withheld in destination account.",
+        fee
+    );
     Ok(())
 }
 

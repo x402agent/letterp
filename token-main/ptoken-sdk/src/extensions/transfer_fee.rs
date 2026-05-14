@@ -1,13 +1,10 @@
 //! Transfer Fee extension — charge an automatic fee on every token transfer.
 
+use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
 use solana_program::{
-    account_info::AccountInfo,
-    entrypoint::ProgramResult,
-    program::invoke,
-    pubkey::Pubkey,
+    account_info::AccountInfo, entrypoint::ProgramResult, program::invoke, pubkey::Pubkey,
 };
 use spl_token_2022::extension::transfer_fee::instruction as fee_ix;
-use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
 
 /// Configuration for the Transfer Fee extension.
 #[derive(Debug, Clone)]
@@ -25,8 +22,8 @@ pub struct TransferFeeConfig {
 /// Initialize the Transfer Fee extension on a mint.
 ///
 /// Must be called before `InitializeMint2`.
-pub fn initialize_transfer_fee_config(
-    mint: &AccountInfo,
+pub fn initialize_transfer_fee_config<'a>(
+    mint: &AccountInfo<'a>,
     config: &TransferFeeConfig,
 ) -> ProgramResult {
     invoke(
@@ -43,9 +40,9 @@ pub fn initialize_transfer_fee_config(
 }
 
 /// Update the transfer fee configuration on an existing mint.
-pub fn set_transfer_fee(
-    mint: &AccountInfo,
-    authority: &AccountInfo,
+pub fn set_transfer_fee<'a>(
+    mint: &AccountInfo<'a>,
+    authority: &AccountInfo<'a>,
     transfer_fee_basis_points: u16,
     maximum_fee: u64,
 ) -> ProgramResult {
@@ -63,11 +60,11 @@ pub fn set_transfer_fee(
 }
 
 /// Withdraw withheld tokens from token accounts to the fee vault.
-pub fn withdraw_withheld_tokens_from_accounts(
-    mint: &AccountInfo,
-    destination: &AccountInfo,
-    authority: &AccountInfo,
-    token_accounts: &[&AccountInfo],
+pub fn withdraw_withheld_tokens_from_accounts<'a>(
+    mint: &AccountInfo<'a>,
+    destination: &AccountInfo<'a>,
+    authority: &AccountInfo<'a>,
+    token_accounts: &[&AccountInfo<'a>],
 ) -> ProgramResult {
     let token_account_keys: Vec<_> = token_accounts.iter().map(|a| a.key).collect();
     let mut accounts = vec![mint.clone(), destination.clone(), authority.clone()];
@@ -87,20 +84,16 @@ pub fn withdraw_withheld_tokens_from_accounts(
 }
 
 /// Harvest withheld tokens from token accounts to the mint's withheld amount.
-pub fn harvest_withheld_tokens_to_mint(
-    mint: &AccountInfo,
-    token_accounts: &[&AccountInfo],
+pub fn harvest_withheld_tokens_to_mint<'a>(
+    mint: &AccountInfo<'a>,
+    token_accounts: &[&AccountInfo<'a>],
 ) -> ProgramResult {
     let keys: Vec<_> = token_accounts.iter().map(|a| a.key).collect();
     let mut accounts = vec![mint.clone()];
     accounts.extend(token_accounts.iter().map(|a| (*a).clone()));
 
     invoke(
-        &fee_ix::harvest_withheld_tokens_to_mint(
-            &TOKEN_2022_PROGRAM_ID,
-            mint.key,
-            &keys,
-        )?,
+        &fee_ix::harvest_withheld_tokens_to_mint(&TOKEN_2022_PROGRAM_ID, mint.key, &keys)?,
         &accounts,
     )
 }

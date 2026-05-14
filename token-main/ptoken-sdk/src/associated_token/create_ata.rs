@@ -1,10 +1,7 @@
 //! Create Associated Token Accounts.
 
 use solana_program::{
-    account_info::AccountInfo,
-    entrypoint::ProgramResult,
-    program::invoke,
-    pubkey::Pubkey,
+    account_info::AccountInfo, entrypoint::ProgramResult, program::invoke, pubkey::Pubkey,
 };
 use spl_associated_token_account::instruction as ata_ix;
 
@@ -12,21 +9,16 @@ use spl_associated_token_account::instruction as ata_ix;
 ///
 /// The ATA address is derived deterministically.
 /// Fails if the ATA already exists.
-pub fn create_associated_token_account(
-    payer: &AccountInfo,
-    wallet: &AccountInfo,
-    mint: &AccountInfo,
+pub fn create_associated_token_account<'a>(
+    payer: &AccountInfo<'a>,
+    wallet: &AccountInfo<'a>,
+    mint: &AccountInfo<'a>,
     token_program_id: &Pubkey,
-    system_program: &AccountInfo,
-    ata_program: &AccountInfo,
+    system_program: &AccountInfo<'a>,
+    ata_program: &AccountInfo<'a>,
 ) -> ProgramResult {
     invoke(
-        &ata_ix::create_associated_token_account(
-            payer.key,
-            wallet.key,
-            mint.key,
-            token_program_id,
-        ),
+        &ata_ix::create_associated_token_account(payer.key, wallet.key, mint.key, token_program_id),
         &[
             payer.clone(),
             wallet.clone(),

@@ -22,26 +22,26 @@
 #![forbid(unsafe_code)]
 
 #[cfg(not(kani))]
-pub mod pinocchio_core;
-#[cfg(not(kani))]
-pub mod token_classic;
-#[cfg(not(kani))]
-pub mod token_2022;
-#[cfg(not(kani))]
-pub mod extensions;
+pub mod associated_token;
+pub mod constants;
 #[cfg(not(kani))]
 pub mod cpi;
+pub mod errors;
+#[cfg(not(kani))]
+pub mod extensions;
+pub mod math;
 #[cfg(not(kani))]
 pub mod pda;
 #[cfg(not(kani))]
-pub mod associated_token;
+pub mod pinocchio_core;
 #[cfg(not(kani))]
 pub mod serialization;
-pub mod math;
+#[cfg(not(kani))]
+pub mod token_2022;
+#[cfg(not(kani))]
+pub mod token_classic;
 #[cfg(not(kani))]
 pub mod validation;
-pub mod errors;
-pub mod constants;
 
 #[cfg(kani)]
 mod kani_verification;
@@ -50,8 +50,5 @@ pub use errors::{PTokenError, PTokenResult};
 
 /// Re-export commonly used Solana types for convenience
 pub use solana_program::{
-    account_info::AccountInfo,
-    entrypoint::ProgramResult,
-    pubkey::Pubkey,
-    msg,
+    account_info::AccountInfo, entrypoint::ProgramResult, msg, pubkey::Pubkey,
 };

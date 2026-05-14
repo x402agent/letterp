@@ -4,11 +4,7 @@
 //! `process_instruction` function dispatched by a manual match on the
 //! instruction discriminant.
 
-use solana_program::{
-    account_info::AccountInfo,
-    entrypoint::ProgramResult,
-    pubkey::Pubkey,
-};
+use solana_program::{account_info::AccountInfo, entrypoint::ProgramResult, pubkey::Pubkey};
 
 /// Trait for Pinocchio-style instruction processors.
 /// Each instruction variant implements this trait.

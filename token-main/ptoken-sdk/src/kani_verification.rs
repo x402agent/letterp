@@ -21,8 +21,16 @@ fn safe_arithmetic_matches_checked_operations() {
     assert_eq!(sub.ok(), a.checked_sub(b));
 
     let overflow_mul: bool = kani::any();
-    let mul_a = if overflow_mul { u64::MAX } else { u16::MAX as u64 };
-    let mul_b = if overflow_mul { 2 } else { kani::any::<u16>() as u64 };
+    let mul_a = if overflow_mul {
+        u64::MAX
+    } else {
+        u16::MAX as u64
+    };
+    let mul_b = if overflow_mul {
+        2
+    } else {
+        kani::any::<u16>() as u64
+    };
     let mul = safe_mul(mul_a, mul_b);
     kani::cover!(mul.is_ok(), "safe_mul success path is reachable");
     kani::cover!(mul.is_err(), "safe_mul overflow path is reachable");
@@ -53,8 +61,14 @@ fn division_helpers_are_total_and_precise() {
     let ceil = ceil_div(a, b);
     kani::cover!(a == 0, "ceil_div zero dividend path is reachable");
     kani::cover!(b == 0, "ceil_div zero divisor path is reachable");
-    kani::cover!(a > 0 && b > 0 && a % b == 0, "ceil_div exact path is reachable");
-    kani::cover!(a > 0 && b > 0 && a % b != 0, "ceil_div rounded path is reachable");
+    kani::cover!(
+        a > 0 && b > 0 && a % b == 0,
+        "ceil_div exact path is reachable"
+    );
+    kani::cover!(
+        a > 0 && b > 0 && a % b != 0,
+        "ceil_div rounded path is reachable"
+    );
     if a == 0 || b == 0 {
         assert_eq!(ceil, 0);
     } else {
@@ -111,7 +125,10 @@ fn standard_fee_calculations_do_not_truncate_or_exceed_caps() {
 fn fee_calculations_cover_u64_extremes() {
     assert_eq!(calculate_transfer_fee(u64::MAX, 10_000, u64::MAX), u64::MAX);
     assert_eq!(apply_bps_fee(u64::MAX, 10_000, u64::MAX), (0, u64::MAX));
-    assert_eq!(calculate_transfer_fee(u64::MAX, u16::MAX, u64::MAX), u64::MAX);
+    assert_eq!(
+        calculate_transfer_fee(u64::MAX, u16::MAX, u64::MAX),
+        u64::MAX
+    );
     assert_eq!(apply_bps_fee(u64::MAX, u16::MAX, u64::MAX), (0, u64::MAX));
     assert_eq!(calculate_transfer_fee(u64::MAX, u16::MAX, 42), 42);
     assert_eq!(apply_bps_fee(u64::MAX, u16::MAX, 42), (u64::MAX - 42, 42));
@@ -130,7 +147,10 @@ fn extended_fee_calculations_cover_high_bps_edges() {
         .min(max_fee as u128)
         .min(u64::MAX as u128) as u64;
 
-    kani::cover!(fee > amount, "high bps fee greater than amount path is reachable");
+    kani::cover!(
+        fee > amount,
+        "high bps fee greater than amount path is reachable"
+    );
     kani::cover!(fee == max_fee, "high bps capped path is reachable");
     kani::cover!(fee < max_fee, "high bps uncapped path is reachable");
     assert_eq!(fee, expected);
@@ -155,11 +175,23 @@ fn bounded_u64_helpers_match_mathematical_intent() {
     kani::cover!(!exceeds, "would_exceed_max false path is reachable");
     assert_eq!(exceeds, mathematical_exceeds);
 
-    assert_eq!(saturating_add(current, delta), current.saturating_add(delta));
-    assert_eq!(saturating_sub(current, delta), current.saturating_sub(delta));
+    assert_eq!(
+        saturating_add(current, delta),
+        current.saturating_add(delta)
+    );
+    assert_eq!(
+        saturating_sub(current, delta),
+        current.saturating_sub(delta)
+    );
 
-    kani::cover!(min <= max && in_range(value, min, max), "in_range true path is reachable");
-    kani::cover!(min <= max && !in_range(value, min, max), "in_range false path is reachable");
+    kani::cover!(
+        min <= max && in_range(value, min, max),
+        "in_range true path is reachable"
+    );
+    kani::cover!(
+        min <= max && !in_range(value, min, max),
+        "in_range false path is reachable"
+    );
     if min <= max {
         assert_eq!(in_range(value, min, max), value >= min && value <= max);
     }
@@ -173,8 +205,14 @@ fn decimal_multiplier_is_total_and_monotonic_until_saturation() {
     let multiplier = decimal_multiplier(decimals);
     let next_multiplier = decimal_multiplier(next_decimals);
 
-    kani::cover!(decimals <= 19, "exact decimal multiplier range is reachable");
-    kani::cover!(decimals > 19, "saturated decimal multiplier range is reachable");
+    kani::cover!(
+        decimals <= 19,
+        "exact decimal multiplier range is reachable"
+    );
+    kani::cover!(
+        decimals > 19,
+        "saturated decimal multiplier range is reachable"
+    );
     assert!(multiplier >= 1);
 
     if decimals < u8::MAX {

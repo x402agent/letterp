@@ -40,7 +40,10 @@ pub fn pack_mint(mint: &Mint, account: &AccountInfo) -> Result<(), ProgramError>
 }
 
 /// Pack a Token Account state into an AccountInfo's data.
-pub fn pack_token_account(token_account: &Account, account: &AccountInfo) -> Result<(), ProgramError> {
+pub fn pack_token_account(
+    token_account: &Account,
+    account: &AccountInfo,
+) -> Result<(), ProgramError> {
     let mut data = account.data.borrow_mut();
     Account::pack(*token_account, &mut data)
 }

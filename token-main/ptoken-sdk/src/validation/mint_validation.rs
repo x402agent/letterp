@@ -1,10 +1,10 @@
 //! Mint account validation helpers.
 
-use solana_program::{account_info::AccountInfo, pubkey::Pubkey};
 use crate::{
     errors::PTokenError,
     pinocchio_core::zero_copy_layout::{is_mint_initialized, read_mint_decimals, MINT_LEN},
 };
+use solana_program::{account_info::AccountInfo, pubkey::Pubkey};
 
 /// Assert that a mint account is initialized.
 pub fn assert_mint_initialized(mint: &AccountInfo) -> Result<(), PTokenError> {

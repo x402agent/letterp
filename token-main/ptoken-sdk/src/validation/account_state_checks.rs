@@ -1,12 +1,10 @@
 //! Token account state validation.
 
-use solana_program::account_info::AccountInfo;
 use crate::{
     errors::PTokenError,
-    pinocchio_core::zero_copy_layout::{
-        read_token_amount, ACCOUNT_STATE_OFFSET, ACCOUNT_LEN,
-    },
+    pinocchio_core::zero_copy_layout::{read_token_amount, ACCOUNT_LEN, ACCOUNT_STATE_OFFSET},
 };
+use solana_program::account_info::AccountInfo;
 
 /// SPL Token account states.
 #[repr(u8)]
@@ -46,10 +44,7 @@ pub fn assert_account_not_frozen(account: &AccountInfo) -> Result<(), PTokenErro
 }
 
 /// Assert that a token account has a balance of at least `amount`.
-pub fn assert_sufficient_balance(
-    account: &AccountInfo,
-    amount: u64,
-) -> Result<(), PTokenError> {
+pub fn assert_sufficient_balance(account: &AccountInfo, amount: u64) -> Result<(), PTokenError> {
     let data = account.data.borrow();
     let balance = read_token_amount(&data).map_err(|_| PTokenError::InvalidAccountDataLength)?;
     if balance < amount {
