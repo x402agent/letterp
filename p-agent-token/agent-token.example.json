@@ -1,0 +1,26 @@
+{
+  "standard": "p-agent-token-v1",
+  "version": "0.1.0",
+  "network": "solana-mainnet",
+  "token": {
+    "name": "P Clawd",
+    "symbol": "PCLAWD",
+    "decimals": 6,
+    "uri": "https://arweave.net/pclawd-metadata.json"
+  },
+  "agent": {
+    "name": "Clawd",
+    "registrationUri": "https://arweave.net/clawd-agent.json",
+    "model": "claude-sonnet-4-6",
+    "capabilities": ["trade", "launch", "distribute", "delegate"]
+  },
+  "bondingCurve": {
+    "type": "constant-product",
+    "virtualSolReserves": 30,
+    "virtualTokenReserves": 1073000000,
+    "creatorFeeBps": 100,
+    "protocolFeeBps": 0,
+    "graduationSol": 85,
+    "postGraduation": "raydium-cpmm"
+  }
+}
