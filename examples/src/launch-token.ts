@@ -7,6 +7,7 @@
  * This assumes the launchpad server is running on localhost:4400.
  */
 import BN from "bn.js";
+import { PublicKey } from "@solana/web3.js";
 import {
   findCurvePda,
   findCurveVaultPda,
@@ -31,6 +32,10 @@ async function main() {
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       payer,
+      name: "Example p-token Agent",
+      symbol: "PAGT",
+      uri: "https://example.com/pagt-token.json",
+      agentUri: "https://example.com/pagt-agent.json",
       decimals: 6,
       creatorFeeBps: 100, // 1%
     }),
@@ -49,9 +54,9 @@ async function main() {
   console.log("");
 
   // Step 2: Derive PDAs locally to verify they match.
-  const mint = launch.mint;
-  const [curvePda] = findCurvePda(mint as any);
-  const [vaultPda] = findCurveVaultPda(mint as any);
+  const mint = new PublicKey(launch.mint);
+  const [curvePda] = findCurvePda(mint);
+  const [vaultPda] = findCurveVaultPda(mint);
   console.log("2. PDA verification:");
   console.log(`   Curve PDA (derived): ${curvePda.toBase58()}`);
   console.log(`   Server says:         ${launch.curve}`);

@@ -1,34 +1,70 @@
 import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 
+declare const process: { env: Record<string, string | undefined> };
+
 // ---------------------------------------------------------------------------
 // Program IDs
 // ---------------------------------------------------------------------------
 
-/** The mainnet p-token program (TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA).
- *  SIMD-0266 (p-token) is a runtime swap behind a feature gate — same ID,
- *  95–98% lower CU per instruction. */
-export const TOKEN_PROGRAM_ID = new PublicKey(
+function publicKeyFromEnv(name: string, fallback: string): PublicKey {
+  const value = process.env[name] ?? fallback;
+  try {
+    return new PublicKey(value);
+  } catch {
+    return new PublicKey(fallback);
+  }
+}
+
+export const SPL_TOKEN_PROGRAM_ID = new PublicKey(
   "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
 );
+
+/** Pinocchio p-token program id. Override for a custom deployment. */
+export const P_TOKEN_PROGRAM_ID = publicKeyFromEnv(
+  "P_TOKEN_PROGRAM_ID",
+  "ptok6rngomXrDbWf5v5Mkmu5CEbB51hzSCPDoj9DrvF",
+);
+
+export function isPTokenPreferred(): boolean {
+  const value = process.env.USE_P_TOKEN;
+  return value !== "0" && value !== "false";
+}
+
+/** Token program used by the launchpad. Defaults to p-token, with SPL fallback. */
+export const TOKEN_PROGRAM_ID = isPTokenPreferred()
+  ? P_TOKEN_PROGRAM_ID
+  : SPL_TOKEN_PROGRAM_ID;
 
 export const ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey(
   "ATokenGPvbdGVxr1b2hvZbsiqW5xr25ix9fFhNoxLAUVK",
 );
 
-/** The x402 launchpad's on-chain bonding-curve program. Deployed by us. */
-export const BONDING_CURVE_PROGRAM_ID = new PublicKey(
-  "x402XXXXXXXXXXXXXXbondingXXXXXXXcurve",
+/** The self-hosted p-token launchpad program. Override after deployment. */
+export const P_TOKEN_LAUNCHPAD_PROGRAM_ID = publicKeyFromEnv(
+  "P_TOKEN_LAUNCHPAD_PROGRAM_ID",
+  // Valid placeholder only. Set P_TOKEN_LAUNCHPAD_PROGRAM_ID to your deployed id.
+  "11111111111111111111111111111111",
+);
+
+/** Backwards-compatible alias used by the older curve-only SDK. */
+export const BONDING_CURVE_PROGRAM_ID = P_TOKEN_LAUNCHPAD_PROGRAM_ID;
+
+export const P_TOKEN_FEATURE_GATE_PROGRAM_ID = publicKeyFromEnv(
+  "P_TOKEN_FEATURE_GATE_PROGRAM_ID",
+  "ptokFjwyJtrwCa9Kgo9xoDS59V4QccBGEaRFnRPnSdP",
 );
 
 /** Metaplex Core program ID. */
-export const MPL_CORE_PROGRAM_ID = new PublicKey(
-  "MplCore111111111111111111111111111111111111",
+export const MPL_CORE_PROGRAM_ID = publicKeyFromEnv(
+  "MPL_CORE_PROGRAM_ID",
+  "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d",
 );
 
 /** Metaplex Agent Registry program ID. */
-export const MPL_AGENT_REGISTRY_PROGRAM_ID = new PublicKey(
-  "MplAgentReg1111111111111111111111111111111",
+export const MPL_AGENT_REGISTRY_PROGRAM_ID = publicKeyFromEnv(
+  "MPL_AGENT_REGISTRY_PROGRAM_ID",
+  "11111111111111111111111111111111",
 );
 
 // ---------------------------------------------------------------------------
@@ -62,6 +98,24 @@ export interface BondingCurveState {
   protocolFeeBps: number;
   /** The associated mint. */
   mint: PublicKey;
+}
+
+export interface AgentState {
+  owner: PublicKey;
+  uri: string;
+  createdAt: BN;
+  executiveDelegate: PublicKey | null;
+  isActive: boolean;
+}
+
+export interface AgentTokenState {
+  agent: PublicKey;
+  mint: PublicKey;
+  name: string;
+  symbol: string;
+  uri: string;
+  createdAt: BN;
+  isBound: boolean;
 }
 
 // ---------------------------------------------------------------------------

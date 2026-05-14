@@ -87,10 +87,37 @@ accumulated fees.
 ## PDA Derivation
 
 ```
-curve = PDA(["curve", mint], BONDING_CURVE_PROGRAM_ID)
-vault = PDA(["vault", mint], BONDING_CURVE_PROGRAM_ID)
+global = PDA(["global"], P_TOKEN_LAUNCHPAD_PROGRAM_ID)
+curve = PDA(["bonding-curve", mint], P_TOKEN_LAUNCHPAD_PROGRAM_ID)
+vault = PDA(["bonding-curve", mint, "vault"], P_TOKEN_LAUNCHPAD_PROGRAM_ID)
+agent = PDA(["agent", owner], P_TOKEN_LAUNCHPAD_PROGRAM_ID)
+agentToken = PDA(["agent-token", mint], P_TOKEN_LAUNCHPAD_PROGRAM_ID)
+creatorVault = PDA(["creator-vault", creator], P_TOKEN_LAUNCHPAD_PROGRAM_ID)
+executionDelegation = PDA(["exec-delegation", agent, delegate], P_TOKEN_LAUNCHPAD_PROGRAM_ID)
 assetSigner = PDA(["mpl-core-execute", asset], MPL_CORE_PROGRAM_ID)
 ```
+
+## P-Token Launchpad SDK
+
+The launchpad package exposes unsigned TypeScript builders for the self-hosted
+p-token flow:
+
+```ts
+import {
+  buildCreateAgentToken,
+  buildRegisterAgent,
+  buildRegisterExecutive,
+  buildDelegateExecution,
+  buildBuy,
+  buildSell,
+  buildFeeDistributionIx,
+} from "@x402pt/launchpad";
+```
+
+Set `P_TOKEN_LAUNCHPAD_PROGRAM_ID` to the Pinocchio program you deploy. Set
+`P_TOKEN_PROGRAM_ID` to the p-token program deployment, or `USE_P_TOKEN=0` for
+classic SPL fallback. RPC resolution prefers `HELIUS_RPC_URL`, then
+`SOLANA_RPC_URL`, then `HELIUS_API_KEY`.
 
 ## x402 Payment Flow
 

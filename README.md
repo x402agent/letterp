@@ -54,6 +54,29 @@ cd launchpad && npx ts-node src/server.ts
 cd examples && npx ts-node src/launch-token.ts
 ```
 
+### Runtime configuration
+
+The TypeScript SDK now defaults to Helius when either `HELIUS_RPC_URL` or
+`HELIUS_API_KEY` is present:
+
+```bash
+export SOLANA_NETWORK=solana-devnet
+export HELIUS_API_KEY=...
+# or:
+export HELIUS_RPC_URL="https://devnet.helius-rpc.com/?api-key=..."
+```
+
+Program ids are env-driven so the same SDK works before and after you deploy
+your own Pinocchio launchpad:
+
+```bash
+export P_TOKEN_PROGRAM_ID=ptok6rngomXrDbWf5v5Mkmu5CEbB51hzSCPDoj9DrvF
+export P_TOKEN_LAUNCHPAD_PROGRAM_ID=<your deployed launchpad program id>
+export USE_P_TOKEN=1
+```
+
+`USE_P_TOKEN=0` switches token instructions back to classic SPL Token.
+
 ---
 
 ## End-to-end flow

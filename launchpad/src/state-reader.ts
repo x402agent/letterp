@@ -71,9 +71,16 @@ export async function fetchCurveState(
  * otherwise falling back to the cluster default.
  */
 export function makeConnection(): Connection {
+  const heliusApiKey = process.env.HELIUS_API_KEY;
+  const network = process.env.SOLANA_NETWORK ?? "mainnet";
+  const heliusCluster =
+    network === "solana-devnet" || network === "devnet" ? "devnet" : "mainnet";
   const endpoint =
     process.env.HELIUS_RPC_URL ??
     process.env.SOLANA_RPC_URL ??
+    (heliusApiKey
+      ? `https://${heliusCluster}.helius-rpc.com/?api-key=${heliusApiKey}`
+      : undefined) ??
     "https://api.mainnet-beta.solana.com";
   return new Connection(endpoint, "confirmed");
 }

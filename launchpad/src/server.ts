@@ -24,6 +24,7 @@ import { z } from "zod";
 import { makeConnection, fetchCurveState } from "./state-reader";
 import {
   buildCreateLaunch,
+  buildCreateAgentToken,
   buildBuy,
   buildSell,
 } from "./programs/launchpad-ix";
@@ -131,8 +132,13 @@ function require402(
 const LaunchBody = z.object({
   payer: z.string(), // base58 pubkey
   agentAsset: z.string().optional(), // Core asset address if the launcher is an agent
+  name: z.string().max(32).optional(),
+  symbol: z.string().max(10).optional(),
+  uri: z.string().max(256).optional(),
+  agentUri: z.string().max(256).optional(),
   decimals: z.number().int().min(0).max(9).optional(),
   creatorFeeBps: z.number().int().min(0).max(1000).optional(),
+  protocolFeeBps: z.number().int().min(0).max(1000).optional(),
 });
 
 app.post("/launch", async (req, res) => {
@@ -151,11 +157,50 @@ app.post("/launch", async (req, res) => {
     creatorFeeWallet = pda;
   }
 
+  if (
+    parsed.data.name &&
+    parsed.data.symbol &&
+    parsed.data.uri &&
+    parsed.data.agentUri
+  ) {
+    const result = buildCreateAgentToken({
+      payer,
+      name: parsed.data.name,
+      symbol: parsed.data.symbol,
+      uri: parsed.data.uri,
+      agentUri: parsed.data.agentUri,
+      decimals: parsed.data.decimals,
+      creatorFeeBps: parsed.data.creatorFeeBps,
+      protocolFeeBps: parsed.data.protocolFeeBps,
+    });
+
+    res.json({
+      mint: result.mint.publicKey.toBase58(),
+      agent: result.agentPda.toBase58(),
+      agentToken: result.agentTokenPda.toBase58(),
+      curve: result.bondingCurvePda.toBase58(),
+      vault: result.bondingCurveVaultPda.toBase58(),
+      creatorVault: result.creatorVaultPda.toBase58(),
+      mintSecret: Buffer.from(result.mint.secretKey).toString("base64"),
+      instructions: result.instructions.map((ix) => ({
+        programId: ix.programId.toBase58(),
+        keys: ix.keys.map((k) => ({
+          pubkey: k.pubkey.toBase58(),
+          isSigner: k.isSigner,
+          isWritable: k.isWritable,
+        })),
+        data: ix.data.toString("base64"),
+      })),
+    });
+    return;
+  }
+
   const result = await buildCreateLaunch(connection, {
     payer,
     creatorFeeWallet,
     decimals: parsed.data.decimals,
     creatorFeeBps: parsed.data.creatorFeeBps,
+    protocolFeeBps: parsed.data.protocolFeeBps,
   });
 
   // Return the unsigned tx for the client to sign — we never see their key.
