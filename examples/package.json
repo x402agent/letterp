@@ -1,0 +1,25 @@
+{
+  "name": "@x402pt/examples",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "start:launch-token": "node dist/launch-token.js",
+    "start:agent-launch": "node dist/agent-launch.js",
+    "start:pay-to-read": "node dist/pay-to-read.js",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@x402pt/shared": "*",
+    "@x402pt/launchpad": "*",
+    "@x402pt/agent-sdk": "*",
+    "@x402pt/perps": "*",
+    "@solana/web3.js": "^2.0.0",
+    "bn.js": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/bn.js": "^5.1.6",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  }
+}

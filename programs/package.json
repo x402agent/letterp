@@ -1,0 +1,10 @@
+{
+  "name": "@x402pt/programs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "cd src && cargo build-bpf",
+    "clean": "cd src && cargo clean",
+    "test": "cd src && cargo test-bpf"
+  }
+}

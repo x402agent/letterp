@@ -1,0 +1,21 @@
+{
+  "name": "@x402pt/agent-sdk",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@x402pt/shared": "*",
+    "@x402pt/launchpad": "*",
+    "@solana/web3.js": "^2.0.0",
+    "bn.js": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/bn.js": "^5.1.6",
+    "typescript": "^5.7.0"
+  }
+}

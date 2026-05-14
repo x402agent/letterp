@@ -1,0 +1,25 @@
+[package]
+name = "x402-bonding-curve"
+version = "0.1.0"
+edition = "2021"
+description = "On-chain bonding-curve program for the x402-ptoken-launchpad"
+
+[features]
+no-entrypoint = []
+no-idl = []
+
+[dependencies]
+pinocchio = { git = "https://github.com/valentinmadrid/pinocchio", rev = "latest" }
+pinocchio-log = "0.2"
+pinocchio-system = "0.4"
+pinoccio-token = "0.3"
+
+[lib]
+name = "x402_bonding_curve"
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[profile.release]
+opt-level = "z"
+lto = true
+debug = false
+overflow-checks = true

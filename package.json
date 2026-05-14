@@ -1,0 +1,23 @@
+{
+  "name": "x402-ptoken-launchpad",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "facilitator",
+    "launchpad",
+    "agent-sdk",
+    "perps",
+    "programs",
+    "examples"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "clean": "npm run clean --workspaces",
+    "lint": "npm run lint --workspaces",
+    "format": "prettier --write '**/*.{ts,js,json,md}'"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.0",
+    "typescript": "^5.7.0"
+  }
+}
