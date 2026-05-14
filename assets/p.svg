@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 320" width="640" height="320">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&amp;display=swap');
+
+      .bg { fill: #0d0d0d; }
+
+      /* scanline overlay */
+      .scan { fill: url(#scanlines); opacity: 0.06; }
+
+      /* the big P glyphs */
+      .p1 { fill: #9945FF; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 72px; }
+      .p2 { fill: #14F195; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 72px; }
+      .p3 { fill: #00D4AA; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 72px; }
+
+      /* ASCII block art lines */
+      .ascii { fill: #9945FF; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 15px; letter-spacing: 0.05em; }
+      .ascii2 { fill: #14F195; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 10px; letter-spacing: 0.12em; opacity: 0.75; }
+
+      /* glow filter on the P rows */
+      .glow { filter: url(#glow); }
+
+      /* row reveal animations — each row fades in sequentially */
+      .r0 { animation: fadein 0.18s 0.00s both; }
+      .r1 { animation: fadein 0.18s 0.15s both; }
+      .r2 { animation: fadein 0.18s 0.30s both; }
+      .r3 { animation: fadein 0.18s 0.45s both; }
+      .r4 { animation: fadein 0.18s 0.60s both; }
+      .r5 { animation: fadein 0.18s 0.75s both; }
+
+      /* tagline types in after the P */
+      .tag { animation: fadein 0.4s 1.1s both; }
+      .tag2 { animation: fadein 0.4s 1.4s both; }
+      .tag3 { animation: fadein 0.4s 1.7s both; }
+
+      /* cursor blink at end */
+      .cursor { animation: fadein 0.2s 1.9s both, blink 1s 2.0s infinite; fill: #9945FF; font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 800; }
+
+      /* subtle purple pulse on the whole P block */
+      .pulse { animation: pulse 4s 2s ease-in-out infinite; }
+
+      @keyframes fadein {
+        from { opacity: 0; transform: translateX(-4px); }
+        to   { opacity: 1; transform: translateX(0); }
+      }
+      @keyframes blink {
+        0%, 49% { opacity: 1; }
+        50%, 100% { opacity: 0; }
+      }
+      @keyframes pulse {
+        0%, 100% { filter: url(#glow) drop-shadow(0 0 2px #9945FF44); }
+        50%       { filter: url(#glow) drop-shadow(0 0 14px #9945FFaa); }
+      }
+    </style>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <pattern id="scanlines" x="0" y="0" width="2" height="4" patternUnits="userSpaceOnUse">
+      <rect width="2" height="1" fill="#fff"/>
+    </pattern>
+  </defs>
+
+  <!-- background -->
+  <rect class="bg" width="640" height="320"/>
+  <rect class="scan" width="640" height="320"/>
+
+  <!-- ASCII art letter P — centered, animated row by row -->
+  <g class="pulse" transform="translate(130, 52)">
+    <text class="ascii glow r0" x="0" y="0">██████╗ </text>
+    <text class="ascii glow r1" x="0" y="26">██╔══██╗</text>
+    <text class="ascii glow r2" x="0" y="52">██████╔╝</text>
+    <text class="ascii glow r3" x="0" y="78">██╔═══╝ </text>
+    <text class="ascii glow r4" x="0" y="104">██║     </text>
+    <text class="ascii glow r5" x="0" y="130">╚═╝     </text>
+  </g>
+
+  <!-- tagline lines -->
+  <text class="ascii2 tag"  x="320" y="215" text-anchor="middle">P-TOKEN  ·  P-AGENTS  ·  P-LAUNCH  ·  PINOCCHIO  ·  PERPS  ·  PAY.SH</text>
+  <text class="ascii2 tag2" x="320" y="235" text-anchor="middle">SOLANA  ·  METAPLEX CORE  ·  x402  ·  SIMD-0266  ·  BONDING CURVES</text>
+  <text class="ascii2 tag3" x="320" y="262" text-anchor="middle" style="fill:#9945FF;font-size:11px;opacity:0.9;">$CLAWD  ·  8cHzQHUS2s2h8TzCmfqPKYiM4dSt4roa3n7MyRLApump</text>
+
+  <!-- blinking cursor -->
+  <text class="cursor" x="370" y="182">_</text>
+</svg>
