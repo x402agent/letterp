@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const repoRoot = resolve(__dirname, "../../..");
+const repoRoot = findRepoRoot(__dirname);
 const publicRoot = join(__dirname, "public");
 const registryPath = resolve(repoRoot, "data/ptokens.json");
 
@@ -40,6 +40,22 @@ const server = createServer(async (req, res) => {
 server.listen(PORT, () => {
   console.log(`p-token launcher workbench: http://localhost:${PORT}`);
 });
+
+function findRepoRoot(start) {
+  let current = resolve(start);
+  while (true) {
+    if (
+      existsSync(join(current, "package.json")) &&
+      (existsSync(join(current, "shared")) || existsSync(join(current, "templates")))
+    ) {
+      return current;
+    }
+
+    const parent = resolve(current, "..");
+    if (parent === current) return resolve(start, "..");
+    current = parent;
+  }
+}
 
 async function handleApi(req, res, url) {
   if (req.method === "GET" && url.pathname === "/api/health") {

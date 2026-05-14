@@ -14,7 +14,9 @@
     "build": "npm run build --workspaces",
     "clean": "npm run clean --workspaces",
     "lint": "npm run lint --workspaces",
-    "format": "prettier --write '**/*.{ts,js,json,md}'"
+    "format": "prettier --write '**/*.{ts,js,json,md}'",
+    "ptoken:launcher": "npm --prefix p-token-launcher start",
+    "ptoken:launcher:check": "npm --prefix p-token-launcher run check"
   },
   "devDependencies": {
     "prettier": "^3.4.0",

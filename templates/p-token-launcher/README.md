@@ -17,12 +17,7 @@ Use it as the config contract for a launch form or an agent-driven launch workfl
 ## Bonding curve planning
 
 The local planner is intentionally unsigned. Use it to produce config, quotes,
-and agent-visible checklists before any wallet or deploy step:
-
-```sh
-npm run ptoken:launch-plan -- --symbol PFOO --name "P Foo"
-npm run ptoken:curve-quote -- --virtual-sol 30 --virtual-token 1073000000 --sol 1
-```
+and agent-visible checklists before any wallet or deploy step.
 
 The default curve model is constant product:
 
@@ -43,16 +38,16 @@ This template now includes a local workbench for humans and agents to plan a
 p-token launch, simulate curve trades, model a RISE-style floor, prepare a
 perpetual intent, inspect a mint, and emit WDK-ready unsigned wallet intents.
 
-Start it from the repo root:
-
-```sh
-npm run ptoken:launcher
-```
-
-Or start it from this directory:
+After copying the template into a project, start it from that project:
 
 ```sh
 npm start
+```
+
+In this repo, the adapted version lives at `../../p-token-launcher` and can be started from the repo root:
+
+```sh
+npm run ptoken:launcher
 ```
 
 Then open:
@@ -86,6 +81,14 @@ Example:
 curl -s http://localhost:8787/api/launch-plan \
   -H 'content-type: application/json' \
   -d '{"symbol":"PQC","name":"Quantum Compute p-token","virtualSol":30,"virtualToken":1073000000}'
+```
+
+Quote example:
+
+```sh
+curl -s http://localhost:8787/api/quote \
+  -H 'content-type: application/json' \
+  -d '{"side":"buy","virtualSol":30,"virtualToken":1073000000,"sol":1,"feeBps":100}'
 ```
 
 ## Config

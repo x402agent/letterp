@@ -27,14 +27,15 @@ before deployment.
 | `5` | `sell` | Sell along the launch curve. |
 | `6` | `graduate` | Freeze the launch curve and prepare AMM migration. |
 
+## Adapted Version
+
+This repo includes an adapted copy at `../../p-agent-token`. Use that folder as
+the concrete reference for crate naming, source layout, and example config.
+
 ## Planner
 
-From the repo root:
-
-```sh
-npm run pagent:plan -- --symbol PCLAWD --name "Clawd Agent Token" --agent-name "Clawd"
-npm run pagent:quote -- --virtual-sol 30 --virtual-token 1073000000 --sol 1
-```
+Use `../../p-token-launcher` for unsigned launch planning and curve quotes. The
+program template itself does not include a JavaScript CLI.
 
 ## Security Checklist
 

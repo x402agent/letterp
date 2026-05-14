@@ -1,49 +1,68 @@
-# {{project_name}}
+# P Agent Token
 
-Pinocchio p-agent-token starter.
+Pinocchio program scaffold for a faster P Agent token path. This folder is the promoted version of `templates/p-agent-token`: it has a concrete crate name and example config, but it is still a scaffold rather than a deployable audited program.
 
-This template is for a faster agent token path:
+## How It Fits
 
-- p-token mint/account operations for lower compute-unit cost.
-- Pinocchio zero-copy account validation and state access.
-- MPL Core / Agent Registry compatible identity metadata.
-- One-way agent-token binding similar to Metaplex agent token linking.
-- Constant-product launch curve planning.
+`p-agent-token` is the on-chain companion to the TypeScript packages:
 
-This scaffold is intentionally incomplete and unaudited. It defines the public
-program shape and state contract, but you must implement CPI transfers, PDA
-signer seeds, curve reserve custody, fee distribution, graduation, and tests
-before deployment.
+| Workspace area | Role |
+|----------------|------|
+| `agent-sdk` | Builds Core asset, registration, and Core Execute instructions for P Agents. |
+| `launchpad` | Builds TypeScript launch, buy, sell, fee, and graduation instructions. |
+| `p-agent-token` | Defines the Pinocchio state and instruction shell those client builders are expected to target. |
+| `p-token-launcher` | Provides an unsigned planning UI/API for humans and agents before signing or deployment. |
 
-## Planned Instructions
+## Program Shape
 
-| Discriminator | Instruction | Purpose |
+| Discriminator | Instruction | Current behavior |
 | ---: | --- | --- |
-| `0` | `initialize_agent` | Create zero-copy agent state and point to agent metadata/Core asset. |
-| `1` | `initialize_agent_mint` | Create or validate the p-token mint for the agent. |
-| `2` | `bind_agent_token` | Permanently bind the p-token mint to the agent state. |
-| `3` | `delegate_executor` | Record an executive wallet allowed to operate the agent. |
-| `4` | `buy` | Buy along the launch curve. |
-| `5` | `sell` | Sell along the launch curve. |
-| `6` | `graduate` | Freeze the launch curve and prepare AMM migration. |
+| `0` | `initialize_agent` | Validates account shape and owner signer. |
+| `1` | `initialize_agent_mint` | Validates account shape and owner signer. |
+| `2` | `bind_agent_token` | Marks the agent state as permanently bound. |
+| `3` | `delegate_executor` | Validates account shape and owner signer. |
+| `4` | `buy` | Parses a non-zero lamport amount; transfer and curve math are still TODO. |
+| `5` | `sell` | Parses a non-zero token amount; transfer and curve math are still TODO. |
+| `6` | `graduate` | Marks the agent state as graduated. |
 
-## Planner
+## State
 
-From the repo root:
+`src/state.rs` defines:
 
-```sh
-npm run pagent:plan -- --symbol PCLAWD --name "Clawd Agent Token" --agent-name "Clawd"
-npm run pagent:quote -- --virtual-sol 30 --virtual-token 1073000000 --sol 1
+| State | Purpose |
+|-------|---------|
+| `AgentState` | Owner, Core asset, bound token mint, executive wallet, metadata hash, flags, and bump. |
+| `CurveState` | Mint, vault, virtual reserves, real reserves, fees, flags, and bump. |
+
+Both structs use zero-copy loading and exact account-data length checks.
+
+## Example Config
+
+`agent-token.example.json` describes the launch contract shared by the planner, agent metadata, and program implementation:
+
+```json
+{
+  "standard": "p-agent-token-v1",
+  "token": { "symbol": "PCLAWD" },
+  "bondingCurve": { "type": "constant-product", "graduationSol": 85 }
+}
 ```
 
-## Security Checklist
+## Build
+
+```bash
+cd p-agent-token
+cargo check
+```
+
+For SBF builds, use the Solana toolchain appropriate for your validator and Pinocchio version.
+
+## Security Work Before Deployment
 
 - Validate every account owner, signer, writable flag, and PDA bump.
-- Keep p-token mint owner checks explicit.
-- Keep token state zero-copy; avoid owned token account deserialization in hot paths.
+- Enforce token program IDs and p-token mint/account ownership explicitly.
+- Implement CPI transfers and signer seeds for reserve custody.
+- Keep curve reserves separate from agent operating balances.
 - Make `bind_agent_token` one-way after finalization.
-- Separate curve reserves from agent operating balances.
-- Test malformed accounts, duplicate accounts, incorrect token programs, overflow,
-  fee math, and graduation boundaries.
-- Treat p-token as unaudited unless your chosen deployment has an independent
-  review for the exact commit and program id.
+- Implement overflow-safe fee math, graduation thresholds, reserve migration, and close/refund behavior.
+- Add Mollusk or SBF tests for malformed accounts, duplicate accounts, wrong token programs, overflow, fee math, and graduation boundaries.
