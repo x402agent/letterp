@@ -8,6 +8,7 @@ Protocol and agent design notes for the P Token launchpad workspace.
 |------|----------|
 | `PROTOCOL.md` | Bonding-curve math, default parameters, account layout, instruction discriminators, PDA seeds, SDK exports, and x402 payment flow. |
 | `P_AGENTS.md` | P Agent lifecycle, Metaplex Core Execute flow, PDA table, SDK reference, fee routing, registration JSON, and environment setup. |
+| `PROGRAM_DRAFT.md` | Devnet/mainnet P Agent program contract, account model, instruction contract, and implementation order. |
 
 ## Related Project Folders
 
@@ -15,7 +16,7 @@ Protocol and agent design notes for the P Token launchpad workspace.
 |--------|----------|
 | `../templates` | Reusable Pinocchio and p-token launcher starters. |
 | `../p-agent-token` | Adapted Pinocchio P Agent token scaffold. |
-| `../p-token-launcher` | Unsigned browser/API workbench for p-token launch planning. |
+| `../p-token-launcher` | Unsigned browser/API workbench for p-token and P Agent exploration. |
 
 ## Reading Order
 

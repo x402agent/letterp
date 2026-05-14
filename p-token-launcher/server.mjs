@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { createServer } from "node:http";
+import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -65,8 +66,15 @@ async function handleApi(req, res, url) {
       network: inferNetwork(DEFAULT_RPC),
       rpcConfigured: Boolean(process.env.SOLANA_RPC_URL || process.env.HELIUS_RPC_URL),
       pTokenProgramId: DEFAULT_P_TOKEN_PROGRAM_ID,
+      launchpadProgramId: process.env.P_TOKEN_LAUNCHPAD_PROGRAM_ID ?? "11111111111111111111111111111111",
+      agentProgramId: process.env.P_AGENT_TOKEN_PROGRAM_ID ?? "11111111111111111111111111111111",
       adapters: ["wdk-intent", "browser-wallet", "agent-review", "human-review"],
     });
+    return;
+  }
+
+  if (req.method === "GET" && url.pathname === "/api/workspace") {
+    sendJson(res, 200, workspaceMap());
     return;
   }
 
@@ -85,6 +93,21 @@ async function handleApi(req, res, url) {
 
   if (req.method === "POST" && url.pathname === "/api/launch-plan") {
     sendJson(res, 200, launchPlan(await readJsonBody(req)));
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/agent-plan") {
+    sendJson(res, 200, agentPlan(await readJsonBody(req)));
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/program-draft") {
+    sendJson(res, 200, programDraft(await readJsonBody(req)));
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/explore") {
+    sendJson(res, 200, explore(await readJsonBody(req)));
     return;
   }
 
@@ -151,6 +174,47 @@ function readRegistry() {
   if (!existsSync(registryPath)) return { version: 1, tokens: [] };
   const parsed = readJson(registryPath);
   return { version: parsed.version ?? 1, tokens: Array.isArray(parsed.tokens) ? parsed.tokens : [] };
+}
+
+function workspaceMap() {
+  return {
+    repoRoot,
+    unsigned: true,
+    packages: [
+      {
+        name: "agent-sdk",
+        path: "agent-sdk",
+        role: "Core asset identity, asset signer PDA, registration docs, and Core Execute wrappers.",
+        entrypoints: ["src/p-agent.ts", "src/p-nft.ts", "src/p-registry.ts", "src/client.ts"],
+      },
+      {
+        name: "launchpad",
+        path: "launchpad",
+        role: "Bonding curve math, launch/trade instruction builders, state reader, and x402-gated API.",
+        entrypoints: ["src/server.ts", "src/programs/launchpad-ix.ts", "src/curves/constant-product.ts"],
+      },
+      {
+        name: "p-agent-token",
+        path: "p-agent-token",
+        role: "Pinocchio agent-token program draft for devnet and mainnet deployments.",
+        entrypoints: ["src/lib.rs", "src/state.rs", "src/instructions"],
+      },
+      {
+        name: "facilitator",
+        path: "facilitator",
+        role: "x402 verify, settle, supported, and health service.",
+        entrypoints: ["src/server.ts"],
+      },
+      {
+        name: "perps",
+        path: "perps",
+        role: "Drift and Adrena-style market configuration for graduated p-tokens.",
+        entrypoints: ["src/drift-adapter.ts"],
+      },
+    ],
+    documents: ["docs/PROTOCOL.md", "docs/P_AGENTS.md", "docs/PROGRAM_DRAFT.md", "p-agent-token/DEPLOYMENT.md"],
+    templates: ["templates/escrow", "templates/vault", "templates/p-agent-token", "templates/p-token-launcher"],
+  };
 }
 
 function numberArg(input, key, fallback) {
@@ -228,6 +292,155 @@ function launchPlan(input) {
       "register verified mint in data/ptokens.json",
       "enable x402 P_TOKEN_PROGRAM_ID or USE_P_TOKEN routing only after verification",
     ],
+  };
+}
+
+function agentPlan(input) {
+  const agentName = String(input.agentName ?? "Solana Clawd").trim();
+  const tokenSymbol = String(input.symbol ?? "CLAWD").trim().toUpperCase();
+  const owner = String(input.owner ?? "<owner-wallet-or-multisig>");
+  const asset = String(input.coreAsset ?? "<new-metaplex-core-asset>");
+  const model = String(input.model ?? "policy-controlled-agent");
+  const endpoint = String(input.endpoint ?? "https://solanaclawd.com/agent.json");
+  const assetSigner = draftAddress("mpl-core-execute", asset);
+  const agentState = draftAddress("agent", assetSigner);
+  const creatorVault = draftAddress("creator-vault", assetSigner);
+  const executive = input.executive ? String(input.executive) : null;
+
+  return {
+    unsigned: true,
+    standard: "p-agent-token-v1",
+    network: String(input.network ?? "solana-devnet"),
+    agent: {
+      name: agentName,
+      owner,
+      coreAsset: asset,
+      assetSigner,
+      state: agentState,
+      executive,
+      endpoint,
+      model,
+      capabilities: normalizeList(input.capabilities ?? "launch,trade,quote,settle,delegate"),
+    },
+    token: {
+      symbol: tokenSymbol,
+      name: String(input.tokenName ?? `${agentName} Token`),
+      mint: String(input.mint ?? "<created-by-launch>"),
+      creatorFeeWallet: assetSigner,
+      creatorVault,
+    },
+    registrationDoc: {
+      "@context": "https://erc8004.org/schema/agent.json",
+      "@type": "Agent",
+      id: asset,
+      name: agentName,
+      description: String(input.description ?? `${agentName} manages p-token launch and trading workflows.`),
+      image: String(input.image ?? "https://solanaclawd.com/agent.png"),
+      model,
+      capabilities: normalizeList(input.capabilities ?? "launch,trade,quote,settle,delegate"),
+      endpoint,
+      services: [
+        { name: "launchpad", endpoint: String(input.launchpadUrl ?? "http://localhost:4400"), version: "0.1.0" },
+        { name: "x402", endpoint: String(input.facilitatorUrl ?? "http://localhost:4402"), version: "0.1.0" },
+      ],
+      active: true,
+      registrations: [{ agentId: asset, agentRegistry: "solana:p-agent-token-v1" }],
+      supportedTrust: ["core-execute", "x402", "human-review"],
+    },
+    executionPolicy: {
+      defaultMode: "review-required",
+      delegateExpiresAtSlot: input.delegateExpiresAtSlot ? Number(input.delegateExpiresAtSlot) : null,
+      blockedActionsUntilImplemented: ["custodial-transfer", "autonomous-mainnet-trade", "perp-open-without-policy"],
+    },
+    nextInstructions: [
+      "mint or select the Core asset",
+      "pin the registration JSON and call initialize_agent",
+      "initialize the p-token mint and bind_agent_token",
+      "route creator fees to the asset signer PDA",
+      "delegate execution only with slot expiry and policy checks",
+    ],
+  };
+}
+
+function programDraft(input) {
+  const target = String(input.target ?? "devnet");
+  const authority = String(input.upgradeAuthority ?? "<upgrade-authority-multisig>");
+  const launchpadProgramId = String(input.launchpadProgramId ?? process.env.P_TOKEN_LAUNCHPAD_PROGRAM_ID ?? "<deploy-launchpad-program>");
+  const agentProgramId = String(input.agentProgramId ?? process.env.P_AGENT_TOKEN_PROGRAM_ID ?? "<deploy-agent-token-program>");
+  const pTokenProgramId = String(input.pTokenProgramId ?? DEFAULT_P_TOKEN_PROGRAM_ID);
+  const risk = target.includes("mainnet") ? "mainnet-guarded" : "devnet-iteration";
+  return {
+    unsigned: true,
+    target,
+    risk,
+    programs: {
+      launchpad: {
+        path: "programs/src",
+        programId: launchpadProgramId,
+        purpose: "bonding curve state, buy/sell/graduation, creator fee claiming",
+        sourceOfTruth: "docs/PROTOCOL.md",
+      },
+      agentToken: {
+        path: "p-agent-token",
+        programId: agentProgramId,
+        purpose: "agent state, Core asset binding, p-token mint binding, executive delegation",
+        sourceOfTruth: "p-agent-token/DEPLOYMENT.md",
+      },
+      tokenProgram: {
+        programId: pTokenProgramId,
+        purpose: "p-token or SPL-compatible token operations",
+      },
+    },
+    deployment: {
+      upgradeAuthority: authority,
+      devnet: [
+        "cargo check in p-agent-token",
+        "cargo build-sbf or Solana SBF build for the selected Pinocchio toolchain",
+        "solana config set --url devnet",
+        "solana program deploy target/deploy/p_agent_token.so --program-id target/deploy/p_agent_token-keypair.json",
+        "set P_AGENT_TOKEN_PROGRAM_ID to the deployed program id",
+        "run launcher inspect and agent-plan against devnet",
+      ],
+      mainnet: [
+        "freeze interface discriminators and account layouts",
+        "run SBF tests and external review",
+        "deploy with multisig upgrade authority",
+        "publish program ids in docs and environment templates",
+        "start with review-required agent execution policy",
+      ],
+    },
+    accountContract: {
+      agent: ["owner", "agent_asset", "agent_token_mint", "executive", "metadata_hash", "flags", "bump"],
+      curve: ["mint", "vault", "virtual_sol", "virtual_token", "real_sol", "real_token", "fee_bps", "creator_fee_bps", "flags", "bump"],
+      signerSeeds: {
+        assetSigner: ["mpl-core-execute", "asset"],
+        agentState: ["agent", "asset_signer"],
+        agentToken: ["agent-token", "mint"],
+        curve: ["bonding-curve", "mint"],
+        vault: ["bonding-curve", "mint", "vault"],
+      },
+    },
+  };
+}
+
+function explore(input) {
+  const query = String(input.query ?? "").trim();
+  const kind = String(input.kind ?? inferExploreKind(query));
+  return {
+    unsigned: true,
+    query,
+    kind,
+    network: String(input.network ?? inferNetwork(DEFAULT_RPC)),
+    token: query ? classifyTokenInput(query) : null,
+    workspace: workspaceMap().packages,
+    routes: {
+      launchPlan: "/api/launch-plan",
+      agentPlan: "/api/agent-plan",
+      quote: "/api/quote",
+      inspect: "/api/inspect",
+      programDraft: "/api/program-draft",
+    },
+    recommendedNext: recommendedNext(kind),
   };
 }
 
@@ -363,6 +576,42 @@ function wdkIntent(input) {
       },
     ],
   };
+}
+
+function normalizeList(value) {
+  if (Array.isArray(value)) return value.map(String).filter(Boolean);
+  return String(value)
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function inferExploreKind(query) {
+  if (query.length >= 32 && query.length <= 64) return "address";
+  if (query.startsWith("http")) return "metadata";
+  if (query.includes("-PERP")) return "perp-market";
+  return "workspace";
+}
+
+function classifyTokenInput(query) {
+  return {
+    raw: query,
+    looksLikeSolanaAddress: /^[1-9A-HJ-NP-Za-km-z]{32,64}$/.test(query),
+    looksLikePumpMint: query.endsWith("pump"),
+    suggestedActions: ["inspect mint", "build launch plan", "bind to agent", "prepare quote", "draft perp listing"],
+  };
+}
+
+function recommendedNext(kind) {
+  if (kind === "address") return ["inspect mint over RPC", "compare owner program to p-token program id", "derive launchpad PDAs in SDK"];
+  if (kind === "metadata") return ["fetch metadata externally", "build agent registration doc", "pin immutable URI"];
+  if (kind === "perp-market") return ["verify graduated curve", "generate perps adapter config", "check oracle freshness"];
+  return ["create launch plan", "create agent plan", "review devnet program draft"];
+}
+
+function draftAddress(...parts) {
+  const digest = createHash("sha256").update(parts.join(":")).digest();
+  return base58(digest);
 }
 
 async function inspectMint(mint, input) {

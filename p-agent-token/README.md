@@ -57,6 +57,10 @@ cargo check
 
 For SBF builds, use the Solana toolchain appropriate for your validator and Pinocchio version.
 
+## Deployment Draft
+
+See [`DEPLOYMENT.md`](DEPLOYMENT.md) for the devnet and mainnet deployment checklist.
+
 ## Security Work Before Deployment
 
 - Validate every account owner, signer, writable flag, and PDA bump.

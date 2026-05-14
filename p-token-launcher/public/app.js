@@ -1,18 +1,50 @@
 const state = {
   launch: {},
+  agent: {},
+  program: {},
 };
 
-const outputIds = ["plan-output", "quote-output", "perp-output", "inspect-output", "registry-output"];
+const outputIds = [
+  "explore-output",
+  "plan-output",
+  "agent-output",
+  "program-output",
+  "quote-output",
+  "perp-output",
+  "inspect-output",
+  "registry-output",
+];
 
 document.querySelectorAll(".tabs button").forEach((button) => {
   button.addEventListener("click", () => activateOutput(button.dataset.output));
 });
 
+document.getElementById("workspace-button").addEventListener("click", async () => {
+  render("explore-output", await getJson("/api/workspace"));
+});
+
+document.getElementById("explore-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  render("explore-output", await postJson("/api/explore", formData(event.currentTarget)));
+});
+
 document.getElementById("launch-form").addEventListener("submit", async (event) => {
   event.preventDefault();
-  const body = formData(event.currentTarget);
-  state.launch = await postJson("/api/launch-plan", body);
+  state.launch = await postJson("/api/launch-plan", formData(event.currentTarget));
   render("plan-output", state.launch);
+});
+
+document.getElementById("agent-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const body = { ...state.launch?.metadata, ...formData(event.currentTarget) };
+  state.agent = await postJson("/api/agent-plan", body);
+  render("agent-output", state.agent);
+});
+
+document.getElementById("program-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  state.program = await postJson("/api/program-draft", formData(event.currentTarget));
+  render("program-output", state.program);
 });
 
 document.getElementById("quote-form").addEventListener("submit", async (event) => {
@@ -36,15 +68,27 @@ document.getElementById("inspect-form").addEventListener("submit", async (event)
 await boot();
 
 async function boot() {
-  const [health, registry] = await Promise.all([getJson("/api/health"), getJson("/api/registry")]);
-  document.getElementById("status").textContent = `${health.network} · ${health.unsigned ? "unsigned review mode" : "signing enabled"}`;
+  const [health, registry, workspace] = await Promise.all([
+    getJson("/api/health"),
+    getJson("/api/registry"),
+    getJson("/api/workspace"),
+  ]);
+  document.getElementById("status").textContent =
+    `${health.network} / ${health.unsigned ? "unsigned" : "signing"} / ${workspace.packages.length} modules`;
   render("registry-output", registry);
+  render("explore-output", workspace);
   document.getElementById("launch-form").requestSubmit();
+  document.getElementById("agent-form").requestSubmit();
+  document.getElementById("program-form").requestSubmit();
 }
 
 function activateOutput(id) {
-  outputIds.forEach((outputId) => document.getElementById(outputId).classList.toggle("active", outputId === id));
-  document.querySelectorAll(".tabs button").forEach((button) => button.classList.toggle("active", button.dataset.output === id));
+  outputIds.forEach((outputId) => {
+    document.getElementById(outputId).classList.toggle("active", outputId === id);
+  });
+  document.querySelectorAll(".tabs button").forEach((button) => {
+    button.classList.toggle("active", button.dataset.output === id);
+  });
 }
 
 function render(id, payload) {
@@ -66,8 +110,9 @@ function formData(form) {
 
 async function getJson(path) {
   const res = await fetch(path);
-  if (!res.ok) throw new Error(`${path} ${res.status}`);
-  return res.json();
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error ?? `${path} ${res.status}`);
+  return json;
 }
 
 async function postJson(path, body) {

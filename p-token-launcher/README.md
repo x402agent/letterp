@@ -1,6 +1,6 @@
 # P Token Launcher Workbench
 
-Local unsigned workbench for p-token launch planning. It gives humans and agents a browser UI and JSON API for launch configs, constant-product quotes, RISE-style floor modeling, perp intents, mint inspection, and WDK-style unsigned action envelopes.
+Local unsigned workbench for p-token and P Agent exploration. It gives humans and agents a browser UI and JSON API for launch configs, agent plans, program deployment drafts, constant-product quotes, RISE-style floor modeling, perp intents, mint inspection, and WDK-style unsigned action envelopes.
 
 This folder is the promoted version of `templates/p-token-launcher`.
 
@@ -38,9 +38,13 @@ http://localhost:8787
 | Route | Purpose |
 |-------|---------|
 | `GET /api/health` | Runtime status, target network, p-token program ID, and supported adapters. |
+| `GET /api/workspace` | Returns the repo module map, docs, and template locations. |
 | `GET /api/registry` | Reads `data/ptokens.json` when present; otherwise returns an empty registry. |
 | `GET /api/examples` | Returns `launch-config.example.json` and `bonding-curve.example.json`. |
+| `POST /api/explore` | Classifies an address, metadata URI, perp market, or workspace query and returns next actions. |
 | `POST /api/launch-plan` | Builds the complete unsigned p-token launch plan. |
+| `POST /api/agent-plan` | Builds an unsigned P Agent identity, registration, fee routing, and execution policy plan. |
+| `POST /api/program-draft` | Builds a devnet or mainnet program deployment draft for launchpad and agent-token programs. |
 | `POST /api/quote` | Simulates a buy or sell against the constant-product curve. |
 | `POST /api/rise-floor` | Models protocol-owned floor coverage for a RISE-style launch. |
 | `POST /api/perp-plan` | Produces a planner-only perpetual trade intent and risk checks. |
