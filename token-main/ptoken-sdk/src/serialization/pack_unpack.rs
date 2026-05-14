@@ -48,7 +48,9 @@ pub fn pack_token_account(
     Account::pack(*token_account, &mut data)
 }
 
-/// Byte sizes for reference.
+/// Packed byte size of an SPL Token mint account.
 pub const MINT_PACKED_LEN: usize = Mint::LEN;
+/// Packed byte size of an SPL Token account.
 pub const ACCOUNT_PACKED_LEN: usize = Account::LEN;
+/// Packed byte size of an SPL Token multisig account.
 pub const MULTISIG_PACKED_LEN: usize = Multisig::LEN;

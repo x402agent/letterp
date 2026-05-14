@@ -14,6 +14,10 @@
 //! - [`associated_token`] — Associated Token Account wrappers
 //! - [`serialization`] — Borsh and Pack/Unpack serialization
 //! - [`math`] — Safe arithmetic and decimal helpers
+//! - [`agent`] — Agent permission and execution policy primitives
+//! - [`x402`] — x402 payment intent and receipt verification helpers
+//! - [`bonding_curve`] — Bonding-curve quote math
+//! - [`perpetuals`] — Perpetual position and funding math
 //! - [`validation`] — Account and instruction validation
 //! - [`errors`] — Custom error types
 //! - [`constants`] — Program IDs, seeds, and defaults
@@ -21,8 +25,10 @@
 #![deny(missing_docs)]
 #![forbid(unsafe_code)]
 
+pub mod agent;
 #[cfg(not(kani))]
 pub mod associated_token;
+pub mod bonding_curve;
 pub mod constants;
 #[cfg(not(kani))]
 pub mod cpi;
@@ -32,6 +38,7 @@ pub mod extensions;
 pub mod math;
 #[cfg(not(kani))]
 pub mod pda;
+pub mod perpetuals;
 #[cfg(not(kani))]
 pub mod pinocchio_core;
 #[cfg(not(kani))]
@@ -42,6 +49,7 @@ pub mod token_2022;
 pub mod token_classic;
 #[cfg(not(kani))]
 pub mod validation;
+pub mod x402;
 
 #[cfg(kani)]
 mod kani_verification;

@@ -45,7 +45,7 @@ pub fn create_and_initialize_mint<'a>(
             mint.key,
             mint_rent,
             spl_token::state::Mint::LEN as u64,
-            &TOKEN_PROGRAM_ID,
+            token_program.key,
         ),
         &[payer.clone(), mint.clone(), system_program.clone()],
     )?;
@@ -53,7 +53,7 @@ pub fn create_and_initialize_mint<'a>(
     // 2. Initialize the mint
     invoke(
         &token_ix::initialize_mint(
-            &TOKEN_PROGRAM_ID,
+            token_program.key,
             mint.key,
             mint_authority,
             freeze_authority,

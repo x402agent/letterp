@@ -1,9 +1,7 @@
 //! Reallocate Token-2022 token accounts to add new extensions.
 
 use crate::constants::program_ids::TOKEN_2022_PROGRAM_ID;
-use solana_program::{
-    account_info::AccountInfo, entrypoint::ProgramResult, program::invoke, pubkey::Pubkey,
-};
+use solana_program::{account_info::AccountInfo, entrypoint::ProgramResult, program::invoke};
 use spl_token_2022::{extension::ExtensionType, instruction as token_ix};
 
 /// Add new extensions to an existing Token-2022 token account.

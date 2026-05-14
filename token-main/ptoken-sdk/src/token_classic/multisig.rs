@@ -1,6 +1,5 @@
 //! SPL Token M-of-N multisig authority setup.
 
-use crate::constants::program_ids::TOKEN_PROGRAM_ID;
 use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program::invoke, program_pack::Pack,
     pubkey::Pubkey, rent::Rent, system_instruction, sysvar::Sysvar,
@@ -41,13 +40,13 @@ pub fn create_multisig<'a>(
             multisig.key,
             multisig_rent,
             spl_token::state::Multisig::LEN as u64,
-            &TOKEN_PROGRAM_ID,
+            token_program.key,
         ),
         &[payer.clone(), multisig.clone(), system_program.clone()],
     )?;
 
     invoke(
-        &token_ix::initialize_multisig(&TOKEN_PROGRAM_ID, multisig.key, signer_keys, m)?,
+        &token_ix::initialize_multisig(token_program.key, multisig.key, signer_keys, m)?,
         &[multisig.clone(), rent_sysvar.clone()],
     )?;
 

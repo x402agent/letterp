@@ -30,13 +30,13 @@ pub fn create_token_account<'a>(
             token_account.key,
             account_rent,
             spl_token::state::Account::LEN as u64,
-            &TOKEN_PROGRAM_ID,
+            token_program.key,
         ),
         &[payer.clone(), token_account.clone(), system_program.clone()],
     )?;
 
     invoke(
-        &token_ix::initialize_account(&TOKEN_PROGRAM_ID, token_account.key, mint.key, owner)?,
+        &token_ix::initialize_account(token_program.key, token_account.key, mint.key, owner)?,
         &[token_account.clone(), mint.clone(), rent_sysvar.clone()],
     )?;
 

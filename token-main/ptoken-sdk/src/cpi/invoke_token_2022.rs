@@ -9,6 +9,7 @@ use solana_program::{
 use spl_token_2022::instruction as token_ix;
 
 /// CPI: transfer tokens via Token-2022 program.
+#[allow(deprecated)]
 pub fn cpi_transfer_2022<'a>(
     source: &AccountInfo<'a>,
     destination: &AccountInfo<'a>,

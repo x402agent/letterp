@@ -5,11 +5,7 @@ use solana_program::{
     account_info::AccountInfo, entrypoint::ProgramResult, program::invoke, pubkey::Pubkey,
     rent::Rent, system_instruction, sysvar::Sysvar,
 };
-use spl_token_2022::{
-    extension::{ExtensionType, StateWithExtensionsMut},
-    instruction as token_ix,
-    state::Mint,
-};
+use spl_token_2022::{extension::ExtensionType, instruction as token_ix, state::Mint};
 
 /// Calculate the required account size for a Token-2022 mint with the given extensions.
 pub fn mint_size_with_extensions<'a>(
