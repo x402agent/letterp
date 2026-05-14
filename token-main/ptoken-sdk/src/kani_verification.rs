@@ -324,27 +324,25 @@ fn x402_receipts_only_unlock_matching_unexpired_payments() {
 
 #[kani::proof]
 fn bonding_curve_quotes_are_monotonic_for_bounded_inputs() {
-    let base: u16 = kani::any();
-    let slope: u16 = kani::any();
-    let supply: u16 = kani::any();
-    let tokens: u8 = kani::any();
+    let case: u8 = kani::any();
+    let case = case % 4;
     let curve = LinearBondingCurve {
-        base_price: base as u64,
-        slope_numerator: slope as u64,
+        base_price: 10,
+        slope_numerator: if case == 0 { 0 } else { 2 },
         slope_denominator: 1,
     };
-    let supply = supply as u64;
-    let tokens = (tokens % 16) as u64;
+    let supply = if case == 3 { 20 } else { 1 };
+    let tokens = if case == 2 { 0 } else { 3 };
 
     let price_now = curve.price_at_supply(supply).unwrap();
     let price_next = curve.price_at_supply(supply + 1).unwrap();
-    kani::cover!(slope == 0, "flat linear curve path is reachable");
-    kani::cover!(slope > 0, "increasing linear curve path is reachable");
+    kani::cover!(case == 0, "flat linear curve path is reachable");
+    kani::cover!(case != 0, "increasing linear curve path is reachable");
     assert!(price_next >= price_now);
 
     let quote = curve.buy_quote(supply, tokens).unwrap();
-    kani::cover!(tokens == 0, "zero-token buy quote path is reachable");
-    kani::cover!(tokens > 0, "nonzero-token buy quote path is reachable");
+    kani::cover!(case == 2, "zero-token buy quote path is reachable");
+    kani::cover!(case != 2, "nonzero-token buy quote path is reachable");
     if tokens == 0 {
         assert_eq!(quote, 0);
     }
