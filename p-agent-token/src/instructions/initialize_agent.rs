@@ -1,20 +1,20 @@
-use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
+use pinocchio::{error::ProgramError, AccountView, ProgramResult};
 
 use super::helpers::require_signer;
 
 pub struct InitializeAgentAccounts<'a> {
-    pub owner: &'a AccountInfo,
-    pub agent_state: &'a AccountInfo,
+    pub owner: &'a AccountView,
+    pub agent_state: &'a AccountView,
 }
 
 pub struct InitializeAgent<'a> {
     pub accounts: InitializeAgentAccounts<'a>,
 }
 
-impl<'a> TryFrom<&'a [AccountInfo]> for InitializeAgentAccounts<'a> {
+impl<'a> TryFrom<&'a [AccountView]> for InitializeAgentAccounts<'a> {
     type Error = ProgramError;
 
-    fn try_from(accounts: &'a [AccountInfo]) -> Result<Self, Self::Error> {
+    fn try_from(accounts: &'a [AccountView]) -> Result<Self, Self::Error> {
         let [owner, agent_state, _system_program] = accounts else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
@@ -23,10 +23,10 @@ impl<'a> TryFrom<&'a [AccountInfo]> for InitializeAgentAccounts<'a> {
     }
 }
 
-impl<'a> TryFrom<(&'a [u8], &'a [AccountInfo])> for InitializeAgent<'a> {
+impl<'a> TryFrom<(&'a [u8], &'a [AccountView])> for InitializeAgent<'a> {
     type Error = ProgramError;
 
-    fn try_from((_data, accounts): (&'a [u8], &'a [AccountInfo])) -> Result<Self, Self::Error> {
+    fn try_from((_data, accounts): (&'a [u8], &'a [AccountView])) -> Result<Self, Self::Error> {
         Ok(Self { accounts: InitializeAgentAccounts::try_from(accounts)? })
     }
 }

@@ -1,11 +1,11 @@
 use core::mem::size_of;
-use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
+use pinocchio::{error::ProgramError, AccountView, ProgramResult};
 
 use super::helpers::{require_nonzero_amount, require_signer};
 
 pub struct BuyAccounts<'a> {
-    pub buyer: &'a AccountInfo,
-    pub curve: &'a AccountInfo,
+    pub buyer: &'a AccountView,
+    pub curve: &'a AccountView,
 }
 
 pub struct BuyData {
@@ -17,10 +17,10 @@ pub struct Buy<'a> {
     pub data: BuyData,
 }
 
-impl<'a> TryFrom<&'a [AccountInfo]> for BuyAccounts<'a> {
+impl<'a> TryFrom<&'a [AccountView]> for BuyAccounts<'a> {
     type Error = ProgramError;
 
-    fn try_from(accounts: &'a [AccountInfo]) -> Result<Self, Self::Error> {
+    fn try_from(accounts: &'a [AccountView]) -> Result<Self, Self::Error> {
         let [buyer, curve, _vault, _buyer_token_account, _mint, _token_program] = accounts else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
@@ -42,10 +42,10 @@ impl TryFrom<&[u8]> for BuyData {
     }
 }
 
-impl<'a> TryFrom<(&'a [u8], &'a [AccountInfo])> for Buy<'a> {
+impl<'a> TryFrom<(&'a [u8], &'a [AccountView])> for Buy<'a> {
     type Error = ProgramError;
 
-    fn try_from((data, accounts): (&'a [u8], &'a [AccountInfo])) -> Result<Self, Self::Error> {
+    fn try_from((data, accounts): (&'a [u8], &'a [AccountView])) -> Result<Self, Self::Error> {
         Ok(Self { accounts: BuyAccounts::try_from(accounts)?, data: BuyData::try_from(data)? })
     }
 }

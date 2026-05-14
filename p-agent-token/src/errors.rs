@@ -1,4 +1,4 @@
-use pinocchio::program_error::{ProgramError, ToStr};
+use pinocchio::error::{ProgramError, ToStr};
 use thiserror::Error;
 
 #[derive(Clone, Debug, Eq, Error, PartialEq)]

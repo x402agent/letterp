@@ -1,12 +1,12 @@
 use core::mem::size_of;
-use pinocchio::{program_error::ProgramError, pubkey::Pubkey};
+use pinocchio::{error::ProgramError, Address};
 
 #[repr(C)]
 pub struct AgentState {
-    pub owner: Pubkey,
-    pub agent_asset: Pubkey,
-    pub agent_token_mint: Pubkey,
-    pub executive: Pubkey,
+    pub owner: Address,
+    pub agent_asset: Address,
+    pub agent_token_mint: Address,
+    pub executive: Address,
     pub metadata_hash: [u8; 32],
     flags: [u8; 1],
     bump: [u8; 1],
@@ -61,8 +61,8 @@ impl AgentState {
 
 #[repr(C)]
 pub struct CurveState {
-    pub mint: Pubkey,
-    pub vault: Pubkey,
+    pub mint: Address,
+    pub vault: Address,
     virtual_sol: [u8; 8],
     virtual_token: [u8; 8],
     real_sol: [u8; 8],
