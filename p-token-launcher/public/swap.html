@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CLAWD Dex Pulse</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell dex-shell">
+      <header class="topbar dex-topbar">
+        <div>
+          <p class="eyebrow">CLAWD Dex Pulse</p>
+          <h1>Birdeye live token stats, new listings, swaps, and meme momentum.</h1>
+        </div>
+        <div class="status-stack">
+          <div class="status live-status" id="dex-status">Connecting</div>
+          <button class="ghost" id="refresh-button" type="button">Refresh</button>
+          <label class="inline-toggle"><input id="auto-refresh" type="checkbox" checked /> Live</label>
+        </div>
+      </header>
+
+      <section class="dex-controls">
+        <form id="swap-form" class="panel swap-ticket">
+          <div class="panel-title">
+            <h2>Base / Quote</h2>
+            <button type="submit">Quote</button>
+          </div>
+          <div class="split">
+            <label>Input mint <input name="inputMint" id="input-mint" value="So11111111111111111111111111111111111111112" /></label>
+            <label>Output mint <input name="outputMint" id="output-mint" value="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" /></label>
+          </div>
+          <div class="split three">
+            <label>Amount <input name="amount" type="number" min="0" step="0.000001" value="1" /></label>
+            <label>Decimals <input name="decimals" type="number" min="0" max="12" value="9" /></label>
+            <label>Slippage bps <input name="slippageBps" type="number" min="1" max="5000" value="75" /></label>
+          </div>
+          <div class="quick-actions">
+            <button class="ghost" type="button" data-pair="sol-usdc">SOL/USD</button>
+            <button class="ghost" type="button" data-pair="jup-usdc">JUP/USD</button>
+            <button class="ghost" type="button" id="flip-button">Flip</button>
+          </div>
+          <div class="quote-result" id="quote-result">Waiting for quote...</div>
+        </form>
+
+        <form id="analyze-form" class="panel token-search">
+          <div class="panel-title">
+            <h2>Token Analysis</h2>
+            <button type="submit">Analyze</button>
+          </div>
+          <label>Mint <input name="address" id="analysis-address" placeholder="Click a row or paste a token mint" /></label>
+          <div class="analysis-actions">
+            <button class="ghost" type="button" id="copy-address">Copy</button>
+            <a class="button-link" id="birdeye-link" href="https://birdeye.so/" target="_blank" rel="noreferrer">Birdeye</a>
+            <a class="button-link" id="jupiter-link" href="https://jup.ag/" target="_blank" rel="noreferrer">Jupiter</a>
+          </div>
+        </form>
+      </section>
+
+      <section class="market-strip" id="market-strip">
+        <article class="metric-panel"><span>SOL/USD</span><strong>Waiting...</strong><small></small></article>
+        <article class="metric-panel"><span>JUP/USD</span><strong>Waiting...</strong><small></small></article>
+      </section>
+
+      <section class="dex-grid">
+        <article class="panel data-panel">
+          <div class="panel-title"><h2>Pump.fun + Meme Flow</h2><span id="meme-count"></span></div>
+          <div class="row-list" id="meme-flow">Waiting for live data...</div>
+        </article>
+
+        <article class="panel data-panel">
+          <div class="panel-title"><h2>Fresh Listings</h2><span id="listing-count"></span></div>
+          <div class="row-list" id="fresh-listings">Waiting for live data...</div>
+        </article>
+
+        <article class="panel data-panel">
+          <div class="panel-title"><h2>New Pairs</h2><span id="pair-count"></span></div>
+          <div class="row-list" id="new-pairs">Waiting for live data...</div>
+        </article>
+
+        <article class="panel data-panel">
+          <div class="panel-title"><h2>Recent Swaps</h2><span id="swap-count"></span></div>
+          <div class="row-list" id="recent-swaps">Waiting for live data...</div>
+        </article>
+
+        <article class="panel data-panel">
+          <div class="panel-title"><h2>Large Trades</h2><span id="large-count"></span></div>
+          <div class="row-list" id="large-trades">Waiting for live data...</div>
+        </article>
+
+        <article class="panel data-panel analysis-panel">
+          <div class="panel-title"><h2>Token Analysis</h2><span id="analysis-state">Select a token</span></div>
+          <div id="analysis-output" class="analysis-output">Click any token, listing, meme coin, or swap row to pull live Birdeye analysis.</div>
+        </article>
+      </section>
+    </main>
+    <script src="/swap.js" type="module"></script>
+  </body>
+</html>

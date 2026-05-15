@@ -15,6 +15,14 @@ const PORT = Number(process.env.PORT ?? 8787);
 const DEFAULT_RPC = process.env.SOLANA_RPC_URL ?? process.env.HELIUS_RPC_URL ?? "https://api.devnet.solana.com";
 const DEFAULT_P_TOKEN_PROGRAM_ID = process.env.P_TOKEN_PROGRAM_ID ?? "ptok6rngomXrDbWf5v5Mkmu5CEbB51hzSCPDoj9DrvF";
 const SPL_TOKEN_PROGRAM_ID = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
+const BIRDEYE_API_BASE = process.env.BIRDEYE_API_BASE ?? "https://public-api.birdeye.so";
+const BIRDEYE_API_KEY = process.env.BIRDEYE_API_KEY ?? process.env.BIRDEYE_KEY ?? "";
+const JUPITER_QUOTE_URL = process.env.JUPITER_QUOTE_URL ?? "https://api.jup.ag/swap/v1/quote";
+const SOL_MINT = "So11111111111111111111111111111111111111112";
+const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+const JUP_MINT = "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN";
+const DEX_CACHE_TTL_MS = Number(process.env.DEX_CACHE_TTL_MS ?? 15_000);
+const dexCache = new Map();
 
 const mimeTypes = {
   ".html": "text/html; charset=utf-8",
@@ -96,6 +104,21 @@ async function handleApi(req, res, url) {
     return;
   }
 
+  if (req.method === "GET" && url.pathname === "/api/swap/pulse") {
+    sendJson(res, 200, await dexPulse());
+    return;
+  }
+
+  if (req.method === "GET" && url.pathname === "/api/swap/analyze") {
+    sendJson(res, 200, await tokenAnalysis(String(url.searchParams.get("address") ?? "")));
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/swap/quote") {
+    sendJson(res, 200, await swapQuote(await readJsonBody(req)));
+    return;
+  }
+
   if (req.method === "POST" && url.pathname === "/api/launch-plan") {
     sendJson(res, 200, launchPlan(await readJsonBody(req)));
     return;
@@ -146,7 +169,7 @@ async function handleApi(req, res, url) {
 }
 
 function serveStatic(res, pathname) {
-  const normalized = pathname === "/" ? "/index.html" : pathname;
+  const normalized = pathname === "/" ? "/index.html" : pathname === "/swap" ? "/swap.html" : pathname;
   const path = resolve(publicRoot, `.${normalized}`);
   if (!path.startsWith(publicRoot) || !existsSync(path)) {
     sendJson(res, 404, { error: "Not found" });
@@ -169,6 +192,297 @@ function sendJson(res, status, payload) {
     "cache-control": "no-store",
   });
   res.end(JSON.stringify(payload, null, 2));
+}
+
+async function cachedJson(key, loader, ttlMs = DEX_CACHE_TTL_MS) {
+  const cached = dexCache.get(key);
+  if (cached && Date.now() - cached.time < ttlMs) return { ...cached.value, cached: true };
+  const value = await loader();
+  dexCache.set(key, { time: Date.now(), value });
+  return { ...value, cached: false };
+}
+
+async function dexPulse() {
+  return cachedJson("dex-pulse", async () => {
+    const generatedAt = new Date().toISOString();
+    const calls = await Promise.allSettled([
+      birdeye("price:sol", "/defi/price", { address: SOL_MINT }),
+      birdeye("price:jup", "/defi/price", { address: JUP_MINT }),
+      birdeye("trending", "/defi/token_trending", { sort_by: "rank", sort_type: "asc", offset: 0, limit: 12 }),
+      birdeye("new-listing", "/defi/v2/tokens/new_listing", { limit: 12, meme_platform_enabled: true }),
+      birdeye("recent", "/defi/v3/txs/recent", { limit: 16, tx_type: "swap" }),
+      birdeye("large", "/defi/v3/token/txs-by-volume", {
+        token_address: SOL_MINT,
+        volume_type: "usd",
+        min_volume: 25_000,
+        tx_type: "swap",
+        sort_by: "block_unix_time",
+        sort_type: "desc",
+        offset: 0,
+        limit: 12,
+      }),
+    ]);
+    const [solPrice, jupPrice, trending, newListings, recentSwaps, largeTrades] = calls.map(settledPayload);
+    const trendingTokens = normalizeTokens(trending.data);
+    const listingTokens = normalizeTokens(newListings.data);
+    const recentRows = normalizeTrades(recentSwaps.data);
+    const largeRows = normalizeTrades(largeTrades.data);
+    const errors = calls
+      .map((call, index) => call.status === "rejected" ? { source: ["SOL/USD", "JUP/USD", "trending", "new-listing", "recent-swaps", "large-trades"][index], error: call.reason.message } : null)
+      .filter(Boolean);
+
+    return {
+      ok: errors.length === 0,
+      generatedAt,
+      provider: {
+        birdeye: {
+          configured: Boolean(BIRDEYE_API_KEY),
+          baseUrl: BIRDEYE_API_BASE,
+          status: BIRDEYE_API_KEY ? "live" : "missing-api-key",
+        },
+        jupiter: {
+          quoteUrl: JUPITER_QUOTE_URL,
+        },
+      },
+      markets: [
+        priceCard("SOL/USD", SOL_MINT, solPrice.data),
+        priceCard("JUP/USD", JUP_MINT, jupPrice.data),
+      ],
+      memeFlow: buildMemeFlow(trendingTokens, listingTokens),
+      freshListings: listingTokens,
+      newPairs: listingTokens.filter((token) => token.liquidity > 0 || token.source).slice(0, 12),
+      recentSwaps: recentRows,
+      largeTrades: largeRows,
+      defaults: {
+        inputMint: SOL_MINT,
+        outputMint: USDC_MINT,
+        slippageBps: 75,
+      },
+      errors,
+    };
+  });
+}
+
+async function tokenAnalysis(address) {
+  const mint = sanitizeMint(address);
+  return cachedJson(`analysis:${mint}`, async () => {
+    const calls = await Promise.allSettled([
+      birdeye(`overview:${mint}`, "/defi/token_overview", { address: mint, frames: "1h,4h,24h" }),
+      birdeye(`trade-data:${mint}`, "/defi/v3/token/trade-data/single", { address: mint, frames: "1h,4h,24h" }),
+      birdeye(`txs:${mint}`, "/defi/v3/token/txs", { address: mint, limit: 20, tx_type: "swap", sort_type: "desc" }),
+      birdeye(`large:${mint}`, "/defi/v3/token/txs-by-volume", {
+        token_address: mint,
+        volume_type: "usd",
+        min_volume: 5_000,
+        tx_type: "swap",
+        sort_by: "block_unix_time",
+        sort_type: "desc",
+        offset: 0,
+        limit: 12,
+      }),
+    ]);
+    const [overview, tradeData, txs, large] = calls.map(settledPayload);
+    const profile = normalizeToken(overview.data?.data ?? overview.data, { address: mint });
+    const recentSwaps = normalizeTrades(txs.data);
+    const largeTrades = normalizeTrades(large.data);
+    const risk = riskSnapshot(profile, recentSwaps, largeTrades);
+    return {
+      ok: calls.every((call) => call.status === "fulfilled"),
+      generatedAt: new Date().toISOString(),
+      address: mint,
+      profile,
+      tradeData: tradeData.data?.data ?? tradeData.data ?? null,
+      recentSwaps,
+      largeTrades,
+      risk,
+      errors: calls
+        .map((call, index) => call.status === "rejected" ? { source: ["overview", "trade-data", "recent-swaps", "large-trades"][index], error: call.reason.message } : null)
+        .filter(Boolean),
+    };
+  });
+}
+
+async function swapQuote(input) {
+  const inputMint = sanitizeMint(input.inputMint ?? SOL_MINT);
+  const outputMint = sanitizeMint(input.outputMint ?? USDC_MINT);
+  if (inputMint === outputMint) throw new Error("inputMint and outputMint must be different");
+  const humanAmount = Number(input.amount ?? 1);
+  if (!Number.isFinite(humanAmount) || humanAmount <= 0) throw new Error("amount must be greater than zero");
+  const decimals = Math.max(0, Math.min(12, Number(input.decimals ?? (inputMint === SOL_MINT ? 9 : 6))));
+  const amount = toBaseUnits(humanAmount, decimals);
+  const slippageBps = Math.max(1, Math.min(5000, Number(input.slippageBps ?? 75)));
+  const params = new URLSearchParams({
+    inputMint,
+    outputMint,
+    amount,
+    slippageBps: String(slippageBps),
+    swapMode: "ExactIn",
+  });
+  const res = await fetch(`${JUPITER_QUOTE_URL}?${params.toString()}`, {
+    headers: { accept: "application/json" },
+    signal: AbortSignal.timeout(8_000),
+  });
+  const json = await safeJson(res);
+  if (!res.ok) throw new Error(`Jupiter quote HTTP ${res.status}: ${extractError(json)}`);
+  return {
+    ok: true,
+    generatedAt: new Date().toISOString(),
+    unsigned: true,
+    inputMint,
+    outputMint,
+    amount,
+    humanAmount,
+    decimals,
+    slippageBps,
+    quote: json,
+    routePlan: Array.isArray(json.routePlan) ? json.routePlan.map((route) => ({
+      percent: route.percent,
+      label: route.swapInfo?.label,
+      ammKey: route.swapInfo?.ammKey,
+      inputMint: route.swapInfo?.inputMint,
+      outputMint: route.swapInfo?.outputMint,
+      inAmount: route.swapInfo?.inAmount,
+      outAmount: route.swapInfo?.outAmount,
+      feeAmount: route.swapInfo?.feeAmount,
+      feeMint: route.swapInfo?.feeMint,
+    })) : [],
+  };
+}
+
+async function birdeye(key, path, params) {
+  if (!BIRDEYE_API_KEY) throw new Error("BIRDEYE_API_KEY is not configured");
+  const url = new URL(path, BIRDEYE_API_BASE);
+  for (const [param, value] of Object.entries(params ?? {})) {
+    if (value !== undefined && value !== null && value !== "") url.searchParams.set(param, String(value));
+  }
+  const res = await fetch(url, {
+    headers: {
+      accept: "application/json",
+      "x-chain": "solana",
+      "X-API-KEY": BIRDEYE_API_KEY,
+    },
+    signal: AbortSignal.timeout(8_000),
+  });
+  const json = await safeJson(res);
+  if (!res.ok) throw new Error(`${key} HTTP ${res.status}: ${extractError(json)}`);
+  if (json && json.success === false) throw new Error(`${key}: ${extractError(json)}`);
+  return json;
+}
+
+async function safeJson(res) {
+  const text = await res.text();
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { raw: text.slice(0, 500) };
+  }
+}
+
+function settledPayload(result) {
+  return result.status === "fulfilled" ? { data: result.value } : { data: null, error: result.reason.message };
+}
+
+function extractError(json) {
+  return json?.message ?? json?.error ?? json?.data?.message ?? json?.raw ?? "request failed";
+}
+
+function sanitizeMint(value) {
+  const mint = String(value ?? "").trim();
+  if (!/^[1-9A-HJ-NP-Za-km-z]{32,64}$/.test(mint)) throw new Error(`Invalid Solana mint: ${mint || "<empty>"}`);
+  return mint;
+}
+
+function toBaseUnits(amount, decimals) {
+  const fixed = amount.toFixed(decimals);
+  const [whole, fraction = ""] = fixed.split(".");
+  return `${whole}${fraction.padEnd(decimals, "0")}`.replace(/^0+(?=\d)/, "") || "0";
+}
+
+function priceCard(label, address, payload) {
+  const data = payload?.data ?? payload;
+  return {
+    label,
+    address,
+    value: numberOrNull(data?.value ?? data?.price),
+    updateUnixTime: data?.updateUnixTime ?? data?.update_unix_time ?? null,
+  };
+}
+
+function normalizeTokens(payload) {
+  const data = payload?.data ?? payload;
+  const list = data?.tokens ?? data?.items ?? data?.list ?? data?.data ?? [];
+  return Array.isArray(list) ? list.map((item) => normalizeToken(item)).filter((item) => item.address).slice(0, 24) : [];
+}
+
+function normalizeToken(item, fallback = {}) {
+  const address = item?.address ?? item?.tokenAddress ?? item?.mint ?? fallback.address ?? "";
+  return {
+    address,
+    symbol: item?.symbol ?? item?.tokenSymbol ?? fallback.symbol ?? shortAddress(address),
+    name: item?.name ?? item?.tokenName ?? fallback.name ?? shortAddress(address),
+    logoURI: item?.logoURI ?? item?.logo_uri ?? item?.logo ?? null,
+    price: numberOrNull(item?.price ?? item?.value),
+    liquidity: numberOrNull(item?.liquidity ?? item?.liquidityUsd ?? item?.liquidityUSD),
+    volume24hUSD: numberOrNull(item?.volume24hUSD ?? item?.v24hUSD ?? item?.volumeUSD ?? item?.volume_usd),
+    priceChange24hPercent: numberOrNull(item?.priceChange24hPercent ?? item?.v24hChangePercent ?? item?.priceChange24h),
+    marketCap: numberOrNull(item?.mc ?? item?.marketCap ?? item?.marketcap),
+    source: item?.source ?? item?.sourceName ?? item?.platform ?? null,
+    rank: item?.rank ?? null,
+    listedAt: item?.liquidityAddedAt ?? item?.listedAt ?? item?.createdAt ?? item?.blockUnixTime ?? null,
+  };
+}
+
+function normalizeTrades(payload) {
+  const data = payload?.data ?? payload;
+  const list = data?.items ?? data?.txs ?? data?.transactions ?? data?.list ?? data?.data ?? [];
+  return Array.isArray(list) ? list.map((item) => ({
+    signature: item.txHash ?? item.tx_hash ?? item.signature ?? item.txSignature ?? null,
+    side: item.side ?? item.txType ?? item.tx_type ?? item.type ?? "swap",
+    source: item.source ?? item.sourceName ?? item.dex ?? item.platform ?? null,
+    tokenAddress: item.tokenAddress ?? item.token_address ?? item.address ?? item.baseAddress ?? null,
+    baseSymbol: item.baseSymbol ?? item.tokenSymbol ?? item.symbol ?? item.from?.symbol ?? null,
+    quoteSymbol: item.quoteSymbol ?? item.quote?.symbol ?? item.to?.symbol ?? null,
+    volumeUsd: numberOrNull(item.volumeUSD ?? item.volume_usd ?? item.valueUSD ?? item.value_usd ?? item.usd),
+    amount: numberOrNull(item.amount ?? item.uiAmount ?? item.tokenAmount),
+    price: numberOrNull(item.price ?? item.priceUsd ?? item.price_usd),
+    owner: item.owner ?? item.trader ?? item.maker ?? null,
+    time: item.blockUnixTime ?? item.block_unix_time ?? item.unixTime ?? item.time ?? null,
+  })).slice(0, 32) : [];
+}
+
+function buildMemeFlow(trendingTokens, listingTokens) {
+  const combined = [...listingTokens, ...trendingTokens];
+  return combined
+    .filter((token) => token.address && (token.address.endsWith("pump") || String(token.source ?? "").toLowerCase().includes("pump") || String(token.name ?? "").toLowerCase().includes("pump")))
+    .slice(0, 12);
+}
+
+function riskSnapshot(profile, recentSwaps, largeTrades) {
+  const liquidity = Number(profile.liquidity ?? 0);
+  const volume = Number(profile.volume24hUSD ?? 0);
+  const largeVolume = largeTrades.reduce((sum, trade) => sum + Number(trade.volumeUsd ?? 0), 0);
+  const flags = [];
+  if (!liquidity) flags.push("missing-liquidity");
+  if (liquidity > 0 && volume / liquidity > 10) flags.push("high-volume-to-liquidity");
+  if (largeVolume > volume * 0.5 && volume > 0) flags.push("large-trade-concentration");
+  if (recentSwaps.length === 0) flags.push("no-recent-swaps");
+  return {
+    liquidity,
+    volume24hUSD: volume,
+    largeTradeVolumeUSD: largeVolume,
+    flags,
+    posture: flags.length === 0 ? "normal" : flags.length <= 2 ? "watch" : "high-risk",
+  };
+}
+
+function numberOrNull(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function shortAddress(address) {
+  return address ? `${address.slice(0, 4)}...${address.slice(-4)}` : "";
 }
 
 function readJson(path) {
